@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_12_28_233151) do
+ActiveRecord::Schema[7.2].define(version: 2025_12_28_233344) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -421,6 +421,23 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_28_233151) do
     t.integer "term_months"
     t.decimal "initial_balance", precision: 19, scale: 4
     t.jsonb "locked_attributes", default: {}
+  end
+
+  create_table "lunchflow_accounts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "lunchflow_connection_id", null: false
+    t.uuid "account_id"
+    t.bigint "lunchflow_id", null: false
+    t.string "name", null: false
+    t.string "institution_name", null: false
+    t.string "institution_logo"
+    t.string "provider", null: false
+    t.string "currency", null: false
+    t.string "status", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_lunchflow_accounts_on_account_id"
+    t.index ["lunchflow_connection_id"], name: "index_lunchflow_accounts_on_lunchflow_connection_id"
+    t.index ["lunchflow_id"], name: "index_lunchflow_accounts_on_lunchflow_id", unique: true
   end
 
   create_table "lunchflow_connections", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -858,6 +875,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_28_233151) do
   add_foreign_key "imports", "families"
   add_foreign_key "invitations", "families"
   add_foreign_key "invitations", "users", column: "inviter_id"
+  add_foreign_key "lunchflow_accounts", "accounts"
+  add_foreign_key "lunchflow_accounts", "lunchflow_connections"
   add_foreign_key "lunchflow_connections", "families"
   add_foreign_key "merchants", "families"
   add_foreign_key "messages", "chats"
