@@ -1,0 +1,8 @@
+dylan_checking:
+  lunchflow_connection: dylan_lunchflow
+  lunchflow_id: 12345
+  name: Checking Account
+  institution_name: Chase Bank
+  provider: gocardless
+  currency: USD
+  status: ACTIVE
