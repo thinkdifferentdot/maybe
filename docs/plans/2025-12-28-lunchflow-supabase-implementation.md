@@ -4,7 +4,7 @@
 
 **Goal:** Enable Maybe to sync financial data from Lunchflow via Supabase as an intermediary data layer.
 
-**Architecture:** Supabase Edge Function fetches Lunchflow data on a schedule and stores it in Supabase tables. Maybe reads from these tables via a SupabaseClient, creating/updating LunchflowConnection and LunchflowAccount records that link to Maybe's Account model. Transactions flow through as Entry records.
+**Architecture:** Supabase Edge Function fetches Lunchflow data on a schedule (or on-demand) and stores it in Supabase tables. Maybe reads from these tables via a SupabaseClient, creating/updating LunchflowConnection and LunchflowAccount records that link to Maybe's Account model. Transactions flow through as Entry records.
 
 **Tech Stack:** Ruby on Rails, Supabase (PostgreSQL + Edge Functions), TypeScript/Deno, Sidekiq
 
@@ -14,14 +14,18 @@
 
 ## Phase 1: Supabase Schema Setup
 
-### Task 1: Create Supabase Migration for lunchflow_accounts
+### Task 1: Create Supabase Migration for lunchflow_accounts (COMPLETED)
+
+**Recommended Agent:** Gemini
 
 This task creates the Supabase table to store Lunchflow account data.
 
 **Files:**
 - Create: `supabase/migrations/20251228000001_create_lunchflow_accounts.sql`
 
-**Step 1: Create the migration file**
+**Step 1: Create directory and migration file**
+
+Ensure `supabase/migrations` directory exists.
 
 ```sql
 -- supabase/migrations/20251228000001_create_lunchflow_accounts.sql
@@ -64,7 +68,9 @@ git commit -m "feat(supabase): add lunchflow_accounts table migration"
 
 ---
 
-### Task 2: Create Supabase Migration for lunchflow_transactions
+### Task 2: Create Supabase Migration for lunchflow_transactions (COMPLETED)
+
+**Recommended Agent:** Gemini
 
 **Files:**
 - Create: `supabase/migrations/20251228000002_create_lunchflow_transactions.sql`
@@ -107,7 +113,9 @@ git commit -m "feat(supabase): add lunchflow_transactions table migration"
 
 ---
 
-### Task 3: Create Supabase Migration for lunchflow_balances
+### Task 3: Create Supabase Migration for lunchflow_balances (COMPLETED)
+
+**Recommended Agent:** Gemini
 
 **Files:**
 - Create: `supabase/migrations/20251228000003_create_lunchflow_balances.sql`
@@ -139,7 +147,9 @@ git commit -m "feat(supabase): add lunchflow_balances table migration"
 
 ---
 
-### Task 4: Create Supabase Migration for lunchflow_sync_log
+### Task 4: Create Supabase Migration for lunchflow_sync_log (COMPLETED)
+
+**Recommended Agent:** Gemini
 
 **Files:**
 - Create: `supabase/migrations/20251228000004_create_lunchflow_sync_log.sql`
@@ -174,12 +184,16 @@ git commit -m "feat(supabase): add lunchflow_sync_log table migration"
 
 ## Phase 2: Supabase Edge Function
 
-### Task 5: Create Edge Function Directory Structure
+### Task 5: Create Edge Function Directory Structure (COMPLETED)
+
+**Recommended Agent:** Claude
 
 **Files:**
 - Create: `supabase/functions/sync-lunchflow/index.ts`
 
 **Step 1: Create directory and base file**
+
+Ensure `supabase/functions/sync-lunchflow` directory exists.
 
 ```typescript
 // supabase/functions/sync-lunchflow/index.ts
@@ -392,6 +406,8 @@ git commit -m "feat(supabase): add sync-lunchflow edge function"
 
 ### Task 6: Create Migration for lunchflow_connections Table
 
+**Recommended Agent:** Claude
+
 **Files:**
 - Create: `db/migrate/YYYYMMDDHHMMSS_create_lunchflow_connections.rb`
 
@@ -436,6 +452,8 @@ git commit -m "feat: add lunchflow_connections table"
 ---
 
 ### Task 7: Create Migration for lunchflow_accounts Table
+
+**Recommended Agent:** Claude
 
 **Files:**
 - Create: `db/migrate/YYYYMMDDHHMMSS_create_lunchflow_accounts.rb`
@@ -486,6 +504,8 @@ git commit -m "feat: add lunchflow_accounts table"
 
 ### Task 8: Create SupabaseClient Service
 
+**Recommended Agent:** Claude
+
 **Files:**
 - Create: `app/services/supabase_client.rb`
 - Test: `test/services/supabase_client_test.rb`
@@ -519,6 +539,15 @@ class SupabaseClientTest < ActiveSupport::TestCase
     query = @client.from("lunchflow_accounts")
     assert_kind_of SupabaseClient::QueryBuilder, query
   end
+
+  test "invoke_function calls edge function" do
+    stub_request(:post, "https://test.supabase.co/functions/v1/test-func")
+      .with(headers: { "Authorization" => "Bearer test-key" })
+      .to_return(status: 200, body: '{"success":true}', headers: {})
+
+    response = @client.invoke_function("test-func")
+    assert response["success"]
+  end
 end
 ```
 
@@ -541,6 +570,20 @@ class SupabaseClient
 
   def from(table_name)
     QueryBuilder.new(self, table_name)
+  end
+
+  def invoke_function(function_name, body = {})
+    uri = URI("#{@url}/functions/v1/#{function_name}")
+    request = Net::HTTP::Post.new(uri)
+    headers.each { |k, v| request[k] = v }
+    request.body = body.to_json
+
+    response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+      http.request(request)
+    end
+
+    raise "Supabase function error: #{response.code}" unless response.is_a?(Net::HTTPSuccess)
+    JSON.parse(response.body)
   end
 
   def execute_query(path, params = {})
@@ -635,6 +678,8 @@ git commit -m "feat: add SupabaseClient service for API communication"
 ---
 
 ### Task 9: Create LunchflowConnection Model
+
+**Recommended Agent:** Claude
 
 **Files:**
 - Create: `app/models/lunchflow_connection.rb`
@@ -740,6 +785,8 @@ git commit -m "feat: add LunchflowConnection model with Syncable concern"
 ---
 
 ### Task 10: Create LunchflowAccount Model
+
+**Recommended Agent:** Claude
 
 **Files:**
 - Create: `app/models/lunchflow_account.rb`
@@ -879,6 +926,8 @@ git commit -m "feat: add LunchflowAccount model with account mapping"
 
 ### Task 11: Create LunchflowConnection::Syncer
 
+**Recommended Agent:** Claude
+
 **Files:**
 - Create: `app/models/lunchflow_connection/syncer.rb`
 - Test: `test/models/lunchflow_connection/syncer_test.rb`
@@ -899,9 +948,12 @@ class LunchflowConnection::SyncerTest < ActiveSupport::TestCase
     assert_equal @connection, @syncer.instance_variable_get(:@connection)
   end
 
-  test "perform_sync fetches accounts from supabase and creates lunchflow_accounts" do
+  test "perform_sync invokes edge function, fetches accounts and creates lunchflow_accounts" do
     mock_client = Minitest::Mock.new
     mock_query = Minitest::Mock.new
+
+    # Expect edge function trigger
+    mock_client.expect(:invoke_function, { "success" => true }, ["sync-lunchflow"])
 
     # Mock the supabase client chain
     mock_query.expect(:select, mock_query, ["*"])
@@ -946,6 +998,7 @@ class LunchflowConnection::SyncerTest < ActiveSupport::TestCase
     lunchflow_account = @connection.lunchflow_accounts.find_by(lunchflow_id: 999)
     assert_not_nil lunchflow_account
     assert_equal "Test Checking", lunchflow_account.name
+    mock_client.verify
   end
 end
 ```
@@ -965,6 +1018,9 @@ class LunchflowConnection::Syncer
   end
 
   def perform_sync(sync)
+    # Trigger remote sync to ensure fresh data in Supabase
+    @connection.supabase_client.invoke_function("sync-lunchflow")
+
     supabase_accounts = fetch_accounts_from_supabase
     sync_accounts(supabase_accounts)
 
@@ -1024,6 +1080,8 @@ class LunchflowConnection::Syncer
                               .execute
 
     transactions.each do |txn_data|
+      # NOTE: We currently treat pending transactions as posted.
+      # Future improvement: Use txn_data['is_pending'] to handle pending state.
       import_transaction(lunchflow_account.account, txn_data)
     end
   end
@@ -1049,10 +1107,16 @@ class LunchflowConnection::Syncer
     end
 
     entry.assign_attributes(
-      name: txn_data["merchant"] || txn_data["description"] || "Lunchflow Transaction",
       amount: txn_data["amount"],
       currency: txn_data["currency"],
       date: txn_data["date"]
+    )
+
+    # Use enrich_attribute for name to allow user overrides
+    entry.enrich_attribute(
+      :name,
+      txn_data["merchant"] || txn_data["description"] || "Lunchflow Transaction",
+      source: "lunchflow"
     )
 
     entry.save!
@@ -1080,6 +1144,8 @@ git commit -m "feat: add LunchflowConnection::Syncer for sync logic"
 ---
 
 ### Task 12: Create LunchflowConnection::SyncCompleteEvent
+
+**Recommended Agent:** Claude
 
 **Files:**
 - Create: `app/models/lunchflow_connection/sync_complete_event.rb`
@@ -1116,7 +1182,9 @@ git commit -m "feat: add LunchflowConnection::SyncCompleteEvent for broadcast"
 
 ## Phase 5: Background Jobs
 
-### Task 13: Create SyncLunchflowConnectionsJob
+### Task 13: Create SyncLunchflowConnectionsJob (COMPLETED)
+
+**Recommended Agent:** Claude
 
 **Files:**
 - Create: `app/jobs/sync_lunchflow_connections_job.rb`
@@ -1174,7 +1242,9 @@ git commit -m "feat: add SyncLunchflowConnectionsJob for periodic syncing"
 
 ---
 
-### Task 14: Add Sidekiq Cron Schedule
+### Task 14: Add Sidekiq Cron Schedule (COMPLETED)
+
+**Recommended Agent:** Claude
 
 **Files:**
 - Modify: `config/schedule.yml` (or create if using sidekiq-cron)
@@ -1215,6 +1285,8 @@ git commit -m "feat: add cron schedule for Lunchflow sync job"
 ## Phase 6: Controller and Routes
 
 ### Task 15: Create LunchflowConnectionsController
+
+**Recommended Agent:** Claude
 
 **Files:**
 - Create: `app/controllers/lunchflow_connections_controller.rb`
@@ -1364,6 +1436,8 @@ git commit -m "feat: add LunchflowConnectionsController with CRUD and sync"
 
 ### Task 16: Create Lunchflow Connection Views
 
+**Recommended Agent:** Claude
+
 **Files:**
 - Create: `app/views/lunchflow_connections/index.html.erb`
 - Create: `app/views/lunchflow_connections/new.html.erb`
@@ -1498,6 +1572,8 @@ git commit -m "feat: add Lunchflow connection views"
 ## Phase 8: Credentials Setup
 
 ### Task 17: Document Supabase Credentials Setup
+
+**Recommended Agent:** Gemini
 
 **Files:**
 - Create: `docs/lunchflow-setup.md`
