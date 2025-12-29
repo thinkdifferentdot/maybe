@@ -1,0 +1,22 @@
+<%# app/views/lunchflow_connections/_form.html.erb %>
+<%= form_with model: connection, class: "space-y-4" do |f| %>
+  <% if connection.errors.any? %>
+    <div class="bg-danger/10 border border-danger rounded p-3">
+      <ul class="list-disc list-inside">
+        <% connection.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :name, class: "block text-sm font-medium text-primary mb-1" %>
+    <%= f.text_field :name, class: "input w-full", placeholder: "My Lunchflow Connection" %>
+  </div>
+
+  <div class="flex gap-2">
+    <%= f.submit class: "btn btn--primary" %>
+    <%= link_to "Cancel", lunchflow_connections_path, class: "btn btn--secondary" %>
+  </div>
+<% end %>

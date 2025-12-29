@@ -1,0 +1,47 @@
+<%# app/views/lunchflow_connections/_connection.html.erb %>
+<div id="<%= dom_id(connection) %>" class="bg-container border border-primary rounded-lg p-4">
+  <div class="flex justify-between items-start">
+    <div>
+      <h3 class="font-medium text-primary"><%= connection.name %></h3>
+      <p class="text-sm text-secondary">
+        Status: <%= connection.status %>
+        <% if connection.last_synced_at %>
+          | Last synced: <%= time_ago_in_words(connection.last_synced_at) %> ago
+        <% end %>
+      </p>
+      <p class="text-sm text-secondary mt-1">
+        <%= connection.lunchflow_accounts.count %> accounts linked
+      </p>
+    </div>
+    <div class="flex gap-2">
+      <%= button_to "Sync Now", sync_lunchflow_connection_path(connection),
+          method: :post, class: "btn btn--secondary btn--sm" %>
+      <%= link_to "Edit", edit_lunchflow_connection_path(connection),
+          class: "btn btn--secondary btn--sm" %>
+      <%= button_to "Delete", lunchflow_connection_path(connection),
+          method: :delete,
+          data: { confirm: "Are you sure?" },
+          class: "btn btn--danger btn--sm" %>
+    </div>
+  </div>
+
+  <% if connection.lunchflow_accounts.any? %>
+    <div class="mt-4 space-y-2">
+      <% connection.lunchflow_accounts.each do |lf_account| %>
+        <div class="flex justify-between items-center py-2 border-t border-secondary">
+          <div>
+            <span class="font-medium"><%= lf_account.name %></span>
+            <span class="text-secondary text-sm">(<%= lf_account.institution_name %>)</span>
+          </div>
+          <div class="text-sm">
+            <% if lf_account.account %>
+              Mapped to: <%= lf_account.account.name %>
+            <% else %>
+              <span class="text-warning">Not mapped</span>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>
