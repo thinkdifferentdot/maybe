@@ -11,9 +11,6 @@ class LunchflowConnection < ApplicationRecord
   scope :ordered, -> { order(created_at: :desc) }
 
   def supabase_client
-    @supabase_client ||= SupabaseClient.new(
-      url: Rails.application.credentials.dig(:supabase, :url),
-      key: Rails.application.credentials.dig(:supabase, :key)
-    )
+    @supabase_client ||= SupabaseClient.from_settings
   end
 end
