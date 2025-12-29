@@ -64,6 +64,55 @@ supabase:
   edge_function_url: https://YOUR_PROJECT.supabase.co/functions/v1/sync-lunchflow
 ```
 
+## Configuration
+
+### Option 1: Admin UI (Recommended for Self-Hosted)
+
+1. Navigate to Settings > Self Hosting
+2. Scroll to "Lunchflow Integration" section
+3. Enter:
+   - **Supabase URL**: Your Supabase project URL (e.g., `https://abcdefg.supabase.co`)
+   - **Supabase Service Role Key**: From Supabase Dashboard > Settings > API
+   - **Lunchflow API Key**: Your Lunchflow API key
+4. Each field auto-saves on blur
+5. Update Supabase edge function secret:
+   ```bash
+   supabase secrets set LUNCHFLOW_API_KEY=your_lunchflow_api_key
+   ```
+
+### Option 2: Environment Variables (Recommended for Production)
+
+Set environment variables (highest precedence):
+
+```bash
+export SUPABASE_URL="https://your-project.supabase.co"
+export SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
+export LUNCHFLOW_API_KEY="your-lunchflow-api-key"
+```
+
+### Option 3: Rails Credentials (Legacy)
+
+Edit encrypted credentials:
+
+```bash
+rails credentials:edit
+```
+
+Add:
+
+```yaml
+supabase:
+  url: https://your-project.supabase.co
+  key: your-service-role-key
+```
+
+### Credential Precedence
+
+The system checks credentials in this order:
+1. Environment variables (highest priority)
+2. Rails credentials
+3. Database settings (via admin UI)
+
 ## Testing the Integration
 
 1. Create a Lunchflow connection in Maybe
