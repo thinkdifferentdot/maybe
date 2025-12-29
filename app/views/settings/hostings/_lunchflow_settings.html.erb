@@ -1,0 +1,48 @@
+<div class="space-y-4">
+  <div>
+    <h2 class="font-medium mb-1">Lunchflow Integration</h2>
+    <% if ENV["SUPABASE_URL"].present? %>
+      <p class="text-sm text-secondary">Supabase credentials are configured through environment variables.</p>
+    <% else %>
+      <p class="text-secondary text-sm mb-4">Configure Supabase connection for Lunchflow data sync.</p>
+    <% end %>
+  </div>
+
+  <%= styled_form_with model: Setting.new,
+                       url: settings_hosting_path,
+                       method: :patch,
+                       data: {
+                         controller: "auto-submit-form",
+                         "auto-submit-form-trigger-event-value": "blur"
+                       } do |form| %>
+    <%= form.text_field :supabase_url,
+                        label: "Supabase URL",
+                        placeholder: "https://your-project.supabase.co",
+                        value: ENV.fetch("SUPABASE_URL", Setting.supabase_url),
+                        disabled: ENV["SUPABASE_URL"].present?,
+                        data: { "auto-submit-form-target": "auto" } %>
+
+    <%= form.text_field :supabase_key,
+                        label: "Supabase Service Role Key",
+                        type: "password",
+                        placeholder: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                        value: ENV.fetch("SUPABASE_SERVICE_ROLE_KEY", Setting.supabase_key),
+                        disabled: ENV["SUPABASE_SERVICE_ROLE_KEY"].present?,
+                        data: { "auto-submit-form-target": "auto" } %>
+
+    <%= form.text_field :lunchflow_api_key,
+                        label: "Lunchflow API Key",
+                        type: "password",
+                        placeholder: "Your Lunchflow API key",
+                        value: ENV.fetch("LUNCHFLOW_API_KEY", Setting.lunchflow_api_key),
+                        disabled: ENV["LUNCHFLOW_API_KEY"].present?,
+                        data: { "auto-submit-form-target": "auto" } %>
+  <% end %>
+
+  <div class="bg-gray-50 border border-gray-200 rounded-md p-3">
+    <p class="text-xs text-gray-700">
+      <strong>Note:</strong> After updating the Lunchflow API Key, you must update your Supabase edge function secret:<br>
+      <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">supabase secrets set LUNCHFLOW_API_KEY=your_key</code>
+    </p>
+  </div>
+</div>
