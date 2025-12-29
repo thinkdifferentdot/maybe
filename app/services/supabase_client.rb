@@ -1,9 +1,24 @@
 class SupabaseClient
-  attr_reader :url
+  attr_reader :url, :key
 
   def initialize(url:, key:)
     @url = url
     @key = key
+  end
+
+  # Class method to create client from settings with fallback hierarchy
+  def self.from_settings
+    url = ENV["SUPABASE_URL"] ||
+          Rails.application.credentials.dig(:supabase, :url) ||
+          Setting.supabase_url
+
+    key = ENV["SUPABASE_SERVICE_ROLE_KEY"] ||
+          Rails.application.credentials.dig(:supabase, :key) ||
+          Setting.supabase_key
+
+    raise "Supabase credentials not configured. Please set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY." if url.blank? || key.blank?
+
+    new(url: url, key: key)
   end
 
   def from(table_name)

@@ -11,6 +11,11 @@ class SupabaseClientTest < ActiveSupport::TestCase
     )
   end
 
+  teardown do
+    Setting.supabase_url = nil
+    Setting.supabase_key = nil
+  end
+
   test "initializes with url and key" do
     assert_equal "https://test.supabase.co", @client.url
   end
@@ -34,5 +39,58 @@ class SupabaseClientTest < ActiveSupport::TestCase
 
     response = @client.invoke_function("test-func")
     assert response["success"]
+  end
+
+  test "from_settings uses ENV variables first" do
+    ClimateControl.modify(
+      SUPABASE_URL: "https://env.supabase.co",
+      SUPABASE_SERVICE_ROLE_KEY: "env-key"
+    ) do
+      Setting.supabase_url = "https://setting.supabase.co"
+      Setting.supabase_key = "setting-key"
+
+      client = SupabaseClient.from_settings
+
+      assert_equal "https://env.supabase.co", client.url
+      assert_equal "env-key", client.key
+    end
+  end
+
+  test "from_settings falls back to Setting when ENV not set" do
+    ClimateControl.modify(SUPABASE_URL: nil, SUPABASE_SERVICE_ROLE_KEY: nil) do
+      Setting.supabase_url = "https://setting.supabase.co"
+      Setting.supabase_key = "setting-key"
+
+      client = SupabaseClient.from_settings
+
+      assert_equal "https://setting.supabase.co", client.url
+      assert_equal "setting-key", client.key
+    end
+  end
+
+  test "from_settings raises error when no credentials configured" do
+    ClimateControl.modify(SUPABASE_URL: nil, SUPABASE_SERVICE_ROLE_KEY: nil) do
+      Setting.supabase_url = nil
+      Setting.supabase_key = nil
+
+      error = assert_raises(RuntimeError) do
+        SupabaseClient.from_settings
+      end
+
+      assert_match(/Supabase credentials not configured/, error.message)
+    end
+  end
+
+  test "from_settings raises error when only URL is configured" do
+    ClimateControl.modify(SUPABASE_URL: nil, SUPABASE_SERVICE_ROLE_KEY: nil) do
+      Setting.supabase_url = "https://test.supabase.co"
+      Setting.supabase_key = nil
+
+      error = assert_raises(RuntimeError) do
+        SupabaseClient.from_settings
+      end
+
+      assert_match(/Supabase credentials not configured/, error.message)
+    end
   end
 end
