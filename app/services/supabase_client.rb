@@ -91,11 +91,11 @@ class SupabaseClient
 
   private
 
-  def headers
-    {
-      "Authorization" => "Bearer #{@key}",
-      "apikey" => @key,
-      "Content-Type" => "application/json"
-    }
-  end
+    def headers
+      {
+        "Authorization" => "Bearer #{@key}",
+        "apikey" => @key,
+        "Content-Type" => "application/json"
+      }
+    end
 end

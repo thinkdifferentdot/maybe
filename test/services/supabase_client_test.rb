@@ -1,6 +1,9 @@
 require "test_helper"
+require "webmock/minitest"
 
 class SupabaseClientTest < ActiveSupport::TestCase
+  include WebMock::API
+
   setup do
     @client = SupabaseClient.new(
       url: "https://test.supabase.co",
