@@ -80,4 +80,54 @@ class Settings::HostingsControllerTest < ActionDispatch::IntegrationTest
       assert_equal I18n.t("settings.hostings.not_authorized"), flash[:alert]
     end
   end
+
+  test "can update supabase_url setting" do
+    with_self_hosting do
+      patch settings_hosting_url, params: {
+        setting: { supabase_url: "https://new-project.supabase.co" }
+      }
+
+      assert_redirected_to settings_hosting_path
+      assert_equal "https://new-project.supabase.co", Setting.supabase_url
+    end
+  end
+
+  test "can update supabase_key setting" do
+    with_self_hosting do
+      patch settings_hosting_url, params: {
+        setting: { supabase_key: "new-secret-key-123" }
+      }
+
+      assert_redirected_to settings_hosting_path
+      assert_equal "new-secret-key-123", Setting.supabase_key
+    end
+  end
+
+  test "can update lunchflow_api_key setting" do
+    with_self_hosting do
+      patch settings_hosting_url, params: {
+        setting: { lunchflow_api_key: "lf-new-key-456" }
+      }
+
+      assert_redirected_to settings_hosting_path
+      assert_equal "lf-new-key-456", Setting.lunchflow_api_key
+    end
+  end
+
+  test "can update multiple lunchflow settings at once" do
+    with_self_hosting do
+      patch settings_hosting_url, params: {
+        setting: {
+          supabase_url: "https://multi.supabase.co",
+          supabase_key: "multi-key",
+          lunchflow_api_key: "multi-lf-key"
+        }
+      }
+
+      assert_redirected_to settings_hosting_path
+      assert_equal "https://multi.supabase.co", Setting.supabase_url
+      assert_equal "multi-key", Setting.supabase_key
+      assert_equal "multi-lf-key", Setting.lunchflow_api_key
+    end
+  end
 end
