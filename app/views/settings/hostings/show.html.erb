@@ -6,6 +6,12 @@
   </div>
 <% end %>
 
+<%= settings_section title: "Lunchflow Integration" do %>
+  <div class="space-y-6">
+    <%= render "settings/hostings/lunchflow_settings" %>
+  </div>
+<% end %>
+
 <%= settings_section title: t(".invites") do %>
   <%= render "settings/hostings/invite_code_settings" %>
 <% end %>
