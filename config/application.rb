@@ -30,8 +30,12 @@ module Maybe
     config.app_mode = (ENV["SELF_HOSTED"] == "true" || ENV["SELF_HOSTING_ENABLED"] == "true" ? "self_hosted" : "managed").inquiry
 
     # Self hosters can optionally set their own encryption keys if they want to use ActiveRecord encryption.
-    if Rails.application.credentials.active_record_encryption.present?
-      config.active_record.encryption = Rails.application.credentials.active_record_encryption
+    begin
+      if Rails.application.credentials.active_record_encryption.present?
+        config.active_record.encryption = Rails.application.credentials.active_record_encryption
+      end
+    rescue ActiveSupport::MessageEncryptor::InvalidMessage
+      # Credentials not available, skipping active_record encryption config
     end
 
     config.view_component.preview_controller = "LookbooksController"
