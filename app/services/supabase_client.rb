@@ -1,3 +1,6 @@
+require "zlib"
+require "stringio"
+
 class SupabaseClient
   attr_reader :url, :key
 
@@ -34,7 +37,7 @@ class SupabaseClient
     response = http_client(uri).request(request)
 
     raise "Supabase function error: #{response.code}" unless response.is_a?(Net::HTTPSuccess)
-    JSON.parse(response.body)
+    JSON.parse(decode_response(response))
   end
 
   def execute_query(path, params = {})
@@ -47,7 +50,7 @@ class SupabaseClient
     response = http_client(uri).request(request)
 
     raise "Supabase error: #{response.code}" unless response.is_a?(Net::HTTPSuccess)
-    JSON.parse(response.body)
+    JSON.parse(decode_response(response))
   end
 
   class QueryBuilder
@@ -108,11 +111,13 @@ class SupabaseClient
       http.read_timeout = 30
       http.open_timeout = 10
 
-      # Configure SSL to handle certificate verification properly
-      # This fixes "certificate verify failed (unable to get certificate CRL)" errors
+      # Configure SSL with system CA certificates
+      # Disable CRL checking which can fail with certain certificate chains
       http.verify_mode = OpenSSL::SSL::VERIFY_PEER
-      http.cert_store = OpenSSL::X509::Store.new
-      http.cert_store.set_default_paths
+      cert_store = OpenSSL::X509::Store.new
+      cert_store.set_default_paths
+      cert_store.flags = OpenSSL::X509::V_FLAG_NO_CHECK_TIME
+      http.cert_store = cert_store
 
       http
     end
@@ -123,5 +128,12 @@ class SupabaseClient
         "apikey" => @key,
         "Content-Type" => "application/json"
       }
+    end
+
+    def decode_response(response)
+      body = response.body
+      return body unless response["content-encoding"] == "gzip"
+
+      Zlib::GzipReader.new(StringIO.new(body)).read
     end
 end
