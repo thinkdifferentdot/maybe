@@ -12,6 +12,52 @@
 
 ---
 
+## ✅ **Progress Update (2025-12-30)**
+
+### **Completed: Supabase Edge Function (Phase 2)**
+
+The Supabase edge function is now **fully working** and successfully syncing data from Lunchflow:
+
+**What works:**
+- ✅ Edge function deployed and tested
+- ✅ Correct API endpoints: `https://www.lunchflow.app/api/v1`
+- ✅ Correct authentication: `x-api-key` header
+- ✅ Proper response parsing for all API responses (accounts, transactions, balances)
+- ✅ Field mapping: camelCase (API) → snake_case (DB)
+- ✅ Nullable fields: currency and status now optional per actual API schema
+- ✅ All 4 Supabase tables created and populated
+- ✅ Verified syncing: 5 accounts, 625+ transactions, balances
+
+**Key fixes made:**
+1. Base URL: `lunchflow.com` → `www.lunchflow.app`
+2. Auth header: `Authorization: Bearer` → `x-api-key`
+3. Response structure handling (supports multiple formats)
+4. Made `currency` and `status` nullable in DB schema
+5. Added SSL certificate fixes to SupabaseClient
+6. Enhanced error logging and debugging
+
+**Documentation created:**
+- `SUPABASE_VERIFICATION.md` - How to verify sync from CLI/dashboard
+- `LUNCHFLOW_API_VERIFICATION.md` - API implementation details
+- `FIX_401_ERROR.md` - Authentication troubleshooting
+- `APPLY_MIGRATIONS.md` - Migration application guide
+
+**Commit:** `58b1139c` - "feat: implement working Supabase edge function for Lunchflow sync"
+
+### **Next Steps:**
+
+**Immediate (Phase 3-4):**
+- [ ] Test Rails sync from Supabase → Maybe (Task 11: LunchflowConnection::Syncer)
+- [ ] Verify transactions flow into Maybe Entry records
+- [ ] Test full end-to-end flow: Lunchflow → Supabase → Maybe
+
+**Near-term:**
+- [ ] Set up automated syncing (cron or webhook)
+- [ ] Add admin UI for Supabase settings (LUNCHFLOW_API_KEY, SUPABASE_URL, etc.)
+- [ ] Production deployment testing
+
+---
+
 ## Phase 1: Supabase Schema Setup
 
 ### Task 1: Create Supabase Migration for lunchflow_accounts (COMPLETED)
