@@ -31,9 +31,7 @@ class SupabaseClient
     headers.each { |k, v| request[k] = v }
     request.body = body.to_json
 
-    response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
-      http.request(request)
-    end
+    response = http_client(uri).request(request)
 
     raise "Supabase function error: #{response.code}" unless response.is_a?(Net::HTTPSuccess)
     JSON.parse(response.body)
@@ -46,9 +44,7 @@ class SupabaseClient
     request = Net::HTTP::Get.new(uri)
     headers.each { |k, v| request[k] = v }
 
-    response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
-      http.request(request)
-    end
+    response = http_client(uri).request(request)
 
     raise "Supabase error: #{response.code}" unless response.is_a?(Net::HTTPSuccess)
     JSON.parse(response.body)
@@ -105,6 +101,21 @@ class SupabaseClient
   end
 
   private
+
+    def http_client(uri)
+      http = Net::HTTP.new(uri.hostname, uri.port)
+      http.use_ssl = true
+      http.read_timeout = 30
+      http.open_timeout = 10
+
+      # Configure SSL to handle certificate verification properly
+      # This fixes "certificate verify failed (unable to get certificate CRL)" errors
+      http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+      http.cert_store = OpenSSL::X509::Store.new
+      http.cert_store.set_default_paths
+
+      http
+    end
 
     def headers
       {
