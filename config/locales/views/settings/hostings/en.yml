@@ -28,6 +28,16 @@ en:
         placeholder: Enter your API key here
         plan: "%{plan} plan"
         title: Synth Settings
+      llm_settings:
+        title: LLM Integration
+        description: Configure API keys for LLM providers (used for auto-categorization, etc.)
+        openai_label: OpenAI Access Token
+        openai_placeholder: Enter your OpenAI API Key
+        gemini_label: Google Gemini API Key
+        gemini_placeholder: Enter your Gemini API Key
+        anthropic_label: Anthropic API Key
+        anthropic_placeholder: Enter your Anthropic API Key
+        preferred_provider_label: Preferred LLM Provider
       update:
         failure: Invalid setting value
         success: Settings updated

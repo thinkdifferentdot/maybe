@@ -1,0 +1,58 @@
+<div class="space-y-4">
+  <div>
+    <h2 class="font-medium mb-1"><%= t(".title") %></h2>
+    <p class="text-secondary text-sm mb-4"><%= t(".description") %></p>
+  </div>
+
+  <%= styled_form_with model: Setting.new,
+                       url: settings_hosting_path,
+                       method: :patch,
+                       data: {
+                         controller: "auto-submit-form",
+                         "auto-submit-form-trigger-event-value": "blur"
+                       } do |form| %>
+
+    <div class="space-y-4">
+      <%= form.text_field :openai_access_token,
+                          label: t(".openai_label"),
+                          type: "password",
+                          placeholder: t(".openai_placeholder"),
+                          value: ENV.fetch("OPENAI_ACCESS_TOKEN", Setting.openai_access_token),
+                          disabled: ENV["OPENAI_ACCESS_TOKEN"].present?,
+                          data: { "auto-submit-form-target": "auto" } %>
+
+      <% if ENV["OPENAI_ACCESS_TOKEN"].present? %>
+        <p class="text-sm text-secondary -mt-2">Configured via OPENAI_ACCESS_TOKEN env var</p>
+      <% end %>
+
+      <%= form.text_field :gemini_api_key,
+                          label: t(".gemini_label"),
+                          type: "password",
+                          placeholder: t(".gemini_placeholder"),
+                          value: ENV.fetch("GEMINI_API_KEY", Setting.gemini_api_key),
+                          disabled: ENV["GEMINI_API_KEY"].present?,
+                          data: { "auto-submit-form-target": "auto" } %>
+
+      <% if ENV["GEMINI_API_KEY"].present? %>
+        <p class="text-sm text-secondary -mt-2">Configured via GEMINI_API_KEY env var</p>
+      <% end %>
+
+      <%= form.text_field :anthropic_api_key,
+                          label: t(".anthropic_label"),
+                          type: "password",
+                          placeholder: t(".anthropic_placeholder"),
+                          value: ENV.fetch("ANTHROPIC_API_KEY", Setting.anthropic_api_key),
+                          disabled: ENV["ANTHROPIC_API_KEY"].present?,
+                          data: { "auto-submit-form-target": "auto" } %>
+
+      <% if ENV["ANTHROPIC_API_KEY"].present? %>
+        <p class="text-sm text-secondary -mt-2">Configured via ANTHROPIC_API_KEY env var</p>
+      <% end %>
+
+      <%= form.select :preferred_llm_provider,
+                      options_for_select([["OpenAI", "openai"], ["Google Gemini", "gemini"], ["Anthropic", "anthropic"]], Setting.preferred_llm_provider),
+                      { label: t(".preferred_provider_label") },
+                      data: { "auto-submit-form-target": "auto" } %>
+    </div>
+  <% end %>
+</div>

@@ -23,6 +23,23 @@ class Settings::HostingsController < ApplicationController
       Setting.synth_api_key = hosting_params[:synth_api_key]
     end
 
+    # LLM Settings
+    if hosting_params.key?(:openai_access_token)
+      Setting.openai_access_token = hosting_params[:openai_access_token]
+    end
+
+    if hosting_params.key?(:gemini_api_key)
+      Setting.gemini_api_key = hosting_params[:gemini_api_key]
+    end
+
+    if hosting_params.key?(:anthropic_api_key)
+      Setting.anthropic_api_key = hosting_params[:anthropic_api_key]
+    end
+
+    if hosting_params.key?(:preferred_llm_provider)
+      Setting.preferred_llm_provider = hosting_params[:preferred_llm_provider]
+    end
+
     # Lunchflow-Supabase settings
     if hosting_params.key?(:supabase_url)
       Setting.supabase_url = hosting_params[:supabase_url]
@@ -53,6 +70,10 @@ class Settings::HostingsController < ApplicationController
         :require_invite_for_signup,
         :require_email_confirmation,
         :synth_api_key,
+        :openai_access_token,
+        :gemini_api_key,
+        :anthropic_api_key,
+        :preferred_llm_provider,
         :supabase_url,
         :supabase_key,
         :lunchflow_api_key
