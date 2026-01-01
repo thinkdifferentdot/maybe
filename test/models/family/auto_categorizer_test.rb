@@ -61,6 +61,16 @@ class Family::AutoCategorizerTest < ActiveSupport::TestCase
     Family::AutoCategorizer.new(@family, transaction_ids: txn_ids).auto_categorize
   end
 
+  test "preview_categorizations raises error when no provider" do
+    Provider::Registry.expects(:for_concept).with(:llm).returns(OpenStruct.new(providers: []))
+
+    categorizer = Family::AutoCategorizer.new(@family, transaction_ids: [1])
+
+    assert_raises(Family::AutoCategorizer::Error, "No LLM provider for auto-categorization") do
+      categorizer.preview_categorizations
+    end
+  end
+
   private
     AutoCategorization = Provider::LlmConcept::AutoCategorization
 end
