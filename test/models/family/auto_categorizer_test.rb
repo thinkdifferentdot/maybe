@@ -7,7 +7,10 @@ class Family::AutoCategorizerTest < ActiveSupport::TestCase
     @family = families(:dylan_family)
     @account = @family.accounts.create!(name: "Rule test", balance: 100, currency: "USD", accountable: Depository.new)
     @llm_provider = mock
-    Provider::Registry.stubs(:get_provider).with(:openai).returns(@llm_provider)
+
+    registry_mock = mock
+    Provider::Registry.stubs(:for_concept).with(:llm).returns(registry_mock)
+    registry_mock.stubs(:providers).returns([ @llm_provider ])
   end
 
   test "auto-categorizes transactions" do
