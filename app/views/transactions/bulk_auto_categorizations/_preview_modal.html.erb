@@ -1,0 +1,78 @@
+<div data-controller="bulk-auto-categorize">
+  <%= render DS::Dialog.new(variant: "modal", auto_open: false, width: :lg) do |dialog| %>
+    <% dialog.with_header(title: "Auto-Categorization Preview") %>
+
+    <% dialog.with_body do %>
+      <!-- Loading State -->
+      <div data-bulk-auto-categorize-target="loadingState"
+           class="flex flex-col items-center justify-center py-12 gap-3">
+        <%= icon "loader-2", class: "animate-spin text-secondary", size: "lg" %>
+        <p class="text-secondary">Categorizing transactions...</p>
+      </div>
+
+      <!-- Preview Content -->
+      <div data-bulk-auto-categorize-target="previewContent" class="hidden">
+        <p class="text-sm text-secondary mb-4 px-4">
+          Review the suggested categories below. Uncheck any you don't want to apply.
+        </p>
+
+        <%= form_with url: transactions_bulk_auto_categorization_path,
+                      method: :post,
+                      data: {
+                        bulk_auto_categorize_target: "form",
+                        action: "submit->bulk-auto-categorize#applyCategories",
+                        turbo_frame: "_top"
+                      } do |f| %>
+
+          <div class="space-y-2 max-h-96 overflow-y-auto px-4">
+            <!-- Container for dynamically rendered predictions -->
+            <template data-bulk-auto-categorize-target="previewTemplate">
+              <div class="flex items-center gap-3 p-3 rounded-lg bg-container-inset">
+                <%= check_box_tag "predictions[]", "", true,
+                                  class: "checkbox checkbox--light",
+                                  data: {
+                                    bulk_auto_categorize_target: "checkbox",
+                                    action: "change->bulk-auto-categorize#updateSelectedCount"
+                                  } %>
+
+                <div class="flex-1 min-w-0">
+                  <p class="font-medium truncate" data-field="name"></p>
+                  <p class="text-xs text-secondary" data-field="account"></p>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <%= icon "arrow-right", class: "text-secondary", size: "sm" %>
+                  <span class="px-2 py-1 rounded bg-gray-100 text-sm font-medium"
+                        data-field="category"></span>
+                </div>
+
+                <p class="text-sm font-medium whitespace-nowrap" data-field="amount"></p>
+              </div>
+            </template>
+          </div>
+
+          <div class="mt-4 flex items-center justify-between px-4 pb-4">
+            <p class="text-sm text-secondary">
+              <span data-bulk-auto-categorize-target="selectedCount"></span> selected
+            </p>
+
+            <div class="flex gap-2">
+              <%= render DS::Button.new(text: "Cancel", variant: "outline",
+                                       type: "button",
+                                       data: { action: "click->bulk-auto-categorize#closeModal" }) %>
+              <%= render DS::Button.new(text: "Apply", variant: "primary", type: "submit") %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Error State -->
+      <div data-bulk-auto-categorize-target="errorState" class="hidden py-12 text-center px-4">
+        <p class="text-red-600 mb-4" data-field="errorMessage"></p>
+        <%= render DS::Button.new(text: "Close", variant: "outline",
+                                 type: "button",
+                                 data: { action: "click->bulk-auto-categorize#closeModal" }) %>
+      </div>
+    <% end %>
+  <% end %>
+</div>

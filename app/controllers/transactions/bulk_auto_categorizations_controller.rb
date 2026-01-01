@@ -27,6 +27,31 @@ class Transactions::BulkAutoCategorizationsController < ApplicationController
     render json: { error: e.message }, status: :unprocessable_entity
   end
 
+  def create
+    predictions = (params[:predictions] || []).reject(&:blank?)
+
+    if predictions.empty?
+      redirect_to transactions_path, alert: "No categorizations selected"
+      return
+    end
+
+    applied_count = 0
+    predictions.each do |prediction_json|
+      prediction = JSON.parse(prediction_json)
+      entry = Current.family.entries.find(prediction["entry_id"])
+      transaction = entry.entryable
+
+      if prediction["category_id"].present?
+        transaction.enrich_attribute(:category_id, prediction["category_id"], source: "ai")
+        transaction.lock_attr!(:category_id)
+        applied_count += 1
+      end
+    end
+
+    redirect_to transactions_path,
+                notice: "Successfully categorized #{applied_count} transaction#{'s' unless applied_count == 1}"
+  end
+
   private
 
   def set_transactions

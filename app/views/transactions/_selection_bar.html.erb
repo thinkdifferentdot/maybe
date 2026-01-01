@@ -14,6 +14,14 @@
       <%= icon "pencil-line", class: "group-hover:text-inverse" %>
     <% end %>
 
+    <!-- NEW: Auto-categorize button -->
+    <%= link_to "#",
+                class: "p-1.5 group hover:bg-inverse flex items-center justify-center rounded-md",
+                title: "Auto-categorize",
+                data: { action: "click->bulk-auto-categorize#openPreview" } do %>
+      <%= icon "sparkles", class: "group-hover:text-inverse" %>
+    <% end %>
+
     <%= form_with url: transactions_bulk_deletion_path, data: { turbo_confirm: true, turbo_frame: "_top" } do %>
       <button type="button" data-bulk-select-scope-param="bulk_delete" data-action="bulk-select#submitBulkRequest" class="p-1.5 group hover:bg-inverse flex items-center justify-center rounded-md" title="Delete">
         <%= icon "trash-2", class: "group-hover:text-inverse" %>
