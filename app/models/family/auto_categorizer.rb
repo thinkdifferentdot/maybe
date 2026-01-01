@@ -6,6 +6,43 @@ class Family::AutoCategorizer
     @transaction_ids = transaction_ids
   end
 
+  # Get predictions without applying them
+  def preview_categorizations
+    raise Error, "No LLM provider for auto-categorization" unless llm_provider
+
+    if scope.none?
+      Rails.logger.info("No transactions to auto-categorize for family #{family.id}")
+      return []
+    end
+
+    batch_size = Setting.categorization_batch_size
+
+    # For preview, we only process up to one batch
+    batch = scope.limit(batch_size)
+
+    result = llm_provider.auto_categorize(
+      transactions: build_transactions_input(batch),
+      user_categories: user_categories_input,
+      options: categorization_options
+    )
+
+    unless result.success?
+      raise Error, result.error.message
+    end
+
+    # Build prediction objects without saving
+    batch.map do |transaction|
+      auto_categorization = result.data.find { |c| c.transaction_id == transaction.id }
+      category = user_categories_input.find { |c| c[:name] == auto_categorization&.category_name }
+
+      {
+        transaction: transaction,
+        category: category ? Current.family.categories.find(category[:id]) : nil,
+        confidence: auto_categorization&.confidence || 0
+      }
+    end
+  end
+
   def auto_categorize
     raise Error, "No LLM provider for auto-categorization" unless llm_provider
 

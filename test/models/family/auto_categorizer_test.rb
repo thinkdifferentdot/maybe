@@ -61,6 +61,56 @@ class Family::AutoCategorizerTest < ActiveSupport::TestCase
     Family::AutoCategorizer.new(@family, transaction_ids: txn_ids).auto_categorize
   end
 
+  test "preview_categorizations raises error when no provider" do
+    registry_mock = mock
+    Provider::Registry.expects(:for_concept).with(:llm).returns(registry_mock)
+    registry_mock.expects(:providers).returns([])
+
+    categorizer = Family::AutoCategorizer.new(@family, transaction_ids: [1])
+
+    assert_raises(Family::AutoCategorizer::Error, "No LLM provider for auto-categorization") do
+      categorizer.preview_categorizations
+    end
+  end
+
+  test "preview_categorizations respects batch size limit" do
+    original_batch_size = Setting.categorization_batch_size
+    Setting.categorization_batch_size = 10
+
+    # Create 11 uncategorized transactions
+    transactions = 11.times.map do |i|
+      Entry.create!(
+        name: "Transaction #{i}",
+        amount: -10,
+        currency: "USD",
+        account: @account,
+        date: Date.today,
+        entryable: Transaction.new(category: nil)
+      ).entryable
+    end
+
+    # Mock provider - should only be called with 10 transactions
+    mock_result = OpenStruct.new(
+      success?: true,
+      data: transactions[0...10].map do |t|
+        OpenStruct.new(transaction_id: t.id, category_name: "Groceries", confidence: 85)
+      end
+    )
+
+    Provider::Registry.for_concept(:llm).providers.first
+      .expects(:auto_categorize)
+      .with { |transactions:, **| transactions.size == 10 }
+      .returns(mock_result)
+
+    categorizer = Family::AutoCategorizer.new(@family, transaction_ids: transactions.map(&:id))
+    predictions = categorizer.preview_categorizations
+
+    # Should only return 10 predictions (one batch)
+    assert_equal 10, predictions.length
+  ensure
+    Setting.categorization_batch_size = original_batch_size
+  end
+
   private
     AutoCategorization = Provider::LlmConcept::AutoCategorization
 end
