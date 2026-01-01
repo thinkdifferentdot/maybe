@@ -80,6 +80,8 @@ gem "after_commit_everywhere", "~> 1.0"
 
 # AI
 gem "ruby-openai"
+gem "gemini-ai"
+gem "anthropic"
 
 group :development, :test do
   gem "debug", platforms: %i[mri windows]
