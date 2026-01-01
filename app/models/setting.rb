@@ -4,6 +4,10 @@ class Setting < RailsSettings::Base
 
   field :synth_api_key, type: :string, default: ENV["SYNTH_API_KEY"]
   field :openai_access_token, type: :string, default: ENV["OPENAI_ACCESS_TOKEN"]
+  field :gemini_api_key, type: :string, default: ENV["GEMINI_API_KEY"]
+  field :anthropic_api_key, type: :string, default: ENV["ANTHROPIC_API_KEY"]
+
+  field :preferred_llm_provider, type: :string, default: "openai"
 
   # Lunchflow-Supabase integration settings
   field :supabase_url, type: :string, default: ENV["SUPABASE_URL"]
