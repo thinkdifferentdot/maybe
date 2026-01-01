@@ -3,7 +3,7 @@ class LunchflowAccount < ApplicationRecord
   belongs_to :account, optional: true
 
   validates :lunchflow_id, presence: true, uniqueness: true
-  validates :name, :institution_name, :provider, :currency, :status, presence: true
+  validates :name, :institution_name, :provider, presence: true
 
   def ensure_account!
     return account if account.present?
@@ -11,7 +11,7 @@ class LunchflowAccount < ApplicationRecord
     new_account = Account.create!(
       family: lunchflow_connection.family,
       name: "#{institution_name} - #{name}",
-      currency: currency,
+      currency: currency || lunchflow_connection.family.currency || "USD",
       balance: 0,
       accountable: Depository.new
     )

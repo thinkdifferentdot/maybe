@@ -27,7 +27,6 @@ class LunchflowConnection::Syncer
       @connection.supabase_client
                  .from("lunchflow_accounts")
                  .select("*")
-                 .eq("status", "ACTIVE")
                  .execute
     end
 
