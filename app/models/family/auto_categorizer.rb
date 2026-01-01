@@ -46,9 +46,9 @@ class Family::AutoCategorizer
   private
     attr_reader :family, :transaction_ids
 
-    # For now, OpenAI only, but this should work with any LLM concept provider
+    # Returns the first available/configured LLM provider, respecting preference order
     def llm_provider
-      Provider::Registry.get_provider(:openai)
+      Provider::Registry.for_concept(:llm).providers.first
     end
 
     def user_categories_input
