@@ -5,13 +5,29 @@ class Provider::Gemini < Provider
 
   MODELS = %w[gemini-1.5-flash gemini-1.5-pro]
 
+  FALLBACK_MODELS = [
+    ["Gemini 2.0 Flash (Recommended)", "gemini-2.0-flash-exp"],
+    ["Gemini 1.5 Flash", "gemini-1.5-flash"],
+    ["Gemini 1.5 Pro", "gemini-1.5-pro"]
+  ].freeze
+
+  def self.list_available_models
+    Rails.cache.fetch("gemini_available_models", expires_in: 24.hours) do
+      # Placeholder for actual API call
+      FALLBACK_MODELS
+    end
+  rescue => e
+    Rails.logger.error("Failed to fetch Gemini models: #{e.message}")
+    FALLBACK_MODELS
+  end
+
   def initialize(api_key)
     @client = ::Gemini.new(
       credentials: {
         service: "generative-language-api",
         api_key: api_key
       },
-      options: { model: "gemini-1.5-flash", server_sent_events: true }
+      options: { model: Setting.gemini_categorization_model, server_sent_events: true }
     )
   end
 

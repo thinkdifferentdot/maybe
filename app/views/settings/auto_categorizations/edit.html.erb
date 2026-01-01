@@ -1,0 +1,87 @@
+<%= content_for :page_title, "Auto-Categorization Settings" %>
+
+<%= styled_form_with model: Setting.new,
+                     url: settings_auto_categorization_path,
+                     method: :patch,
+                     data: {
+                       controller: "auto-submit-form",
+                       "auto-submit-form-trigger-event-value": "blur"
+                     } do |form| %>
+
+  <div class="space-y-6">
+    <%= settings_section title: "LLM Model Selection", subtitle: "Choose which AI model to use for each provider" do %>
+      <div class="space-y-4">
+        <% if @available_models[:openai].present? %>
+          <%= form.select :openai_categorization_model,
+                          options_for_select(@available_models[:openai], Setting.openai_categorization_model),
+                          { label: "OpenAI Model" },
+                          data: { "auto-submit-form-target": "auto" } %>
+        <% end %>
+
+        <% if @available_models[:anthropic].present? %>
+          <%= form.select :anthropic_categorization_model,
+                          options_for_select(@available_models[:anthropic], Setting.anthropic_categorization_model),
+                          { label: "Anthropic Model" },
+                          data: { "auto-submit-form-target": "auto" } %>
+        <% end %>
+
+        <% if @available_models[:gemini].present? %>
+          <%= form.select :gemini_categorization_model,
+                          options_for_select(@available_models[:gemini], Setting.gemini_categorization_model),
+                          { label: "Gemini Model" },
+                          data: { "auto-submit-form-target": "auto" } %>
+        <% end %>
+
+        <% if @available_models.values.all?(&:nil?) %>
+          <div class="text-sm text-secondary italic">
+            No LLM providers configured. Please configure an API key in Hosting settings first.
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <%= settings_section title: "Categorization Behavior" do %>
+      <div class="space-y-4">
+        <!-- Confidence Threshold Slider -->
+        <div>
+          <%= form.range_field :categorization_confidence_threshold,
+                               label: "Confidence Threshold: #{Setting.categorization_confidence_threshold}%",
+                               min: 0, max: 100, step: 5,
+                               data: { "auto-submit-form-target": "auto" } %>
+          <p class="text-sm text-secondary mt-1">
+            Higher values mean fewer matches but higher accuracy
+          </p>
+        </div>
+
+        <!-- Batch Size Input -->
+        <%= form.number_field :categorization_batch_size,
+                              label: "Batch Size",
+                              min: 10, max: 200,
+                              hint: "Number of transactions to categorize per API request",
+                              data: { "auto-submit-form-target": "auto" } %>
+
+        <!-- Null Tolerance Radio -->
+        <%= form.select :categorization_null_tolerance,
+                        options_for_select([
+                          ["Pessimistic - Favor 'null' over false positives", "pessimistic"],
+                          ["Balanced - Favor accuracy over completeness", "balanced"],
+                          ["Optimistic - Attempt matches whenever plausible", "optimistic"]
+                        ], Setting.categorization_null_tolerance),
+                        { label: "Null Tolerance" },
+                        data: { "auto-submit-form-target": "auto" } %>
+      </div>
+    <% end %>
+
+    <%= settings_section title: "Category Matching Preferences" do %>
+      <div class="space-y-4">
+        <%= form.check_box :categorization_prefer_subcategories,
+                           label: "Prefer subcategories over parent categories",
+                           data: { "auto-submit-form-target": "auto" } %>
+
+        <%= form.check_box :categorization_enforce_classification_match,
+                           label: "Enforce strict expense/income classification matching",
+                           data: { "auto-submit-form-target": "auto" } %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

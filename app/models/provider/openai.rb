@@ -6,6 +6,27 @@ class Provider::Openai < Provider
 
   MODELS = %w[gpt-4.1]
 
+  FALLBACK_MODELS = [
+    ["GPT-4o Mini (Recommended)", "gpt-4o-mini"],
+    ["GPT-4o", "gpt-4o"],
+    ["GPT-4 Turbo", "gpt-4-turbo"]
+  ].freeze
+
+  def self.list_available_models
+    Rails.cache.fetch("openai_available_models", expires_in: 24.hours) do
+      client = ::OpenAI::Client.new(access_token: Setting.openai_access_token)
+      models = client.models.list["data"]
+
+      # Filter to text-completion models suitable for categorization
+      suitable_models = models.select { |m| m["id"].start_with?("gpt-") && !m["id"].include?("instruct") }
+
+      suitable_models.map { |m| [m["id"], m["id"]] }.sort
+    end
+  rescue => e
+    Rails.logger.error("Failed to fetch OpenAI models: #{e.message}")
+    FALLBACK_MODELS
+  end
+
   def initialize(access_token)
     @client = ::OpenAI::Client.new(access_token: access_token)
   end

@@ -40,6 +40,27 @@ class Family::AutoCategorizerTest < ActiveSupport::TestCase
     assert_equal 0, @account.transactions.reload.enrichable(:category_id).count
   end
 
+  test "auto-categorizes transactions with batching and options" do
+    Setting.categorization_batch_size = 10
+    Setting.categorization_confidence_threshold = 80
+
+    txns = 15.times.map { create_transaction(account: @account, name: "Txn").transaction }
+    txn_ids = txns.map(&:id)
+
+    # Expect 2 calls: first with 10 items, second with 5 item
+    @llm_provider.expects(:auto_categorize)
+                 .with { |transactions:, options:, **rest| transactions.size == 10 && options[:confidence_threshold] == 80 }
+                 .returns(provider_success_response([]))
+                 .once
+
+    @llm_provider.expects(:auto_categorize)
+                 .with { |transactions:, options:, **rest| transactions.size == 5 && options[:confidence_threshold] == 80 }
+                 .returns(provider_success_response([]))
+                 .once
+
+    Family::AutoCategorizer.new(@family, transaction_ids: txn_ids).auto_categorize
+  end
+
   private
     AutoCategorization = Provider::LlmConcept::AutoCategorization
 end

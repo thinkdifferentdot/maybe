@@ -5,6 +5,23 @@ class Provider::Anthropic < Provider
 
   MODELS = %w[claude-3-5-sonnet-20241022 claude-3-5-haiku-20241022]
 
+  FALLBACK_MODELS = [
+    ["Claude 3.5 Sonnet (Recommended)", "claude-3-5-sonnet-20241022"],
+    ["Claude 3.5 Haiku", "claude-3-5-haiku-20241022"],
+    ["Claude 3 Opus", "claude-3-opus-20240229"]
+  ].freeze
+
+  def self.list_available_models
+    Rails.cache.fetch("anthropic_available_models", expires_in: 24.hours) do
+      # Anthropic API doesn't expose a simple models list endpoint in the same way,
+      # or requires different handling. Using curated list for now.
+      FALLBACK_MODELS
+    end
+  rescue => e
+    Rails.logger.error("Failed to fetch Anthropic models: #{e.message}")
+    FALLBACK_MODELS
+  end
+
   def initialize(api_key)
     @client = ::Anthropic::Client.new(api_key: api_key)
   end
