@@ -8,16 +8,37 @@ class LunchflowAccount < ApplicationRecord
   def ensure_account!
     return account if account.present?
 
+    detected = AccountTypeDetector.new(
+      account_name: name,
+      institution_name: institution_name
+    ).detect
+
+    accountable = create_accountable_for_type(
+      detected[:accountable_type],
+      detected[:subtype]
+    )
+
     new_account = Account.create!(
       family: lunchflow_connection.family,
       name: "#{institution_name} - #{name}",
       currency: currency || lunchflow_connection.family.currency || "USD",
       balance: 0,
-      accountable: Depository.new
+      accountable: accountable
     )
 
     update!(account: new_account)
     new_account
+  end
+
+  private
+
+  def create_accountable_for_type(type, subtype)
+    klass = type.constantize
+    if subtype.present?
+      klass.create!(subtype: subtype)
+    else
+      klass.create!
+    end
   end
 
   def potential_duplicates

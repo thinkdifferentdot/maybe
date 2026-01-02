@@ -55,4 +55,13 @@ class LunchflowAccountTest < ActiveSupport::TestCase
     )
     assert account.valid?
   end
+
+  test "ensure_account! detects Investment type from account name" do
+    lunchflow_account = lunchflow_accounts(:investment_401k)
+
+    account = lunchflow_account.ensure_account!
+
+    assert_equal 'Investment', account.accountable_type
+    assert_instance_of Investment, account.accountable
+  end
 end

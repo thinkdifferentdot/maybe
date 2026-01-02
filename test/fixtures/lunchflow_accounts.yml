@@ -6,3 +6,12 @@ dylan_checking:
   provider: gocardless
   currency: USD
   status: ACTIVE
+
+investment_401k:
+  lunchflow_connection: dylan_lunchflow
+  lunchflow_id: 9999
+  name: "401k Retirement"
+  institution_name: "Fidelity"
+  provider: "plaid"
+  currency: "USD"
+  status: "ACTIVE"
