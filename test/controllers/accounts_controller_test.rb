@@ -32,4 +32,29 @@ class AccountsControllerTest < ActionDispatch::IntegrationTest
     assert_enqueued_with job: DestroyJob
     assert_equal "Account scheduled for deletion", flash[:notice]
   end
+
+  test "subtypes returns JSON for Depository" do
+    get subtypes_accounts_path, params: { type: "Depository" }
+
+    assert_response :success
+    json = JSON.parse(response.body)
+    assert json.is_a?(Array)
+    assert json.any? { |subtype| subtype[0] == "Checking" && subtype[1] == "checking" }
+  end
+
+  test "subtypes returns empty array for types without subtypes" do
+    get subtypes_accounts_path, params: { type: "Crypto" }
+
+    assert_response :success
+    json = JSON.parse(response.body)
+    assert_equal [], json
+  end
+
+  test "subtypes returns empty array for invalid type" do
+    get subtypes_accounts_path, params: { type: "InvalidType" }
+
+    assert_response :success
+    json = JSON.parse(response.body)
+    assert_equal [], json
+  end
 end
