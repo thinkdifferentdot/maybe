@@ -65,9 +65,16 @@ class AccountsController < ApplicationController
       new_subtype = params[:account][:subtype]
 
       if @account.change_accountable_type!(new_type, new_subtype)
+        # Reload to ensure we have fresh data after accountable type change
+        @account.reload
+
         # Update other account attributes
-        @account.update(account_params.except(:accountable_type, :subtype))
-        redirect_to @account, notice: "Account type updated successfully"
+        if @account.update(account_params.except(:accountable_type, :subtype))
+          redirect_to @account, notice: "Account type updated successfully"
+        else
+          @error_message = @account.errors.full_messages.join(", ")
+          render :edit, status: :unprocessable_entity
+        end
       else
         @error_message = @account.errors.full_messages.join(", ")
         render :edit, status: :unprocessable_entity

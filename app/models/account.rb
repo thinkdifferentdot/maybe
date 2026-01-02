@@ -180,7 +180,10 @@ class Account < ApplicationRecord
       new_accountable = new_accountable_class.create!
 
       # Update account to point to new accountable and update subtype
-      update!(accountable: new_accountable, subtype: new_subtype)
+      # Skip validations to avoid "Accountable must exist" error from delegated_type
+      self.accountable = new_accountable
+      self.subtype = new_subtype
+      save!(validate: false)
     end
 
     true

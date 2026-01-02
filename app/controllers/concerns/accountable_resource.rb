@@ -41,27 +41,69 @@ module AccountableResource
   end
 
   def update
-    # Handle balance update if provided
-    if account_params[:balance].present?
-      result = @account.set_current_balance(account_params[:balance].to_d)
-      unless result.success?
-        @error_message = result.error_message
+    # Check if accountable_type is being changed
+    if account_params[:accountable_type].present? &&
+       account_params[:accountable_type] != @account.accountable_type
+
+      new_type = account_params[:accountable_type]
+      new_subtype = account_params[:subtype]
+
+      if @account.change_accountable_type!(new_type, new_subtype)
+        # Reload to get fresh data
+        @account.reload
+
+        # Handle remaining updates (balance, name, etc.)
+        update_params = account_params.except(:return_to, :accountable_type, :subtype, :currency)
+
+        # Handle balance update if provided
+        if update_params[:balance].present?
+          result = @account.set_current_balance(update_params[:balance].to_d)
+          unless result.success?
+            @error_message = result.error_message
+            render :edit, status: :unprocessable_entity
+            return
+          end
+          @account.sync_later
+          update_params = update_params.except(:balance)
+        end
+
+        # Update remaining attributes
+        if update_params.present? && !@account.update(update_params)
+          @error_message = @account.errors.full_messages.join(", ")
+          render :edit, status: :unprocessable_entity
+          return
+        end
+
+        @account.lock_saved_attributes!
+        redirect_back_or_to account_path(@account), notice: "Account type updated successfully"
+      else
+        @error_message = @account.errors.full_messages.join(", ")
+        render :edit, status: :unprocessable_entity
+      end
+    else
+      # Normal update flow (no type change)
+      # Handle balance update if provided
+      if account_params[:balance].present?
+        result = @account.set_current_balance(account_params[:balance].to_d)
+        unless result.success?
+          @error_message = result.error_message
+          render :edit, status: :unprocessable_entity
+          return
+        end
+        @account.sync_later
+      end
+
+      # Update remaining account attributes
+      update_params = account_params.except(:return_to, :balance, :currency)
+      unless @account.update(update_params)
+        @error_message = @account.errors.full_messages.join(", ")
         render :edit, status: :unprocessable_entity
         return
       end
-      @account.sync_later
-    end
 
-    # Update remaining account attributes
-    update_params = account_params.except(:return_to, :balance, :currency)
-    unless @account.update(update_params)
-      @error_message = @account.errors.full_messages.join(", ")
-      render :edit, status: :unprocessable_entity
-      return
+      @account.lock_saved_attributes!
+      redirect_back_or_to account_path(@account), notice: t("accounts.update.success", type: accountable_type.name.underscore.humanize)
     end
-
-    @account.lock_saved_attributes!
-    redirect_back_or_to account_path(@account), notice: t("accounts.update.success", type: accountable_type.name.underscore.humanize)
   end
 
   private
