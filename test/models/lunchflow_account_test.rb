@@ -61,7 +61,16 @@ class LunchflowAccountTest < ActiveSupport::TestCase
 
     account = lunchflow_account.ensure_account!
 
-    assert_equal 'Investment', account.accountable_type
+    assert_equal "Investment", account.accountable_type
     assert_instance_of Investment, account.accountable
+  end
+
+  test "ensure_account! detects Depository/checking from checking keyword" do
+    lunchflow_account = lunchflow_accounts(:dylan_checking)
+
+    account = lunchflow_account.ensure_account!
+
+    assert_equal "Depository", account.accountable_type
+    assert_equal "checking", account.subtype
   end
 end

@@ -13,17 +13,15 @@ class LunchflowAccount < ApplicationRecord
       institution_name: institution_name
     ).detect
 
-    accountable = create_accountable_for_type(
-      detected[:accountable_type],
-      detected[:subtype]
-    )
+    accountable = create_accountable_for_type(detected[:accountable_type])
 
     new_account = Account.create!(
       family: lunchflow_connection.family,
       name: "#{institution_name} - #{name}",
       currency: currency || lunchflow_connection.family.currency || "USD",
       balance: 0,
-      accountable: accountable
+      accountable: accountable,
+      subtype: detected[:subtype]
     )
 
     update!(account: new_account)
@@ -32,18 +30,13 @@ class LunchflowAccount < ApplicationRecord
 
   private
 
-  def create_accountable_for_type(type, subtype)
-    klass = type.constantize
-    if subtype.present?
-      klass.create!(subtype: subtype)
-    else
-      klass.create!
+    def create_accountable_for_type(type)
+      type.constantize.create!
     end
-  end
 
-  def potential_duplicates
-    Account.where(family: lunchflow_connection.family)
-           .where("name ILIKE ? OR name ILIKE ?", "%#{institution_name}%", "%#{name}%")
-           .limit(5)
-  end
+    def potential_duplicates
+      Account.where(family: lunchflow_connection.family)
+             .where("name ILIKE ? OR name ILIKE ?", "%#{institution_name}%", "%#{name}%")
+             .limit(5)
+    end
 end
