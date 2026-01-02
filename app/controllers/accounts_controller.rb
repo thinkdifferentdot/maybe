@@ -1,5 +1,5 @@
 class AccountsController < ApplicationController
-  before_action :set_account, only: %i[sync sparkline toggle_active show destroy]
+  before_action :set_account, only: %i[sync sparkline toggle_active show edit update destroy]
   include Periodable
 
   def index
@@ -53,6 +53,47 @@ class AccountsController < ApplicationController
     redirect_to accounts_path
   end
 
+  def edit
+  end
+
+  def update
+    # Check if accountable_type is being changed
+    if params[:account][:accountable_type].present? &&
+       params[:account][:accountable_type] != @account.accountable_type
+
+      new_type = params[:account][:accountable_type]
+      new_subtype = params[:account][:subtype]
+
+      if @account.change_accountable_type!(new_type, new_subtype)
+        # Update other account attributes
+        @account.update(account_params.except(:accountable_type, :subtype))
+        redirect_to @account, notice: "Account type updated successfully"
+      else
+        @error_message = @account.errors.full_messages.join(", ")
+        render :edit, status: :unprocessable_entity
+      end
+    else
+      # Normal update flow (no type change)
+      if @account.update(account_params)
+        redirect_to @account, notice: "Account updated successfully"
+      else
+        @error_message = @account.errors.full_messages.join(", ")
+        render :edit, status: :unprocessable_entity
+      end
+    end
+  end
+
+  def subtypes
+    type = params[:type]
+    return render json: [] unless type.present? && Accountable::TYPES.include?(type)
+
+    klass = type.constantize
+    return render json: [] unless klass.const_defined?(:SUBTYPES)
+
+    subtypes = klass::SUBTYPES.map { |key, labels| [ labels[:long], key ] }
+    render json: subtypes
+  end
+
   def destroy
     if @account.linked?
       redirect_to account_path(@account), alert: "Cannot delete a linked account"
@@ -69,5 +110,9 @@ class AccountsController < ApplicationController
 
     def set_account
       @account = family.accounts.find(params[:id])
+    end
+
+    def account_params
+      params.require(:account).permit(:name, :balance, :currency, :accountable_type, :subtype)
     end
 end
