@@ -27,15 +27,29 @@ depository:
 
 connected:
   family: dylan_family
-  name: Plaid Depository Account
-  balance: 5000
+  name: Connected Account
+  balance: 1000
   currency: USD
-  subtype: checking
   accountable_type: Depository
-  accountable: two
-  plaid_account: one
+  accountable: one
   status: active
+  plaid_account_id: 12345
 
+lunchflow_checking_account:
+  family: dylan_family
+  name: Chase - Checking
+  balance: 1000
+  currency: "USD"
+  subtype: "checking"
+  accountable: lunchflow_checking_depository (Depository)
+
+lunchflow_checking_account_alt:
+  family: dylan_family
+  name: Chase - Checking Alt
+  balance: 2000
+  currency: "USD"
+  subtype: "checking"
+  accountable: lunchflow_checking_depository_alt (Depository)
 credit_card:
   family: dylan_family
   name: Credit Card

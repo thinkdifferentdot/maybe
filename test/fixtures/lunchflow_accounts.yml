@@ -1,11 +1,22 @@
 dylan_checking:
   lunchflow_connection: dylan_lunchflow
+  account: lunchflow_checking_account
   lunchflow_id: 12345
   name: Checking Account
   institution_name: Chase Bank
   provider: gocardless
   currency: USD
   status: ACTIVE
+
+lunchflow_checking:
+  lunchflow_connection: dylan_lunchflow
+  account: lunchflow_checking_account_alt
+  lunchflow_id: 54321
+  name: "Checking"
+  institution_name: "Chase"
+  provider: "plaid"
+  currency: "USD"
+  status: "ACTIVE"
 
 investment_401k:
   lunchflow_connection: dylan_lunchflow

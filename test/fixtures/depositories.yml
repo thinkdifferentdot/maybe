@@ -1,2 +1,9 @@
-one: { }
+one:
+  locked_attributes: {}
+
+lunchflow_checking_depository:
+  locked_attributes: {}
+
+lunchflow_checking_depository_alt:
+  locked_attributes: {}
 two: {}
