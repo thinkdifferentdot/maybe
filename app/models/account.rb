@@ -160,4 +160,31 @@ class Account < ApplicationRecord
       raise "Unknown account type: #{accountable_type}"
     end
   end
+
+  # Change the accountable type safely
+  def change_accountable_type!(new_type, new_subtype = nil)
+    # Validate the change first
+    validator = AccountTypeChangeValidator.new(self, accountable_type, new_type)
+    unless validator.valid?
+      errors.add(:accountable_type, validator.error_message)
+      return false
+    end
+
+    transaction do
+      # Destroy old accountable record
+      accountable&.destroy!
+
+      # Create new accountable record
+      new_accountable_class = new_type.constantize
+      new_accountable = new_accountable_class.create!
+
+      # Update account to point to new accountable and update subtype
+      update!(accountable: new_accountable, subtype: new_subtype)
+    end
+
+    true
+  rescue ActiveRecord::RecordInvalid => e
+    errors.add(:base, "Failed to change account type: #{e.message}")
+    false
+  end
 end

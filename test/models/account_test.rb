@@ -31,4 +31,45 @@ class AccountTest < ActiveSupport::TestCase
     assert_equal "Investments", account.short_subtype_label
     assert_equal "Investments", account.long_subtype_label
   end
+
+  test "change_accountable_type! successfully changes type" do
+    account = accounts(:depository)
+    original_accountable_id = account.accountable_id
+
+    assert_equal "Depository", account.accountable_type
+
+    assert account.change_accountable_type!("CreditCard")
+
+    account.reload
+    assert_equal "CreditCard", account.accountable_type
+    assert_instance_of CreditCard, account.accountable
+    assert_not_equal original_accountable_id, account.accountable_id
+  end
+
+  test "change_accountable_type! preserves transactions" do
+    account = accounts(:depository)
+    # Create a transaction
+    account.entries.create!(
+      date: Date.current,
+      amount: 100,
+      currency: "USD",
+      name: "Test Entry",
+      entryable: Transaction.create!
+    )
+
+    transaction_count = account.transactions.count
+
+    account.change_accountable_type!("CreditCard")
+
+    assert_equal transaction_count, account.reload.transactions.count
+  end
+
+  test "change_accountable_type! allows subtype change for same type" do
+    account = accounts(:depository)
+    account.update!(subtype: "checking")
+
+    assert account.change_accountable_type!("Depository", "savings")
+    assert_equal "Depository", account.accountable_type
+    assert_equal "savings", account.subtype
+  end
 end
