@@ -123,6 +123,41 @@
 
       <div class="hidden md:flex items-center gap-1 col-span-2">
         <%= render "transactions/transaction_category", transaction: transaction %>
+
+        <%# AI Categorize button %>
+        <% if transaction.transfer&.categorizable? || transaction.transfer.nil? %>
+          <button type="button"
+                  data-controller="ai-categorize"
+                  data-ai-categorize-transaction-id-value="<%= transaction.id %>"
+                  data-action="click->ai-categorize#categorize"
+                  class="p-1 hover:bg-gray-100 rounded text-secondary hover:text-primary transition-colors"
+                  title="<%= t("transactions.ai_categorize.button_title") %>">
+            <%= icon "sparkles", size: "sm" %>
+          </button>
+        <% end %>
+
+        <%# Approve/Reject buttons for AI-categorized transactions %>
+        <% if transaction.data_enrichments.where(source: "ai", attribute_name: "category_id").any? %>
+          <div class="flex gap-1 ml-1">
+            <%= button_to approve_ai_transaction_path(entry.id),
+                method: :post,
+                form: { data: { turbo_frame: dom_id(entry) } },
+                class: "text-xs bg-green-100 text-green-700 px-2 py-1 rounded hover:bg-green-200 flex items-center gap-1",
+                title: t(".approve_ai_title") do %>
+              <%= icon "check", size: "xs" %>
+              <span class="hidden sm:inline"><%= t(".approve_ai") %></span>
+            <% end %>
+
+            <%= button_to reject_ai_transaction_path(entry.id),
+                method: :post,
+                form: { data: { turbo_frame: dom_id(entry) } },
+                class: "text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200 flex items-center gap-1",
+                title: t(".reject_ai_title") do %>
+              <%= icon "x", size: "xs" %>
+              <span class="hidden sm:inline"><%= t(".reject_ai") %></span>
+            <% end %>
+          </div>
+        <% end %>
       </div>
 
       <div class="shrink-0 col-span-4 lg:col-span-2 ml-auto text-right">

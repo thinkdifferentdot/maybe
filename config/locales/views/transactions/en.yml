@@ -118,3 +118,9 @@ en:
         less_than: less than
       form:
         toggle_selection_checkboxes: Toggle all checkboxes
+    approve_ai: Approve
+    approve_ai_title: Approve this categorization and create a learned pattern
+    reject_ai: Reject
+    reject_ai_title: Reject this categorization and remove the category
+    approval_success: Pattern learned! Future transactions will be auto-categorized.
+    rejection_success: Category removed. This transaction won't be auto-categorized.
