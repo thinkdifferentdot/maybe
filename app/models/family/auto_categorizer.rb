@@ -1,6 +1,15 @@
 class Family::AutoCategorizer
   Error = Class.new(StandardError)
 
+  # Result struct for AI categorization with confidence score
+  # Confidence is a float between 0.0 and 1.0 (default 1.0 for now)
+  # Until providers return actual confidence scores, we default to 100%
+  Result = Data.define(:transaction_id, :category_name, :confidence) do
+    def initialize(transaction_id:, category_name:, confidence: 1.0)
+      super
+    end
+  end
+
   def initialize(family, transaction_ids: [])
     @family = family
     @transaction_ids = transaction_ids
@@ -53,11 +62,21 @@ class Family::AutoCategorizer
       category_id = categories_input.find { |c| c[:name] == auto_categorization&.category_name }&.dig(:id)
 
       if category_id.present?
+        # Get confidence score from auto_categorization if available, otherwise default to 1.0
+        # (until providers return actual confidence scores)
+        confidence = auto_categorization.respond_to?(:confidence) ? auto_categorization.confidence : 1.0
+
         was_modified = transaction.enrich_attribute(
           :category_id,
           category_id,
           source: "ai"
         )
+
+        # Store confidence in extra metadata for UI display
+        if was_modified
+          transaction.update_column(:extra, transaction.extra.merge("ai_categorization_confidence" => confidence))
+        end
+
         transaction.lock_attr!(:category_id)
         # enrich_attribute returns true if the transaction was actually modified
         modified_count += 1 if was_modified
@@ -92,9 +111,10 @@ class Family::AutoCategorizer
       modified_count
     end
 
-    # For now, OpenAI only, but this should work with any LLM concept provider
+    # Use the family's configured LLM provider (openai or anthropic)
     def llm_provider
-      Provider::Registry.get_provider(:openai)
+      provider_name = Setting.llm_provider.presence || "openai"
+      Provider::Registry.for_concept(:llm).get_provider(provider_name)
     end
 
     def user_categories_input
