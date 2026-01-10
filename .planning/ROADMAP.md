@@ -95,21 +95,24 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 06-01: Add provider selector dropdown to self-hosting settings
-- [ ] 06-02: Add Anthropic API key and model input fields
+- [x] 06-01: Add provider selector dropdown to self-hosting settings
+- [x] 06-02: Add Anthropic API key and model input fields
 - [ ] 06-03: Show/hide fields based on selected provider
 - [ ] 06-04: Add configuration validation and error messages
+
+**Status**: In progress (2026-01-09) - Plans 01-02 complete
 
 ### Phase 7: Langfuse Integration
 **Goal**: Ensure observability tracing works for Anthropic requests
 **Depends on**: Phase 3
 **Research**: Likely (observability integration)
 **Research topics**: Langfuse SDK compatibility, trace format for Anthropic
-**Plans**: 2 plans
+**Plans**: 1 plan (consolidated from 2)
 
 Plans:
-- [ ] 07-01: Adapt Langfuse tracing for Anthropic requests
-- [ ] 07-02: Verify token usage and cost tracking in Langfuse
+- [x] 07-01: Adapt Langfuse tracing for Anthropic requests (VERIFICATION - already implemented in Phases 02-03)
+
+**Status**: Complete (2026-01-10) - Verification confirmed Langfuse integration was already implemented correctly. No code changes needed.
 
 ### Phase 8: Validation & Testing
 **Goal**: Verify all features work and no OpenAI regressions
@@ -131,6 +134,6 @@ Plans:
 | 3. Chat Support | 4/4 | Complete | 2026-01-09 |
 | 4. Registry Integration | 3/3 | Complete | 2026-01-09 |
 | 5. Settings Model | 3/3 | Complete | 2026-01-09 |
-| 6. Settings UI | 0/4 | Not started | - |
-| 7. Langfuse Integration | 0/2 | Not started | - |
+| 6. Settings UI | 2/4 | In progress | 2026-01-09 |
+| 7. Langfuse Integration | 1/1 | Complete | 2026-01-10 |
 | 8. Validation & Testing | 0/3 | Not started | - |
