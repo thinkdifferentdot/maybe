@@ -113,4 +113,10 @@ class TransactionImport < Import
     csv.delete("account") if account.present?
     csv
   end
+
+  private
+
+  def ai_categorize_enabled?
+    Setting.ai_categorize_on_import == true
+  end
 end
