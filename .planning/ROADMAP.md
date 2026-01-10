@@ -11,7 +11,7 @@ None (Rails backend work following established patterns in the Sure codebase)
 ## Milestones
 
 - ✅ **[v1.0 Anthropic Support](milestones/v1.0-ROADMAP.md)** - Phases 1-9 + 9.1 (shipped 2026-01-10)
-- 🚧 **v1.1 AI Auto-Categorization Triggers** - Phases 10-13 (in progress, 19% complete)
+- ✅ **[v1.1 AI Auto-Categorization Triggers](milestones/v1.1-ROADMAP.md)** - Phases 10-14 (shipped 2026-01-10)
 
 ## Phases
 
@@ -79,11 +79,21 @@ See [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full details.
 - [x] 13-01: LearnedPattern model and matcher tests (2026-01-10)
 - [x] 13-02: AI categorization controllers tests (2026-01-10)
 - [x] 13-03: Settings & confidence integration tests (2026-01-10)
-- [ ] 13-04: Full AI regression tests (pending)
+- [x] 13-04: Full AI regression tests (2026-01-10)
 
-**Status**: In progress (3/4 plans complete - 2026-01-10)
+**Status**: Complete (4/4 plans complete - 2026-01-10)
 
-## Phase Details
+#### Phase 14: Manual Testing
+
+**Goal**: User performs manual QA testing of all implemented v1.1 features
+**Depends on**: Phase 13
+**Research**: Unlikely (manual testing)
+**Plans**: 1 plan
+- [x] 14-01: Manual testing checklist and verification (2026-01-10)
+
+**Status**: Complete (1/1 plan complete - 2026-01-10)
+
+### Phase Details
 
 ### Phase 1: Foundation
 **Goal**: Add Anthropic gem and create Provider::Anthropic class with basic structure
@@ -237,4 +247,5 @@ The AI chat was failing when calling the `get_transactions` function because Ant
 | 10. Settings & Config | v1.1 | 1/1 | Complete | 2026-01-10 |
 | 11. Import Triggers | v1.1 | 4/4 | Complete | 2026-01-10 |
 | 12. Transaction UI Actions | v1.1 | 3/3 | Complete | 2026-01-10 |
-| 13. Testing & Docs | v1.1 | 3/4 | In progress | 2026-01-10 |
+| 13. Testing & Docs | v1.1 | 4/4 | Complete | 2026-01-10 |
+| 14. Manual Testing | v1.1 | 1/1 | Complete | 2026-01-10 |
