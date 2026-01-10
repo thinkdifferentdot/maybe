@@ -3,7 +3,25 @@ class Transactions::AiCategorizationsController < ApplicationController
 
   def create
     @entry = Current.family.entries.transactions.find(params[:transaction_id])
-    transaction = @entry.entryable
+
+    begin
+      transaction = @entry.entryable
+    rescue ActiveRecord::RecordNotFound
+      flash[:error] = t("transactions.ai_categorize.error")
+      respond_to do |format|
+        format.turbo_stream { head :unprocessable_entity }
+      end
+      return
+    end
+
+    # Check if entryable exists (handle orphaned entries)
+    if transaction.nil?
+      flash[:error] = t("transactions.ai_categorize.error")
+      respond_to do |format|
+        format.turbo_stream { head :unprocessable_entity }
+      end
+      return
+    end
 
     categorizer = Family::AutoCategorizer.new(Current.family, transaction_ids: [transaction.id])
 
