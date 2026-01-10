@@ -9,12 +9,14 @@ See: .planning/PROJECT.md (updated 2025-01-09)
 
 ## Current Position
 
-Phase: 8 of 8 (Validation & Testing)
-Plan: 01 of 03
-Status: In progress
-Last activity: 2026-01-10 — Completed Phase 8 Plan 01 (Anthropic Provider Tests)
+Phase: 10 of 13 (Settings & Config)
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-01-10 — Milestone v1.1 created
 
-Progress: ████████████████░░░ 78% (18/23 plans complete)
+Progress: ░░░░░░░░░░░░░░░░░░░░ 0% (0/? plans complete for v1.1)
+
+**Note:** v1.0 (Anthropic Support) at 78% - Phases 8-9 remain to complete that milestone.
 
 ## Performance Metrics
 
@@ -73,6 +75,11 @@ Recent decisions affecting current work:
 
 None yet.
 
+### Roadmap Evolution
+
+- **Phase 9 added**: Resolve Anthropic Issues (2026-01-10) - New phase to address any bugs or integration issues discovered during testing
+- **Milestone v1.1 created**: AI Auto-Categorization Triggers (2026-01-10) - 4 phases (10-13) focused on adding import triggers, UI actions, and settings for AI categorization beyond Rules
+
 ### Blockers/Concerns
 
 None yet.
@@ -80,5 +87,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-10
-Stopped at: Completed Phase 8 Plan 01 (Anthropic Provider Tests)
+Stopped at: Milestone v1.1 initialization
 Resume file: None

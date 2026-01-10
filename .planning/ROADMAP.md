@@ -8,7 +8,15 @@ Add native Anthropic Claude support as a first-class LLM provider in Sure. Users
 
 None (Rails backend work following established patterns in the Sure codebase)
 
+## Milestones
+
+- 🚧 **v1.0 Anthropic Support** - Phases 1-9 (in progress, 78% complete)
+- 📋 **v1.1 AI Auto-Categorization Triggers** - Phases 10-13 (planned)
+
 ## Phases
+
+<details>
+<summary>v1.0 Anthropic Support (Phases 1-9)</summary>
 
 - [x] **Phase 1: Foundation** - Add Anthropic gem and create Provider::Anthropic class skeleton
 - [x] **Phase 2: Core Operations** - Implement auto_categorize and auto_detect_merchants for Anthropic
@@ -18,6 +26,41 @@ None (Rails backend work following established patterns in the Sure codebase)
 - [x] **Phase 6: Settings UI** - Build provider selector dropdown and configuration form
 - [x] **Phase 7: Langfuse Integration** - Ensure observability tracing works for Anthropic
 - [ ] **Phase 8: Validation & Testing** - Verify all features work and no regressions to OpenAI
+- [ ] **Phase 9: Resolve Anthropic Issues** - Fix any remaining bugs or integration issues discovered during testing
+
+</details>
+
+### 📋 v1.1 AI Auto-Categorization Triggers (Planned)
+
+**Milestone Goal:** Add multiple trigger points for AI auto-categorization beyond just Rules - import flow, individual/bulk UI actions, and sync provider integration (especially Lunch Flow).
+
+#### Phase 10: Settings & Config
+
+**Goal**: Add user preferences for auto-categorization behavior and cost controls
+**Depends on**: v1.0 complete
+**Research**: Unlikely (existing Settings patterns)
+**Plans**: TBD
+
+#### Phase 11: Import Triggers
+
+**Goal**: Add AI categorization to CSV import and general sync jobs (Lunch Flow)
+**Depends on**: None (parallel with 10, 12)
+**Research**: Unlikely (existing ImportJob/SyncJob patterns)
+**Plans**: TBD
+
+#### Phase 12: Transaction UI Actions
+
+**Goal**: Add individual and bulk "AI categorize" buttons to transaction UI
+**Depends on**: None (parallel with 10, 11)
+**Research**: Unlikely (existing Hotwire/UI patterns)
+**Plans**: TBD
+
+#### Phase 13: Testing & Docs
+
+**Goal**: Verify all new trigger paths work correctly and document features
+**Depends on**: Phases 10, 11, 12
+**Research**: Unlikely (verification)
+**Plans**: TBD
 
 ## Phase Details
 
@@ -127,15 +170,32 @@ Plans:
 
 **Status**: In progress (2026-01-10) - 2/3 plans complete
 
+### Phase 9: Resolve Anthropic Issues
+**Goal**: Fix any remaining bugs or integration issues discovered during testing
+**Depends on**: Phase 8
+**Research**: Unlikely (bug fixing)
+**Plans**: TBD
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 9 to break down)
+
+**Details:**
+To be added during planning
+
 ## Progress
 
-| Phase | Plans Complete | Status | Completed |
-|-------|----------------|--------|-----------|
-| 1. Foundation | 3/3 | Complete | 2026-01-09 |
-| 2. Core Operations | 3/3 | Complete | 2026-01-10 |
-| 3. Chat Support | 4/4 | Complete | 2026-01-09 |
-| 4. Registry Integration | 3/3 | Complete | 2026-01-09 |
-| 5. Settings Model | 3/3 | Complete | 2026-01-09 |
-| 6. Settings UI | 4/4 | Complete | 2026-01-09 |
-| 7. Langfuse Integration | 1/1 | Complete | 2026-01-10 |
-| 8. Validation & Testing | 1/3 | In progress | 2026-01-10 |
+| Phase | Milestone | Plans Complete | Status | Completed |
+|-------|-----------|----------------|--------|-----------|
+| 1. Foundation | v1.0 | 3/3 | Complete | 2026-01-09 |
+| 2. Core Operations | v1.0 | 3/3 | Complete | 2026-01-10 |
+| 3. Chat Support | v1.0 | 4/4 | Complete | 2026-01-09 |
+| 4. Registry Integration | v1.0 | 3/3 | Complete | 2026-01-09 |
+| 5. Settings Model | v1.0 | 3/3 | Complete | 2026-01-09 |
+| 6. Settings UI | v1.0 | 4/4 | Complete | 2026-01-09 |
+| 7. Langfuse Integration | v1.0 | 1/1 | Complete | 2026-01-10 |
+| 8. Validation & Testing | v1.0 | 2/3 | In progress | 2026-01-10 |
+| 9. Resolve Anthropic Issues | v1.0 | 0/0 | Not started | - |
+| 10. Settings & Config | v1.1 | 0/? | Not started | - |
+| 11. Import Triggers | v1.1 | 0/? | Not started | - |
+| 12. Transaction UI Actions | v1.1 | 0/? | Not started | - |
+| 13. Testing & Docs | v1.1 | 0/? | Not started | - |
