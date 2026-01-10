@@ -63,7 +63,15 @@ class LunchflowAccount::Processor
     end
 
     def process_transactions
-      LunchflowAccount::Transactions::Processor.new(lunchflow_account).process
+      transactions_processor = LunchflowAccount::Transactions::Processor.new(lunchflow_account)
+      transactions_result = transactions_processor.process
+
+      # Trigger AI categorization for imported transactions if enabled
+      if transactions_result[:imported].positive? && transactions_processor.imported_transaction_ids.any?
+        LunchflowAccount::PostProcessor.new(lunchflow_account).process(
+          transactions_processor.imported_transaction_ids
+        )
+      end
     rescue => e
       report_exception(e, "transactions")
     end
