@@ -66,9 +66,9 @@ See [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full details.
 **Plans**: 3 plans
 - [x] 12-01: Backend Provider Selection & Confidence (2026-01-10)
 - [x] 12-02: Individual AI categorize button in UI (2026-01-10)
-- [ ] 12-03: Bulk AI categorize workflow (TBD)
+- [x] 12-03: Bulk AI categorize workflow (2026-01-10)
 
-**Status**: In Progress (2/3 plans complete - 2026-01-10)
+**Status**: Complete (3/3 plans complete - 2026-01-10)
 
 #### Phase 13: Testing & Docs
 
@@ -230,5 +230,5 @@ The AI chat was failing when calling the `get_transactions` function because Ant
 | 9.1. Fix get_transactions function tool | v1.0 | 1/1 | Complete | 2026-01-10 | (INSERTED)
 | 10. Settings & Config | v1.1 | 1/1 | Complete | 2026-01-10 |
 | 11. Import Triggers | v1.1 | 4/4 | Complete | 2026-01-10 |
-| 12. Transaction UI Actions | v1.1 | 2/3 | In progress | 2026-01-10 |
+| 12. Transaction UI Actions | v1.1 | 3/3 | Complete | 2026-01-10 |
 | 13. Testing & Docs | v1.1 | 0/? | Not started | - |

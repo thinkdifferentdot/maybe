@@ -9,30 +9,30 @@ See: .planning/PROJECT.md (updated 2026-01-10)
 
 ## Current Position
 
-Phase: v1.1 AI Auto-Categorization Triggers — Phase 11 (Import Triggers)
-Plan: 11-04 (Bulk Review Workflow) — COMPLETE
-Status: Phase 11 COMPLETE! All 4 plans finished (11-01, 11-02, 11-03, 11-04)
-Last activity: 2026-01-10 — Bulk review workflow for AI-categorized transactions
+Phase: v1.1 AI Auto-Categorization Triggers — Phase 12 (Transaction UI Actions)
+Plan: 12-03 (Bulk AI Categorization) — COMPLETE
+Status: Phase 12 COMPLETE! All 3 plans finished (12-01, 12-02, 12-03)
+Last activity: 2026-01-10 — Bulk AI categorization with cost estimation and low-confidence confirmations
 
-Progress for Phase 11: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100% (4 of 4 plans complete)
-Overall v1.1 Progress: ▓▓▓▓▓▓▓░░░░░░░░░░░░░ 28% (7 of ~25 plans estimated)
+Progress for Phase 12: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100% (3 of 3 plans complete)
+Overall v1.1 Progress: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░ 40% (10 of ~25 plans estimated)
 
-**Summary (11-04):** Bulk review workflow for approving/rejecting AI-categorized transactions. Users can filter to "Recent AI Categorizations" and see approve/reject buttons on each transaction. Approve creates a learned pattern and locks category; reject removes category and enrichment. Turbo Stream provides inline updates without page reload.
+**Summary (12-03):** Bulk AI categorization from selection bar with sparkle icon button. Cost estimation updates dynamically based on selection count (100 tokens/transaction + 50/category * model pricing). Low-confidence (<60%) results require user confirmation; high-confidence results apply immediately. Summary modal shows success/skip/error counts. All 1644 tests passing.
 
 ## Next Milestone Goals
 
 **v1.1: AI Auto-Categorization Triggers** — 4 phases (10-13)
 - Phase 10: Settings & Config — User preferences for auto-categorization behavior and cost controls ✅ COMPLETE
 - Phase 11: Import Triggers — AI categorization in CSV import and sync jobs ✅ COMPLETE
-- Phase 12: Transaction UI Actions — Individual and bulk "AI categorize" buttons in transaction UI
+- Phase 12: Transaction UI Actions — Individual and bulk "AI categorize" buttons in transaction UI ✅ COMPLETE
 - Phase 13: Testing & Docs — Verify all trigger paths and document features
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 35 (26 v1.0 + 9 v1.1)
+- Total plans completed: 38 (26 v1.0 + 12 v1.1)
 - Average duration: ~6 min
-- Total execution time: ~225 min
+- Total execution time: ~240 min
 
 **By Phase:**
 
@@ -50,6 +50,7 @@ Overall v1.1 Progress: ▓▓▓▓▓▓▓░░░░░░░░░░░░
 | 9.1 (get_transactions fix) | 1 | 26 min | 26 min |
 | 10 (Settings & Config) | 1 | ~5 min | ~5 min |
 | 11 (Import Triggers) | 4 | ~35 min | ~9 min |
+| 12 (Transaction UI Actions) | 3 | ~15 min | ~5 min |
 
 ## Accumulated Context
 
@@ -82,10 +83,10 @@ Overall v1.1 Progress: ▓▓▓▓▓▓▓░░░░░░░░░░░░
 - 11-03: AI categorization trigger in Lunchflow sync jobs
 - 11-04: Bulk review workflow for approving/rejecting AI suggestions
 
-**Phase 12 - Transaction UI Actions (IN PROGRESS - 2/3 complete):**
+**Phase 12 - Transaction UI Actions (COMPLETE):**
 - 12-01: Backend Provider Selection & Confidence
 - 12-02: Individual AI categorize button
-- 12-03: Bulk AI categorize workflow (PENDING)
+- 12-03: Bulk AI categorize workflow
 
 **Decisions:**
 - Use PostProcessor pattern for batch AI categorization after sync
@@ -97,6 +98,9 @@ Overall v1.1 Progress: ▓▓▓▓▓▓▓░░░░░░░░░░░░
 - Default confidence 1.0 until providers return actual scores
 - Bulk review workflow: Approve creates learned pattern, Reject removes category
 - 7-day window for "recent AI" filter (configurable via scope parameter)
+- Cost estimation: 100 tokens/transaction + 50/category * model pricing
+- 60% confidence threshold for low-confidence confirmations
+- Errors per transaction continue batch process (don't stop bulk operation)
 
 ### Deferred Issues
 
@@ -105,7 +109,7 @@ None.
 ### Roadmap Evolution
 
 - **v1.0 COMPLETE**: Anthropic Support (2026-01-10) — Full provider integration shipped
-- **v1.1 IN PROGRESS**: AI Auto-Categorization Triggers — 4 phases focused on import triggers, UI actions, and settings
+- **v1.1 IN PROGRESS**: AI Auto-Categorization Triggers — 3 of 4 phases complete (settings, import triggers, UI actions done; testing & docs remaining)
 
 ### Blockers/Concerns
 
@@ -114,7 +118,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-10
-Phase: 11-04 complete (Bulk Review Workflow)
+Phase: 12-03 complete (Bulk AI Categorization)
 Milestone: v1.1
-Next: Phase 12-03 (Bulk AI categorize workflow) or continue other Phase 12 plans
+Next: Phase 13 (Testing & Docs) or discuss next phase
 Resume file: None
