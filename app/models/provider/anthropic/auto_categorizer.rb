@@ -21,11 +21,12 @@ class Provider::Anthropic::AutoCategorizer
       model: model,
       max_tokens: 1024,
       messages: [{role: "user", content: developer_message}],
-      system: instructions,
-      betas: ["structured-outputs-2025-11-13"]
+      system: instructions
     )
 
-    Rails.logger.info("Tokens used to auto-categorize transactions: #{response.usage.total_tokens}")
+    # Note: response.usage is an Anthropic::Models::Usage BaseModel with input_tokens/output_tokens attributes
+    usage_total = response.usage.input_tokens + response.usage.output_tokens
+    Rails.logger.info("Tokens used to auto-categorize transactions: #{usage_total}")
 
     categorizations = extract_categorizations(response)
     result = build_response(categorizations)
@@ -43,7 +44,7 @@ class Provider::Anthropic::AutoCategorizer
     span&.end(output: result.map(&:to_h), usage: {
       input_tokens: response.usage.input_tokens,
       output_tokens: response.usage.output_tokens,
-      total_tokens: response.usage.total_tokens
+      total_tokens: usage_total
     })
 
     result
@@ -125,11 +126,20 @@ class Provider::Anthropic::AutoCategorizer
   end
 
   def extract_categorizations(response)
-    content_block = response.content.find { |block| block.type == "text" }
+    # Note: response.content contains BaseModel objects with symbolized type attributes
+    content_block = response.content.find { |block| block.type == :text }
     raise Provider::Anthropic::Error, "No text content found in response" if content_block.nil?
 
-    parsed = JSON.parse(content_block.text)
-    parsed.dig("categorizations") || []
+    # Strip markdown code blocks if present (e.g., ```json...```)
+    text = content_block.text.gsub(/```json\n?/, "").gsub(/```\n?/, "")
+    parsed = JSON.parse(text)
+
+    # Handle both { "categorizations": [...] } and direct [...] formats
+    if parsed.is_a?(Array)
+      parsed
+    else
+      parsed.dig("categorizations") || []
+    end
   rescue JSON::ParserError => e
     raise Provider::Anthropic::Error, "Invalid JSON in categorization response: #{e.message}"
   end
@@ -163,10 +173,15 @@ class Provider::Anthropic::AutoCategorizer
   def record_usage(model_name, usage_data, operation:, metadata: {})
     return unless family && usage_data
 
+    # Note: usage_data is an Anthropic::Models::Usage BaseModel with input_tokens/output_tokens attributes
+    input_toks = usage_data.input_tokens
+    output_toks = usage_data.output_tokens
+    total_toks = input_toks + output_toks
+
     LlmUsage.calculate_cost(
       model: model_name,
-      prompt_tokens: usage_data.input_tokens,
-      completion_tokens: usage_data.output_tokens
+      prompt_tokens: input_toks,
+      completion_tokens: output_toks
     ).yield_self do |estimated_cost|
       if estimated_cost.nil?
         Rails.logger.info("Recording LLM usage without cost estimate for unknown model: #{model_name}")
@@ -176,9 +191,9 @@ class Provider::Anthropic::AutoCategorizer
         provider: LlmUsage.infer_provider(model_name),
         model: model_name,
         operation: operation,
-        prompt_tokens: usage_data.input_tokens,
-        completion_tokens: usage_data.output_tokens,
-        total_tokens: usage_data.total_tokens,
+        prompt_tokens: input_toks,
+        completion_tokens: output_toks,
+        total_tokens: total_toks,
         estimated_cost: estimated_cost,
         metadata: metadata
       )

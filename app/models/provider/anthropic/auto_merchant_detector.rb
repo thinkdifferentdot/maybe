@@ -21,13 +21,15 @@ class Provider::Anthropic::AutoMerchantDetector
       model: model,
       max_tokens: 1024,
       messages: [{role: "user", content: developer_message}],
-      system: instructions,
-      betas: ["structured-outputs-2025-11-13"]
+      system: instructions
     )
 
-    Rails.logger.info("Tokens used to auto-detect merchants: #{response.usage.total_tokens}")
+    # Note: response.usage is an Anthropic::Models::Usage BaseModel with input_tokens/output_tokens attributes
+    usage_total = response.usage.input_tokens + response.usage.output_tokens
+    Rails.logger.info("Tokens used to auto-detect merchants: #{usage_total}")
 
     merchants = extract_merchants(response)
+    Rails.logger.debug("Extracted merchants: #{merchants.inspect}")
     result = build_response(merchants)
 
     record_usage(
@@ -43,7 +45,7 @@ class Provider::Anthropic::AutoMerchantDetector
     span&.end(output: result.map(&:to_h), usage: {
       input_tokens: response.usage.input_tokens,
       output_tokens: response.usage.output_tokens,
-      total_tokens: response.usage.total_tokens
+      total_tokens: usage_total
     })
 
     result
@@ -169,10 +171,15 @@ class Provider::Anthropic::AutoMerchantDetector
 
   def build_response(merchants)
     merchants.map do |merchant|
+      # Handle both string and symbol keys
+      transaction_id = merchant["transaction_id"] || merchant[:transaction_id]
+      business_name = merchant["business_name"] || merchant[:business_name]
+      business_url = merchant["business_url"] || merchant[:business_url]
+
       AutoDetectedMerchant.new(
-        transaction_id: merchant.dig("transaction_id"),
-        business_name: normalize_merchant_value(merchant.dig("business_name")),
-        business_url: normalize_merchant_value(merchant.dig("business_url"))
+        transaction_id: transaction_id,
+        business_name: normalize_merchant_value(business_name),
+        business_url: normalize_merchant_value(business_url)
       )
     end
   end
@@ -195,11 +202,21 @@ class Provider::Anthropic::AutoMerchantDetector
   end
 
   def extract_merchants(response)
-    content_block = response.content.find { |block| block.type == "text" }
+    # Note: response.content contains BaseModel objects with symbolized type attributes
+    content_block = response.content.find { |block| block.type == :text }
     raise Provider::Anthropic::Error, "No text content found in response" if content_block.nil?
 
-    parsed = JSON.parse(content_block.text)
-    parsed.dig("merchants") || []
+    # Strip markdown code blocks if present (e.g., ```json...```)
+    text = content_block.text.gsub(/```json\n?/, "").gsub(/```\n?/, "")
+    parsed = JSON.parse(text)
+
+    # Handle both { "merchants": [...] } and direct [...] formats
+    if parsed.is_a?(Array)
+      merchants = parsed
+    else
+      merchants = parsed.dig("merchants") || []
+    end
+    merchants
   rescue JSON::ParserError => e
     raise Provider::Anthropic::Error, "Invalid JSON in merchant detection response: #{e.message}"
   end
@@ -207,10 +224,15 @@ class Provider::Anthropic::AutoMerchantDetector
   def record_usage(model_name, usage_data, operation:, metadata: {})
     return unless family && usage_data
 
+    # Note: usage_data is an Anthropic::Models::Usage BaseModel with input_tokens/output_tokens attributes
+    input_toks = usage_data.input_tokens
+    output_toks = usage_data.output_tokens
+    total_toks = input_toks + output_toks
+
     LlmUsage.calculate_cost(
       model: model_name,
-      prompt_tokens: usage_data.input_tokens,
-      completion_tokens: usage_data.output_tokens
+      prompt_tokens: input_toks,
+      completion_tokens: output_toks
     ).yield_self do |estimated_cost|
       if estimated_cost.nil?
         Rails.logger.info("Recording LLM usage without cost estimate for unknown model: #{model_name}")
@@ -220,9 +242,9 @@ class Provider::Anthropic::AutoMerchantDetector
         provider: LlmUsage.infer_provider(model_name),
         model: model_name,
         operation: operation,
-        prompt_tokens: usage_data.input_tokens,
-        completion_tokens: usage_data.output_tokens,
-        total_tokens: usage_data.total_tokens,
+        prompt_tokens: input_toks,
+        completion_tokens: output_toks,
+        total_tokens: total_toks,
         estimated_cost: estimated_cost,
         metadata: metadata
       )
