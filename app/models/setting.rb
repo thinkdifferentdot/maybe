@@ -35,6 +35,11 @@ class Setting < RailsSettings::Base
   field :require_invite_for_signup, type: :boolean, default: false
   field :require_email_confirmation, type: :boolean, default: ENV.fetch("REQUIRE_EMAIL_CONFIRMATION", "true") == "true"
 
+  # AI auto-categorization trigger settings
+  field :ai_categorize_on_import, type: :boolean, default: false
+  field :ai_categorize_on_sync, type: :boolean, default: false
+  field :ai_categorize_on_ui_action, type: :boolean, default: false
+
   def self.validate_onboarding_state!(state)
     return if ONBOARDING_STATES.include?(state)
 

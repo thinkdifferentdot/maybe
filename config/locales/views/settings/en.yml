@@ -113,6 +113,7 @@ en:
       transactions_section_title: Transactions
       whats_new_label: What's new
       api_keys_label: API Key
+      auto_categorization_label: Auto-Categorization
       bank_sync_label: Bank Sync
     settings_nav_link_large:
       next: Next

@@ -1,0 +1,26 @@
+<%= content_for :page_title, t(".page_title") %>
+
+<%= settings_section title: t(".page_title"), subtitle: t(".page_subtitle") do %>
+  <%= styled_form_with model: Setting.new,
+                       url: settings_auto_categorization_path,
+                       method: :patch do |form| %>
+
+    <div class="space-y-4">
+      <%= form.toggle :ai_categorize_on_import,
+                      label: t(".import_label"),
+                      checked: Setting.ai_categorize_on_import? %>
+
+      <%= form.toggle :ai_categorize_on_sync,
+                      label: t(".sync_label"),
+                      checked: Setting.ai_categorize_on_sync? %>
+
+      <%= form.toggle :ai_categorize_on_ui_action,
+                      label: t(".ui_action_label"),
+                      checked: Setting.ai_categorize_on_ui_action? %>
+    </div>
+
+    <div class="mt-6">
+      <%= form.submit t(".save_button") %>
+    </div>
+  <% end %>
+<% end %>

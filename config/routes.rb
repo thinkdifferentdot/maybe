@@ -106,6 +106,7 @@ Rails.application.routes.draw do
     resource :guides, only: :show
     resource :bank_sync, only: :show, controller: "bank_sync"
     resource :providers, only: %i[show update]
+    resource :auto_categorization, only: %i[show update], controller: "auto_categorization"
   end
 
   resource :subscription, only: %i[new show create] do

@@ -1,0 +1,13 @@
+---
+en:
+  settings:
+    auto_categorization:
+      show:
+        page_title: Auto-Categorization
+        page_subtitle: Choose when AI should automatically categorize your transactions
+        import_label: Categorize on CSV import
+        sync_label: Categorize on account sync
+        ui_action_label: Categorize on manual action
+        save_button: Save Changes
+        success: Auto-categorization settings updated
+        not_authorized: You don't have permission to change settings
