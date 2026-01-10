@@ -122,8 +122,10 @@ Plans:
 
 Plans:
 - [ ] 08-01: Test all AI features with Anthropic provider
-- [ ] 08-02: Test all AI features with OpenAI provider (regression check)
+- [x] 08-02: Test all AI features with OpenAI provider (regression check)
 - [ ] 08-03: Test provider switching and settings UI
+
+**Status**: In progress (2026-01-10) - 1/3 plans complete
 
 ## Progress
 
@@ -136,4 +138,4 @@ Plans:
 | 5. Settings Model | 3/3 | Complete | 2026-01-09 |
 | 6. Settings UI | 4/4 | Complete | 2026-01-09 |
 | 7. Langfuse Integration | 1/1 | Complete | 2026-01-10 |
-| 8. Validation & Testing | 0/3 | Not started | - |
+| 8. Validation & Testing | 1/3 | In progress | 2026-01-10 |

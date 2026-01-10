@@ -5,22 +5,22 @@
 See: .planning/PROJECT.md (updated 2025-01-09)
 
 **Core value:** Smooth UX configuration — Users select AI provider through settings dropdown
-**Current focus:** Phase 6 — Settings UI
+**Current focus:** Phase 8 — Validation & Testing
 
 ## Current Position
 
-Phase: 6 of 8 (Settings UI)
-Plan: 04 of 04
-Status: Phase complete
-Last activity: 2026-01-09 — Completed Phase 6 Plan 04 (Configuration Validation)
+Phase: 8 of 8 (Validation & Testing)
+Plan: 02 of 03
+Status: In progress
+Last activity: 2026-01-10 — Completed Phase 8 Plan 02 (OpenAI Regression Tests)
 
-Progress: ███████████████████ 100% (Phase 6 complete)
+Progress: ████████████████░░░ 74% (17/23 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 19
-- Average duration: 3.5 min
+- Total plans completed: 17
+- Average duration: 3.9 min
 - Total execution time: ~66 min
 
 **By Phase:**
@@ -29,15 +29,16 @@ Progress: ███████████████████ 100% (Phase 
 |-------|-------|-------|----------|
 | 1 (Foundation) | 3 | 9 min | 3 min |
 | 2 (Core Operations) | 3 | 14 min | 4.7 min |
-| 3 (Chat Support) | 3 | 17 min | 5.7 min |
+| 3 (Chat Support) | 4 | 17 min | 4.3 min |
 | 4 (Registry Integration) | 1 | 3 min | 3 min |
-| 5 (Settings Model) | 3 | 12 min | 4 min |
-| 6 (Settings UI) | 4 | 8 min | 2 min |
+| 5 (Settings Model) | 1 | 12 min | 12 min |
+| 6 (Settings UI) | 3 | 8 min | 2.7 min |
 | 7 (Langfuse Integration) | 1 | 5 min | 5 min |
+| 8 (Validation & Testing) | 1 | 15 min | 15 min |
 
 **Recent Trend:**
-- Last 5 plans: 5-03 (Controller & Validation), 6-01 (Provider Selector), 6-02 (Anthropic Fields), 6-03 (Provider Visibility), 6-04 (Config Validation)
-- Trend: Phase 6 complete, ready for Phase 8 (Validation & Testing)
+- Last 5 plans: 6-04 (Config Validation), 7-01 (Langfuse Verification), 8-02 (OpenAI Regression)
+- Trend: Phase 8 in progress, 2 plans remaining (08-01, 08-03)
 
 ## Accumulated Context
 
@@ -58,11 +59,12 @@ Recent decisions affecting current work:
 - **Phase 5-01**: Used ANTHROPIC_API_KEY ENV (not ACCESS_TOKEN) to match official gem convention
 - **Phase 5-02**: Provider selection is global (single llm_provider field, not per-feature)
 - **Phase 5-03**: Simple validation for llm_provider using validate_llm_provider! method
-- **Phase 7-01**: Langfuse integration verified - was already implemented in Phases 02-03; No code changes needed; Token field mapping (input/output_tokens -> prompt/completion_tokens) confirmed correct
 - **Phase 6-01**: Provider selector dropdown follows existing pattern with styled_form_with; Auto-submit on blur for instant feedback
 - **Phase 6-02**: Anthropic settings partial matches OpenAI structure exactly; ENV key is ANTHROPIC_API_KEY (not ACCESS_TOKEN) per Anthropic convention; Redaction placeholder "********" prevents accidental overwrite
 - **Phase 6-03**: Provider visibility controller uses hidden class for show/hide; data-provider attributes on settings sections for targeting; Initial provider value from @llm_provider instance variable; Change event triggers immediate visibility update
 - **Phase 6-04**: Anthropic config validation uses claude- prefix check; validate_anthropic_config! follows OpenAI pattern; Help text provides inline guidance; Placeholder shows valid model example
+- **Phase 7-01**: Langfuse integration verified - was already implemented in Phases 02-03; No code changes needed; Token field mapping (input/output_tokens -> prompt/completion_tokens) confirmed correct
+- **Phase 8-02**: OpenAI regression verified - 56 tests passing across 4 test files; LlmUsage test file created for comprehensive pricing coverage; No code changes needed (ideal outcome)
 
 ### Deferred Issues
 
@@ -74,6 +76,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-09
-Stopped at: Completed Phase 6 Plan 04 (Configuration Validation) - Phase 6 complete
+Last session: 2026-01-10
+Stopped at: Completed Phase 8 Plan 02 (OpenAI Regression Tests)
 Resume file: None
