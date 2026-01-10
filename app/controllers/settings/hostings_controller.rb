@@ -97,7 +97,9 @@ class Settings::HostingsController < ApplicationController
       end
     end
 
+    # Validate Anthropic configuration before updating
     if hosting_params.key?(:anthropic_model)
+      Setting.validate_anthropic_config!(model: hosting_params[:anthropic_model])
       Setting.anthropic_model = hosting_params[:anthropic_model]
     end
 
