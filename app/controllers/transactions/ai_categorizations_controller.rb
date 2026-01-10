@@ -17,7 +17,7 @@ class Transactions::AiCategorizationsController < ApplicationController
       return
     end
 
-    categorizer = Family::AutoCategorizer.new(Current.family, transaction_ids: [@transaction.id])
+    categorizer = Family::AutoCategorizer.new(Current.family, transaction_ids: [ @transaction.id ])
 
     begin
       count = categorizer.auto_categorize
@@ -33,9 +33,14 @@ class Transactions::AiCategorizationsController < ApplicationController
         format.turbo_stream do
           render turbo_stream: [
             turbo_stream.replace(
-              dom_id(@transaction, :category_menu),
-              partial: "categories/menu",
-              locals: { transaction: @transaction }
+              "#{dom_id(@transaction, "category_menu")}_mobile",
+              partial: "transactions/transaction_category",
+              locals: { transaction: @transaction, id_suffix: "mobile" }
+            ),
+            turbo_stream.replace(
+              "#{dom_id(@transaction, "category_menu")}_desktop",
+              partial: "transactions/transaction_category",
+              locals: { transaction: @transaction, id_suffix: "desktop" }
             ),
             turbo_stream.replace(
               "category_name_mobile_#{@transaction.id}",
@@ -55,10 +60,10 @@ class Transactions::AiCategorizationsController < ApplicationController
 
   private
 
-  def handle_orphaned_entry
-    flash[:error] = t("transactions.ai_categorize.error")
-    respond_to do |format|
-      format.turbo_stream { head :unprocessable_entity }
+    def handle_orphaned_entry
+      flash[:error] = t("transactions.ai_categorize.error")
+      respond_to do |format|
+        format.turbo_stream { head :unprocessable_entity }
+      end
     end
-  end
 end

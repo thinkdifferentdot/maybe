@@ -1,6 +1,8 @@
-<%# locals: (transaction:) %>
+<%# locals: (transaction:, id_suffix: nil) %>
 
-<div id="<%= dom_id(transaction, "category_menu") %>" class="flex items-center gap-1">
+<% menu_id = id_suffix.present? ? "#{dom_id(transaction, "category_menu")}_#{id_suffix}" : dom_id(transaction, "category_menu") %>
+
+<div id="<%= menu_id %>" class="flex items-center gap-1">
   <% if transaction.transfer&.categorizable? || transaction.transfer.nil? %>
     <%= render "categories/menu", transaction: transaction %>
   <% else %>

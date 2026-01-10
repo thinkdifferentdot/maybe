@@ -167,7 +167,9 @@ class Transactions::AiCategorizationsControllerTest < ActionDispatch::Integratio
     post transactions_ai_categorization_url, params: { transaction_id: @entry.id }, as: :turbo_stream
 
     assert_response :success
-    assert_dom "turbo-stream[action='replace'][target='#{dom_id(@transaction, :category_menu)}']", count: 1
+    # Should replace both mobile and desktop category menus with suffixed IDs
+    assert_dom "turbo-stream[action='replace'][target='#{dom_id(@transaction, :category_menu)}_mobile']", count: 1
+    assert_dom "turbo-stream[action='replace'][target='#{dom_id(@transaction, :category_menu)}_desktop']", count: 1
   end
 
   test "replaces mobile category name on success" do

@@ -180,6 +180,11 @@ class TransactionsController < ApplicationController
     Current.family.learn_pattern_from!(transaction)
     transaction.lock_attr!(:category_id)
 
+    # Remove the enrichment record so approve buttons disappear
+    transaction.data_enrichments
+      .where(source: "ai", attribute_name: "category_id")
+      .destroy_all
+
     flash[:notice] = t(".approval_success")
 
     respond_to do |format|

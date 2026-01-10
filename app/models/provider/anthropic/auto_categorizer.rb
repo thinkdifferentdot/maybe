@@ -17,11 +17,13 @@ class Provider::Anthropic::AutoCategorizer
       user_categories: user_categories
     })
 
+    # Use tool use for structured JSON output
     response = client.messages.create(
       model: model,
-      max_tokens: 1024,
-      messages: [{role: "user", content: developer_message}],
-      system: instructions
+      max_tokens: 4096,
+      messages: [ { role: "user", content: developer_message } ],
+      system: instructions,
+      tools: [ categorization_tool ]
     )
 
     # Note: response.usage is an Anthropic::Models::Usage BaseModel with input_tokens/output_tokens attributes
@@ -55,10 +57,10 @@ class Provider::Anthropic::AutoCategorizer
 
   private
 
-  AutoCategorization = Provider::LlmConcept::AutoCategorization
+    AutoCategorization = Provider::LlmConcept::AutoCategorization
 
-  def instructions
-    <<~INSTRUCTIONS.strip_heredoc
+    def instructions
+      <<~INSTRUCTIONS.strip_heredoc
       You are an assistant to a consumer personal finance app.  You will be provided a list
       of the user's transactions and a list of the user's categories.  Your job is to auto-categorize
       each transaction.
@@ -76,10 +78,10 @@ class Provider::Anthropic::AutoCategorizer
         - Note: "hint" comes from 3rd party aggregators and typically represents a category name that
           may or may not match any of the user-supplied categories
     INSTRUCTIONS
-  end
+    end
 
-  def developer_message
-    <<~MESSAGE.strip_heredoc
+    def developer_message
+      <<~MESSAGE.strip_heredoc
       Here are the user's available categories in JSON format:
 
       ```json
@@ -91,116 +93,180 @@ class Provider::Anthropic::AutoCategorizer
       ```json
       #{transactions.to_json}
       ```
+
+      Use the categorize_transactions tool to provide your categorizations.
     MESSAGE
-  end
+    end
 
-  def json_schema
-    {
-      type: "object",
-      properties: {
-        categorizations: {
-          type: "array",
-          description: "An array of auto-categorizations for each transaction",
-          items: {
-            type: "object",
-            properties: {
-              transaction_id: {
-                type: "string",
-                description: "The internal ID of the original transaction",
-                enum: transactions.map { |t| t[:id] }
-              },
-              category_name: {
-                type: "string",
-                description: "The matched category name of the transaction, or null if no match",
-                enum: [*user_categories.map { |c| c[:name] }, "null"]
+    # Tool definition for structured output
+    def categorization_tool
+      {
+        name: "categorize_transactions",
+        description: "Categorize the provided transactions into the user's categories",
+        input_schema: {
+          type: "object",
+          properties: {
+            categorizations: {
+              type: "array",
+              description: "An array of auto-categorizations for each transaction",
+              items: {
+                type: "object",
+                properties: {
+                  transaction_id: {
+                    type: "string",
+                    description: "The internal ID of the original transaction",
+                    enum: transactions.map { |t| t[:id] }
+                  },
+                  category_name: {
+                    type: "string",
+                    description: "The matched category name of the transaction, or null if no match",
+                    enum: [ *user_categories.map { |c| c[:name] }, "null" ]
+                  }
+                },
+                required: [ "transaction_id", "category_name" ],
+                additionalProperties: false
               }
-            },
-            required: ["transaction_id", "category_name"],
-            additionalProperties: false
-          }
+            }
+          },
+          required: [ "categorizations" ],
+          additionalProperties: false
         }
-      },
-      required: ["categorizations"],
-      additionalProperties: false
-    }
-  end
-
-  def extract_categorizations(response)
-    # Note: response.content contains BaseModel objects with symbolized type attributes
-    content_block = response.content.find { |block| block.type == :text }
-    raise Provider::Anthropic::Error, "No text content found in response" if content_block.nil?
-
-    # Strip markdown code blocks if present (e.g., ```json...```)
-    text = content_block.text.gsub(/```json\n?/, "").gsub(/```\n?/, "")
-    parsed = JSON.parse(text)
-
-    # Handle both { "categorizations": [...] } and direct [...] formats
-    if parsed.is_a?(Array)
-      parsed
-    else
-      parsed.dig("categorizations") || []
+      }
     end
-  rescue JSON::ParserError => e
-    raise Provider::Anthropic::Error, "Invalid JSON in categorization response: #{e.message}"
-  end
 
-  def build_response(categorizations)
-    categorizations.map do |categorization|
-      AutoCategorization.new(
-        transaction_id: categorization.dig("transaction_id"),
-        category_name: normalize_category_name(categorization.dig("category_name")),
-      )
+    def json_schema
+      {
+        type: "object",
+        properties: {
+          categorizations: {
+            type: "array",
+            description: "An array of auto-categorizations for each transaction",
+            items: {
+              type: "object",
+              properties: {
+                transaction_id: {
+                  type: "string",
+                  description: "The internal ID of the original transaction",
+                  enum: transactions.map { |t| t[:id] }
+                },
+                category_name: {
+                  type: "string",
+                  description: "The matched category name of the transaction, or null if no match",
+                  enum: [ *user_categories.map { |c| c[:name] }, "null" ]
+                }
+              },
+              required: [ "transaction_id", "category_name" ],
+              additionalProperties: false
+            }
+          }
+        },
+        required: [ "categorizations" ],
+        additionalProperties: false
+      }
     end
-  end
 
-  def normalize_category_name(category_name)
-    return nil if category_name.nil? || category_name == "null"
+    def extract_categorizations(response)
+      # Note: response.content contains BaseModel objects with symbolized type attributes
+      # When using tools, the model returns a tool_use block with the structured data
+      tool_block = response.content.find { |block| block.type == :tool_use }
 
-    normalized = category_name.to_s.strip
-    return nil if normalized.empty? || normalized == "null"
+      if tool_block.nil?
+        # Fallback: try to find text content for backward compatibility
+        text_block = response.content.find { |block| block.type == :text }
+        if text_block.nil?
+          # Log all content blocks for debugging
+          Rails.logger.error("No tool_use or text content found. Response content types: #{response.content.map(&:type).inspect}")
+          raise Provider::Anthropic::Error, "No tool_use or text content found in response"
+        end
 
-    # Try exact match first
-    exact_match = user_categories.find { |c| c[:name] == normalized }
-    return exact_match[:name] if exact_match
+        # Strip markdown code blocks if present (e.g., ```json...```)
+        text = text_block.text.gsub(/```json\n?/, "").gsub(/```\n?/, "")
+        parsed = JSON.parse(text)
 
-    # Try case-insensitive match
-    case_insensitive_match = user_categories.find { |c| c[:name].to_s.downcase == normalized.downcase }
-    return case_insensitive_match[:name] if case_insensitive_match
-
-    normalized
-  end
-
-  def record_usage(model_name, usage_data, operation:, metadata: {})
-    return unless family && usage_data
-
-    # Note: usage_data is an Anthropic::Models::Usage BaseModel with input_tokens/output_tokens attributes
-    input_toks = usage_data.input_tokens
-    output_toks = usage_data.output_tokens
-    total_toks = input_toks + output_toks
-
-    LlmUsage.calculate_cost(
-      model: model_name,
-      prompt_tokens: input_toks,
-      completion_tokens: output_toks
-    ).yield_self do |estimated_cost|
-      if estimated_cost.nil?
-        Rails.logger.info("Recording LLM usage without cost estimate for unknown model: #{model_name}")
+        # Handle both { "categorizations": [...] } and direct [...] formats
+        if parsed.is_a?(Array)
+          return parsed
+        else
+          return parsed.dig("categorizations") || []
+        end
       end
 
-      family.llm_usages.create!(
-        provider: LlmUsage.infer_provider(model_name),
-        model: model_name,
-        operation: operation,
-        prompt_tokens: input_toks,
-        completion_tokens: output_toks,
-        total_tokens: total_toks,
-        estimated_cost: estimated_cost,
-        metadata: metadata
-      )
+      # Extract the tool input (structured data)
+      # Convert the BaseModel to hash to access the input field
+      # Note: to_h returns a hash with symbol keys, not string keys
+      tool_hash = tool_block.to_h
+      tool_input = tool_hash.dig(:input)
+      # Use symbol key since the hash has symbolized keys
+      categorizations = tool_input&.dig(:categorizations) || []
 
-      Rails.logger.info("LLM usage recorded - Operation: #{operation}, Cost: #{estimated_cost.inspect}")
+      # Convert symbol keys to string keys for consistency with the rest of the codebase
+      categorizations.map do |c|
+        # Convert hash with symbol keys to hash with string keys
+        c.transform_keys(&:to_s)
+      end
+    rescue JSON::ParserError => e
+      raise Provider::Anthropic::Error, "Invalid JSON in categorization response: #{e.message}"
+    rescue => e
+      raise Provider::Anthropic::Error, "Failed to extract categorizations: #{e.message}"
     end
-  rescue => e
-    Rails.logger.error("Failed to record LLM usage: #{e.message}")
-  end
+
+    def build_response(categorizations)
+      categorizations.map do |categorization|
+        AutoCategorization.new(
+          transaction_id: categorization.dig("transaction_id"),
+          category_name: normalize_category_name(categorization.dig("category_name")),
+        )
+      end
+    end
+
+    def normalize_category_name(category_name)
+      return nil if category_name.nil? || category_name == "null"
+
+      normalized = category_name.to_s.strip
+      return nil if normalized.empty? || normalized == "null"
+
+      # Try exact match first
+      exact_match = user_categories.find { |c| c[:name] == normalized }
+      return exact_match[:name] if exact_match
+
+      # Try case-insensitive match
+      case_insensitive_match = user_categories.find { |c| c[:name].to_s.downcase == normalized.downcase }
+      return case_insensitive_match[:name] if case_insensitive_match
+
+      normalized
+    end
+
+    def record_usage(model_name, usage_data, operation:, metadata: {})
+      return unless family && usage_data
+
+      # Note: usage_data is an Anthropic::Models::Usage BaseModel with input_tokens/output_tokens attributes
+      input_toks = usage_data.input_tokens
+      output_toks = usage_data.output_tokens
+      total_toks = input_toks + output_toks
+
+      LlmUsage.calculate_cost(
+        model: model_name,
+        prompt_tokens: input_toks,
+        completion_tokens: output_toks
+      ).yield_self do |estimated_cost|
+        if estimated_cost.nil?
+          Rails.logger.info("Recording LLM usage without cost estimate for unknown model: #{model_name}")
+        end
+
+        family.llm_usages.create!(
+          provider: LlmUsage.infer_provider(model_name),
+          model: model_name,
+          operation: operation,
+          prompt_tokens: input_toks,
+          completion_tokens: output_toks,
+          total_tokens: total_toks,
+          estimated_cost: estimated_cost,
+          metadata: metadata
+        )
+
+        Rails.logger.info("LLM usage recorded - Operation: #{operation}, Cost: #{estimated_cost.inspect}")
+      end
+    rescue => e
+      Rails.logger.error("Failed to record LLM usage: #{e.message}")
+    end
 end

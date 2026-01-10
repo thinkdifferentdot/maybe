@@ -12,10 +12,10 @@
 
 ## Prerequisites
 
-- [ ] Development server running (`bin/dev`)
-- [ ] Logged in as admin user (required for Settings page)
-- [ ] Test data available (uncategorized transactions, or CSV file to import)
-- [ ] AI provider configured in Settings (OpenAI or Anthropic with valid API key)
+- [X] Development server running (`bin/dev`)
+- [X] Logged in as admin user (required for Settings page)
+- [X] Test data available (uncategorized transactions, or CSV file to import)
+- [X] AI provider configured in Settings (OpenAI or Anthropic with valid API key)
 
 ---
 
@@ -25,12 +25,14 @@
 
 ### 1.1 Settings Page Access
 
-- [ ] Navigate to Settings → Auto Categorization
-- [ ] Verify page loads without errors
+- [X] Navigate to Settings → Auto Categorization
+- [X] Verify page loads without errors
 - [ ] Verify all three toggle switches are visible:
   - [ ] "Auto-categorize on CSV import"
   - [ ] "Auto-categorize on sync"
   - [ ] "Auto-categorize on UI action"
+// Toggles are visible, but there's no labels. They are just arranged in a row.
+
 
 ### 1.2 Toggle Functionality
 
@@ -112,8 +114,8 @@
 
 ### 3.1 Button Visibility
 
-- [ ] Navigate to Transactions page
-- [ ] Verify each transaction row has an "AI" button (sparkle icon) in the Category column
+- [X] Navigate to Transactions page
+- [X] Verify each transaction row has an "AI" button (sparkle icon) in the Category column
 
 ### 3.2 Categorize Uncategorized Transaction
 

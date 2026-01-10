@@ -1,2 +1,4 @@
-<%= turbo_stream.remove @entry %>
+<%= turbo_stream.replace @entry.entryable do %>
+  <%= render "transactions/transaction", entry: @entry, balance_trend: nil, view_ctx: "global" %>
+<% end %>
 <%= turbo_stream.append "notification-tray", partial: "shared/notifications/notice", locals: { message: t(".approval_success") } %>
