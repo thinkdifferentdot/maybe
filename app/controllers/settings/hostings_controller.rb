@@ -21,6 +21,9 @@ class Settings::HostingsController < ApplicationController
     # Show Yahoo Finance settings if either provider is set to yahoo_finance
     @show_yahoo_finance_settings = exchange_rate_provider == "yahoo_finance" || securities_provider == "yahoo_finance"
 
+    # Get current LLM provider for initial visibility state
+    @llm_provider = ENV["LLM_PROVIDER"].presence || Setting.llm_provider
+
     # Only fetch provider data if we're showing the section
     if @show_twelve_data_settings
       twelve_data_provider = Provider::Registry.get_provider(:twelve_data)
