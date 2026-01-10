@@ -182,6 +182,21 @@ Plans:
 **Details:**
 To be added during planning
 
+### Phase 9.1: Fix get_transactions function tool (INSERTED)
+
+**Goal**: Fix "unknown attribute 'page' for Transaction::Search" error in AI chat function calling
+**Depends on**: Phase 9
+**Research**: Unlikely (bug fixing)
+**Plans**: 1 plan
+
+Plans:
+- [x] 9.1-01: Handle symbol-keyed params from Anthropic in GetTransactions#call
+
+**Status**: Complete (2026-01-10) - Fixed params.except to handle both string and symbol keys for order/page, ensuring compatibility with both OpenAI and Anthropic providers.
+
+**Details:**
+The AI chat was failing when calling the `get_transactions` function because Anthropic Claude passes `page` and `order` with symbol keys (not string keys like OpenAI). Fixed by updating `params.except("order", "page")` to `params.except("order", "page", :order, :page)` and using fallback pattern for params access.
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -195,6 +210,7 @@ To be added during planning
 | 7. Langfuse Integration | v1.0 | 1/1 | Complete | 2026-01-10 |
 | 8. Validation & Testing | v1.0 | 2/3 | In progress | 2026-01-10 |
 | 9. Resolve Anthropic Issues | v1.0 | 0/0 | Not started | - |
+| 9.1. Fix get_transactions function tool | v1.0 | 1/1 | Complete | 2026-01-10 | (INSERTED)
 | 10. Settings & Config | v1.1 | 0/? | Not started | - |
 | 11. Import Triggers | v1.1 | 0/? | Not started | - |
 | 12. Transaction UI Actions | v1.1 | 0/? | Not started | - |

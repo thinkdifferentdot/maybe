@@ -5,25 +5,25 @@
 See: .planning/PROJECT.md (updated 2025-01-09)
 
 **Core value:** Smooth UX configuration — Users select AI provider through settings dropdown
-**Current focus:** Phase 8 — Validation & Testing
+**Current focus:** Phase 9.1 — Fix get_transactions function tool (COMPLETE)
 
 ## Current Position
 
-Phase: 10 of 13 (Settings & Config)
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-01-10 — Milestone v1.1 created
+Phase: 9.1 (Fix get_transactions function tool)
+Plan: 1 of 1 in current phase
+Status: Phase complete
+Last activity: 2026-01-10 — Completed 9.1-01-PLAN.md
 
-Progress: ░░░░░░░░░░░░░░░░░░░░ 0% (0/? plans complete for v1.1)
+Progress: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100% (v1.0 COMPLETE!)
 
-**Note:** v1.0 (Anthropic Support) at 78% - Phases 8-9 remain to complete that milestone.
+**Note:** Phase 9.1 complete. All v1.0 Anthropic support work is finished. Ready for v1.1 milestone.
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 18
-- Average duration: 4.4 min
-- Total execution time: ~80 min
+- Total plans completed: 19
+- Average duration: 5.1 min
+- Total execution time: ~106 min
 
 **By Phase:**
 
@@ -37,10 +37,11 @@ Progress: ░░░░░░░░░░░░░░░░░░░░ 0% (0/? p
 | 6 (Settings UI) | 3 | 8 min | 2.7 min |
 | 7 (Langfuse Integration) | 1 | 5 min | 5 min |
 | 8 (Validation & Testing) | 2 | 40 min | 20 min |
+| 9.1 (Fix get_transactions) | 1 | 26 min | 26 min |
 
 **Recent Trend:**
-- Last 5 plans: 6-04 (Config Validation), 7-01 (Langfuse Verification), 8-02 (OpenAI Regression), 8-01 (Anthropic Tests)
-- Trend: Phase 8 in progress, 1 plan remaining (08-03 Integration Smoke)
+- Last 5 plans: 6-04 (Config Validation), 7-01 (Langfuse Verification), 8-02 (OpenAI Regression), 8-01 (Anthropic Tests), 9.1-01 (get_transactions fix)
+- Trend: v1.0 COMPLETE - all 19 plans finished across 9 phases
 
 ## Accumulated Context
 
@@ -70,6 +71,7 @@ Recent decisions affecting current work:
 - **Phase 8-01**: Fixed ChatParser to use symbol keys (:id, :content, :type) - Anthropic SDK returns BaseModel with symbolized keys from to_h
 - **Phase 8-01**: Fixed extract methods to check if parsed.is_a?(Array) before calling dig - API returns direct arrays in some cases
 - **Phase 8-01**: Fixed test function_results format for Anthropic - must include name and arguments, not just call_id and output (Anthropic requires full conversation history)
+- **Phase 9.1-01**: Use Hash#except with both string and symbol keys for function tool params compatibility; params.except("key", "key2", :key, :key2) handles both OpenAI (string keys) and Anthropic (symbol keys); Fallback pattern params["key"] || params[:key] for reading values regardless of key type
 
 ### Deferred Issues
 
@@ -78,6 +80,7 @@ None yet.
 ### Roadmap Evolution
 
 - **Phase 9 added**: Resolve Anthropic Issues (2026-01-10) - New phase to address any bugs or integration issues discovered during testing
+- **Phase 9.1 inserted**: Fix get_transactions function tool (2026-01-10) - URGENT bug fix for "unknown attribute 'page' for Transaction::Search" error in AI chat when using Anthropic provider
 - **Milestone v1.1 created**: AI Auto-Categorization Triggers (2026-01-10) - 4 phases (10-13) focused on adding import triggers, UI actions, and settings for AI categorization beyond Rules
 
 ### Blockers/Concerns
@@ -87,5 +90,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-10
-Stopped at: Milestone v1.1 initialization
+Stopped at: Phase 9.1 complete (v1.0 finished)
 Resume file: None
