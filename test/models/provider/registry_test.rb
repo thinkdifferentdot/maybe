@@ -2,9 +2,10 @@ require "test_helper"
 
 class Provider::RegistryTest < ActiveSupport::TestCase
   test "providers filters out nil values when provider is not configured" do
-    # Ensure OpenAI is not configured
-    ClimateControl.modify("OPENAI_ACCESS_TOKEN" => nil) do
+    # Ensure OpenAI and Anthropic are not configured
+    ClimateControl.modify("OPENAI_ACCESS_TOKEN" => nil, "ANTHROPIC_API_KEY" => nil) do
       Setting.stubs(:openai_access_token).returns(nil)
+      Setting.stubs(:anthropic_access_token).returns(nil)
 
       registry = Provider::Registry.for_concept(:llm)
 
@@ -17,6 +18,7 @@ class Provider::RegistryTest < ActiveSupport::TestCase
     # Mock a configured OpenAI provider
     mock_provider = mock("openai_provider")
     Provider::Registry.stubs(:openai).returns(mock_provider)
+    Provider::Registry.stubs(:anthropic).returns(nil)
 
     registry = Provider::Registry.for_concept(:llm)
 
@@ -62,6 +64,68 @@ class Provider::RegistryTest < ActiveSupport::TestCase
       # Should successfully create provider using Setting value
       assert_not_nil provider
       assert_instance_of Provider::Openai, provider
+    end
+  end
+
+  # LLM provider selection tests
+  test "llm concept includes both openai and anthropic in providers" do
+    # Test that both providers are available through the registry
+    ClimateControl.modify("OPENAI_ACCESS_TOKEN" => nil, "ANTHROPIC_API_KEY" => nil) do
+      Setting.stubs(:openai_access_token).returns("test-openai-key")
+      Setting.stubs(:anthropic_access_token).returns("test-anthropic-key")
+      Setting.stubs(:anthropic_model).returns("claude-sonnet-4-5-20250929")
+
+      registry = Provider::Registry.for_concept(:llm)
+      providers = registry.providers
+
+      # Both providers should be returned when configured
+      assert_equal 2, providers.length
+      provider_classes = providers.map { |p| p.class }
+      assert_includes provider_classes, Provider::Openai
+      assert_includes provider_classes, Provider::Anthropic
+    end
+  end
+
+  test "get_provider returns Provider::Anthropic when configured" do
+    ClimateControl.modify("ANTHROPIC_API_KEY" => nil) do
+      Setting.stubs(:anthropic_access_token).returns("test-anthropic-key")
+      Setting.stubs(:anthropic_model).returns("claude-sonnet-4-5-20250929")
+
+      provider = Provider::Registry.get_provider(:anthropic)
+
+      assert_not_nil provider
+      assert_instance_of Provider::Anthropic, provider
+    end
+  end
+
+  test "get_provider returns nil when anthropic not configured" do
+    ClimateControl.modify("ANTHROPIC_API_KEY" => nil) do
+      Setting.stubs(:anthropic_access_token).returns(nil)
+
+      provider = Provider::Registry.get_provider(:anthropic)
+
+      assert_nil provider
+    end
+  end
+
+  test "get_provider returns Provider::Openai when configured" do
+    ClimateControl.modify("OPENAI_ACCESS_TOKEN" => nil) do
+      Setting.stubs(:openai_access_token).returns("test-openai-key")
+
+      provider = Provider::Registry.get_provider(:openai)
+
+      assert_not_nil provider
+      assert_instance_of Provider::Openai, provider
+    end
+  end
+
+  test "get_provider returns nil when openai not configured" do
+    ClimateControl.modify("OPENAI_ACCESS_TOKEN" => nil) do
+      Setting.stubs(:openai_access_token).returns(nil)
+
+      provider = Provider::Registry.get_provider(:openai)
+
+      assert_nil provider
     end
   end
 end
