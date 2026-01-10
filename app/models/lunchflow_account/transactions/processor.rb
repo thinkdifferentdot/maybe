@@ -1,8 +1,9 @@
 class LunchflowAccount::Transactions::Processor
-  attr_reader :lunchflow_account
+  attr_reader :lunchflow_account, :imported_transaction_ids
 
   def initialize(lunchflow_account)
     @lunchflow_account = lunchflow_account
+    @imported_transaction_ids = []
   end
 
   def process
@@ -33,6 +34,8 @@ class LunchflowAccount::Transactions::Processor
           errors << { index: index, transaction_id: transaction_data[:id], error: "No linked account" }
         else
           imported_count += 1
+          # Track imported transaction ID for AI categorization
+          @imported_transaction_ids << result.entryable.id if result.entryable.is_a?(Transaction)
         end
       rescue ArgumentError => e
         # Validation error - log and continue
