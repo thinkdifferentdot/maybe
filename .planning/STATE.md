@@ -95,6 +95,8 @@ Overall v1.1 Progress: ▓▓▓▓▓▓▓░░░░░░░░░░░░
 - Rails 7.2 ActiveJob::TestHelper uses `assert_enqueued_jobs` not `.jobs.count`
 - Confidence stored in transaction.extra metadata (no new table)
 - Default confidence 1.0 until providers return actual scores
+- Bulk review workflow: Approve creates learned pattern, Reject removes category
+- 7-day window for "recent AI" filter (configurable via scope parameter)
 
 ### Deferred Issues
 
@@ -112,7 +114,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-10
-Phase: 12-02 complete (Individual AI Categorize Button)
+Phase: 11-04 complete (Bulk Review Workflow)
 Milestone: v1.1
-Next: Execute 12-03-PLAN.md (Bulk AI categorize workflow)
+Next: Phase 12-03 (Bulk AI categorize workflow) or continue other Phase 12 plans
 Resume file: None

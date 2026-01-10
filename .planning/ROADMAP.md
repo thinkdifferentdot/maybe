@@ -50,11 +50,13 @@ See [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full details.
 **Goal**: Add AI categorization to CSV import and general sync jobs (Lunch Flow)
 **Depends on**: None (parallel with 10, 12)
 **Research**: Complete
-**Plans**: 3 plans
+**Plans**: 4 plans
 - [x] 11-01: Add LearnedPattern model and matcher for AI categorization (2026-01-10)
 - [x] 11-02: Add AI categorization trigger to CSV import (2026-01-10)
 - [x] 11-03: Add AI categorization trigger to Lunchflow sync (2026-01-10)
-- [ ] 11-04: Bulk review workflow (TBD)
+- [x] 11-04: Bulk review workflow (2026-01-10)
+
+**Status**: Complete (4/4 plans complete - 2026-01-10)
 
 #### Phase 12: Transaction UI Actions
 
@@ -227,6 +229,6 @@ The AI chat was failing when calling the `get_transactions` function because Ant
 | 9. Resolve Anthropic Issues | v1.0 | 1/1 | Complete | 2026-01-10 |
 | 9.1. Fix get_transactions function tool | v1.0 | 1/1 | Complete | 2026-01-10 | (INSERTED)
 | 10. Settings & Config | v1.1 | 1/1 | Complete | 2026-01-10 |
-| 11. Import Triggers | v1.1 | 3/4 | In progress | 2026-01-10 |
+| 11. Import Triggers | v1.1 | 4/4 | Complete | 2026-01-10 |
 | 12. Transaction UI Actions | v1.1 | 2/3 | In progress | 2026-01-10 |
 | 13. Testing & Docs | v1.1 | 0/? | Not started | - |
