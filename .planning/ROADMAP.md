@@ -55,7 +55,7 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 03-01: Implement basic chat_response without tools
+- [x] 03-01: Implement basic chat_response without tools
 - [ ] 03-02: Add tool/function calling support for chat
 - [ ] 03-03: Handle function results and multi-turn conversations
 - [ ] 03-04: Add streaming support (if feasible, otherwise defer)
@@ -122,7 +122,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete | 2026-01-09 |
 | 2. Core Operations | 3/3 | Complete | 2026-01-10 |
-| 3. Chat Support | 0/4 | Not started | - |
+| 3. Chat Support | 1/4 | In progress | 2025-01-09 |
 | 4. Registry Integration | 0/3 | Not started | - |
 | 5. Settings Model | 0/3 | Not started | - |
 | 6. Settings UI | 0/4 | Not started | - |
