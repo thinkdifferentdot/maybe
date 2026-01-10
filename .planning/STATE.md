@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2025-01-09)
 ## Current Position
 
 Phase: 2 of 8 (Core Operations)
-Plan: 2 of 3 in current phase
-Status: In progress
-Last activity: 2026-01-09 — Completed 02-02-PLAN.md (AutoCategorizer with Structured Outputs)
+Plan: 3 of 3 in current phase
+Status: Phase complete
+Last activity: 2026-01-10 — Completed 02-03-PLAN.md (AutoMerchantDetector)
 
-Progress: █████████░░░░░░░░░░ 20%
+Progress: ███████████░░░░░░░░ 27%
 
 ## Performance Metrics
 
@@ -27,12 +27,12 @@ Progress: █████████░░░░░░░░░░ 20%
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1 (Foundation) | 3 | 3 | 3 min |
-| 2 (Core Operations) | 2 | 3 | 3 min |
+| 1 (Foundation) | 3 | 9 min | 3 min |
+| 2 (Core Operations) | 3 | 14 min | 4.7 min |
 
 **Recent Trend:**
-- Last 5 plans: 1-01 (Add Anthropic Gem), 1-02 (Create Skeleton), 1-03 (Client Init), 2-01 (Foundation), 2-02 (AutoCategorizer)
-- Trend: Core Operations progressing smoothly
+- Last 5 plans: 1-03 (Client Init), 2-01 (Foundation), 2-02 (AutoCategorizer), 2-03 (AutoMerchantDetector)
+- Trend: Phase 2 complete, ready for Chat Support
 
 ## Accumulated Context
 
@@ -45,6 +45,7 @@ Recent decisions affecting current work:
 - **Phase 1-02**: DEFAULT_MODEL set to "claude-sonnet-4-5-20250929"; Model prefix matching uses start_with? for flexibility
 - **Phase 2-01**: Client initialization pattern with private attr_reader; effective_model class method with ANTHROPIC_MODEL ENV fallback
 - **Phase 2-02**: Used structured outputs beta (2025-11-13) for JSON schema compliance; Content extraction from response.content array (Anthropic-specific); Reused OpenAI's categorization prompts
+- **Phase 2-03**: AutoMerchantDetector with Messages API; Merchant detection returns business_name and business_url (both nullable); Comprehensive Anthropic error handling (APIConnectionError, RateLimitError, etc.)
 
 ### Deferred Issues
 
@@ -56,6 +57,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-09
-Stopped at: Completed 02-02-PLAN.md (AutoCategorizer with Structured Outputs)
+Last session: 2026-01-10
+Stopped at: Completed 02-03-PLAN.md (AutoMerchantDetector)
 Resume file: None
