@@ -11,7 +11,7 @@ None (Rails backend work following established patterns in the Sure codebase)
 ## Milestones
 
 - ✅ **[v1.0 Anthropic Support](milestones/v1.0-ROADMAP.md)** - Phases 1-9 + 9.1 (shipped 2026-01-10)
-- 🚧 **v1.1 AI Auto-Categorization Triggers** - Phases 10-13 (in progress, 3% complete)
+- 🚧 **v1.1 AI Auto-Categorization Triggers** - Phases 10-13 (in progress, 19% complete)
 
 ## Phases
 
@@ -61,7 +61,12 @@ See [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full details.
 **Goal**: Add individual and bulk "AI categorize" buttons to transaction UI
 **Depends on**: None (parallel with 10, 11)
 **Research**: Unlikely (existing Hotwire/UI patterns)
-**Plans**: TBD
+**Plans**: 3 plans
+- [x] 12-01: Backend Provider Selection & Confidence (2026-01-10)
+- [ ] 12-02: Individual AI categorize button in UI (TBD)
+- [ ] 12-03: Bulk AI categorize workflow (TBD)
+
+**Status**: In Progress (1/3 plans complete - 2026-01-10)
 
 #### Phase 13: Testing & Docs
 
@@ -223,5 +228,5 @@ The AI chat was failing when calling the `get_transactions` function because Ant
 | 9.1. Fix get_transactions function tool | v1.0 | 1/1 | Complete | 2026-01-10 | (INSERTED)
 | 10. Settings & Config | v1.1 | 1/1 | Complete | 2026-01-10 |
 | 11. Import Triggers | v1.1 | 3/4 | In progress | 2026-01-10 |
-| 12. Transaction UI Actions | v1.1 | 0/? | Not started | - |
+| 12. Transaction UI Actions | v1.1 | 1/3 | In progress | 2026-01-10 |
 | 13. Testing & Docs | v1.1 | 0/? | Not started | - |

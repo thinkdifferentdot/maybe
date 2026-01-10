@@ -9,15 +9,15 @@ See: .planning/PROJECT.md (updated 2026-01-10)
 
 ## Current Position
 
-Phase: v1.1 AI Auto-Categorization Triggers — Phase 11 (Import Triggers)
-Plan: 11-03 (Lunchflow Sync AI Categorization) — COMPLETE
-Status: 3/4 plans complete in Phase 11 (11-01, 11-02, 11-03)
-Last activity: 2026-01-10 — Lunchflow sync AI categorization implemented
+Phase: v1.1 AI Auto-Categorization Triggers — Phase 12 (Transaction UI Actions)
+Plan: 12-01 (Backend Provider Selection & Confidence) — COMPLETE
+Status: 1/3 plans complete in Phase 12 (12-01)
+Last activity: 2026-01-10 — Dynamic provider selection and confidence tracking added
 
-Progress for Phase 11: ▓▓▓▓▓▓▓▓▓░░░░░░░░░░░ 75% (3 of 4 plans complete)
-Overall v1.1 Progress: ▓▓▓░░░░░░░░░░░░░░░ 15% (4 of ~27 plans estimated)
+Progress for Phase 12: ▓▓▓░░░░░░░░░░░░░░░░ 33% (1 of 3 plans complete)
+Overall v1.1 Progress: ▓▓▓▓░░░░░░░░░░░░░░ 19% (5 of ~27 plans estimated)
 
-**Summary (11-03):** Added AI categorization trigger to Lunchflow sync jobs. The PostProcessor pattern runs after sync completes, checking the ai_categorize_on_sync setting and triggering async AI categorization for imported uncategorized transactions. Transaction IDs are tracked in memory during the sync.
+**Summary (12-01):** AutoCategorizer now supports dynamic provider selection based on Setting.llm_provider (openai/anthropic) instead of hardcoded OpenAI. Added AutoCategorizer::Result struct with confidence score (default 1.0) and stores confidence in transaction.extra["ai_categorization_confidence"]. Tests verify provider selection works for both providers.
 
 ## Next Milestone Goals
 
@@ -30,9 +30,9 @@ Overall v1.1 Progress: ▓▓▓░░░░░░░░░░░░░░░ 15
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 30 (26 v1.0 + 4 v1.1)
+- Total plans completed: 31 (26 v1.0 + 5 v1.1)
 - Average duration: ~6 min
-- Total execution time: ~185 min
+- Total execution time: ~190 min
 
 **By Phase:**
 
@@ -82,12 +82,19 @@ Overall v1.1 Progress: ▓▓▓░░░░░░░░░░░░░░░ 15
 - 11-03: AI categorization trigger in Lunchflow sync jobs
 - 11-04: Bulk review workflow (PENDING)
 
+**Phase 12 - Transaction UI Actions (IN PROGRESS - 1/3 complete):**
+- 12-01: Backend Provider Selection & Confidence
+- 12-02: Individual AI categorize button (PENDING)
+- 12-03: Bulk AI categorize workflow (PENDING)
+
 **Decisions:**
 - Use PostProcessor pattern for batch AI categorization after sync
 - Track imported transaction IDs in memory (no DB schema changes)
 - Async job to avoid blocking sync operations
 - Only categorize uncategorized, enrichable transactions
 - Rails 7.2 ActiveJob::TestHelper uses `assert_enqueued_jobs` not `.jobs.count`
+- Confidence stored in transaction.extra metadata (no new table)
+- Default confidence 1.0 until providers return actual scores
 
 ### Deferred Issues
 
@@ -105,7 +112,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-10
-Phase: 11-03 complete (Lunchflow Sync AI Categorization)
+Phase: 12-01 complete (Backend Provider Selection & Confidence)
 Milestone: v1.1
-Next: Create 11-04-PLAN.md (Bulk Review Workflow) or continue to Phase 12 (Transaction UI Actions)
+Next: Execute 12-02-PLAN.md (Individual AI categorize button in UI)
 Resume file: None
