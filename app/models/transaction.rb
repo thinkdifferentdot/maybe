@@ -42,6 +42,12 @@ class Transaction < ApplicationRecord
     false
   end
 
+  # Returns the merchant name for pattern matching.
+  # Prefers the associated merchant name, falls back to entry name.
+  def merchant_name
+    merchant&.name || entry&.name
+  end
+
   private
     def clear_merchant_unlinked_association
       return unless merchant_id.present? && merchant.is_a?(ProviderMerchant)

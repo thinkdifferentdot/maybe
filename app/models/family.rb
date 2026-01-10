@@ -36,6 +36,7 @@ class Family < ApplicationRecord
 
   has_many :llm_usages, dependent: :destroy
   has_many :recurring_transactions, dependent: :destroy
+  has_many :learned_patterns, dependent: :destroy
 
   validates :locale, inclusion: { in: I18n.available_locales.map(&:to_s) }
   validates :date_format, inclusion: { in: DATE_FORMATS.map(&:last) }
@@ -68,6 +69,25 @@ class Family < ApplicationRecord
 
   def auto_detect_transaction_merchants(transaction_ids)
     AutoMerchantDetector.new(self, transaction_ids: transaction_ids).auto_detect
+  end
+
+  # Finds a learned pattern for the given transaction based on merchant name matching.
+  # Returns the matching LearnedPattern or nil if no match is found.
+  def learned_pattern_for(transaction)
+    LearnedPatternMatcher.new(self).find_matching_pattern(transaction)
+  end
+
+  # Creates a learned pattern from the transaction's merchant name and category.
+  # Uses find_or_create_by to avoid duplicate patterns.
+  def learn_pattern_from!(transaction)
+    return unless transaction.merchant_name.present? && transaction.category_id.present?
+
+    learned_patterns.find_or_create_by(
+      normalized_merchant: LearnedPatternMatcher.new(self).send(:normalize, transaction.merchant_name)
+    ) do |pattern|
+      pattern.merchant_name = transaction.merchant_name
+      pattern.category = transaction.category
+    end
   end
 
   def balance_sheet

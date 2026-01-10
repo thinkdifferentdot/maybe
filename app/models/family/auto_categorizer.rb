@@ -23,19 +23,31 @@ class Family::AutoCategorizer
       return 0
     end
 
+    # First, apply any learned patterns (bypasses AI)
+    modified_count = apply_learned_patterns(scope)
+
+    # Reload scope to get remaining uncategorized transactions
+    remaining_scope = scope.where(category_id: nil)
+
+    if remaining_scope.none?
+      Rails.logger.info("All transactions categorized via learned patterns for family #{family.id}")
+      return modified_count
+    end
+
+    Rails.logger.info("Running AI categorization for #{remaining_scope.count} remaining transactions for family #{family.id}")
+
     result = llm_provider.auto_categorize(
-      transactions: transactions_input,
+      transactions: transactions_input(remaining_scope),
       user_categories: categories_input,
       family: family
     )
 
     unless result.success?
       Rails.logger.error("Failed to auto-categorize transactions for family #{family.id}: #{result.error.message}")
-      return 0
+      return modified_count
     end
 
-    modified_count = 0
-    scope.each do |transaction|
+    remaining_scope.each do |transaction|
       auto_categorization = result.data.find { |c| c.transaction_id == transaction.id }
 
       category_id = categories_input.find { |c| c[:name] == auto_categorization&.category_name }&.dig(:id)
@@ -58,6 +70,28 @@ class Family::AutoCategorizer
   private
     attr_reader :family, :transaction_ids
 
+    # Apply learned patterns before AI categorization
+    # Returns count of transactions modified
+    def apply_learned_patterns(transactions_scope)
+      modified_count = 0
+
+      transactions_scope.each do |transaction|
+        pattern = family.learned_pattern_for(transaction)
+        next unless pattern
+
+        was_modified = transaction.enrich_attribute(
+          :category_id,
+          pattern.category_id,
+          source: "learned_pattern"
+        )
+        transaction.lock_attr!(:category_id)
+        modified_count += 1 if was_modified
+      end
+
+      Rails.logger.info("Applied #{modified_count} learned patterns for family #{family.id}") if modified_count > 0
+      modified_count
+    end
+
     # For now, OpenAI only, but this should work with any LLM concept provider
     def llm_provider
       Provider::Registry.get_provider(:openai)
@@ -75,8 +109,8 @@ class Family::AutoCategorizer
       end
     end
 
-    def transactions_input
-      scope.map do |transaction|
+    def transactions_input(scope_to_use = scope)
+      scope_to_use.map do |transaction|
         {
           id: transaction.id,
           amount: transaction.entry.amount.abs,

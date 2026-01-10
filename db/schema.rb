@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_01_09_144012) do
+ActiveRecord::Schema[7.2].define(version: 2026_01_10_103739) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -620,6 +620,18 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_09_144012) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["token"], name: "index_invite_codes_on_token", unique: true
+  end
+
+  create_table "learned_patterns", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "family_id", null: false
+    t.uuid "category_id", null: false
+    t.string "merchant_name", null: false
+    t.string "normalized_merchant", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category_id"], name: "index_learned_patterns_on_category_id"
+    t.index ["family_id", "normalized_merchant"], name: "index_learned_patterns_on_family_id_and_normalized_merchant", unique: true
+    t.index ["family_id"], name: "index_learned_patterns_on_family_id"
   end
 
   create_table "llm_usages", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -1248,6 +1260,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_09_144012) do
   add_foreign_key "imports", "families"
   add_foreign_key "invitations", "families"
   add_foreign_key "invitations", "users", column: "inviter_id"
+  add_foreign_key "learned_patterns", "categories"
+  add_foreign_key "learned_patterns", "families"
   add_foreign_key "llm_usages", "families"
   add_foreign_key "lunchflow_accounts", "lunchflow_items"
   add_foreign_key "lunchflow_items", "families"
