@@ -86,6 +86,22 @@ class Settings::HostingsController < ApplicationController
       Setting.openai_json_mode = hosting_params[:openai_json_mode].presence
     end
 
+    if hosting_params.key?(:anthropic_access_token)
+      token_param = hosting_params[:anthropic_access_token].to_s.strip
+      # Ignore blanks and redaction placeholders to prevent accidental overwrite
+      unless token_param.blank? || token_param == "********"
+        Setting.anthropic_access_token = token_param
+      end
+    end
+
+    if hosting_params.key?(:anthropic_model)
+      Setting.anthropic_model = hosting_params[:anthropic_model]
+    end
+
+    if hosting_params.key?(:llm_provider)
+      Setting.llm_provider = hosting_params[:llm_provider]
+    end
+
     redirect_to settings_hosting_path, notice: t(".success")
   rescue Setting::ValidationError => error
     flash.now[:alert] = error.message
@@ -99,7 +115,7 @@ class Settings::HostingsController < ApplicationController
 
   private
     def hosting_params
-      params.require(:setting).permit(:onboarding_state, :require_email_confirmation, :brand_fetch_client_id, :twelve_data_api_key, :openai_access_token, :openai_uri_base, :openai_model, :openai_json_mode, :exchange_rate_provider, :securities_provider)
+      params.require(:setting).permit(:onboarding_state, :require_email_confirmation, :brand_fetch_client_id, :twelve_data_api_key, :openai_access_token, :openai_uri_base, :openai_model, :openai_json_mode, :exchange_rate_provider, :securities_provider, :anthropic_access_token, :anthropic_model, :llm_provider)
     end
 
     def ensure_admin

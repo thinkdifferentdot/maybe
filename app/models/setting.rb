@@ -136,4 +136,11 @@ class Setting < RailsSettings::Base
       raise ValidationError, "OpenAI model is required when custom URI base is configured"
     end
   end
+
+  # Validates LLM provider is one of the supported providers
+  def self.validate_llm_provider!(provider)
+    return if provider.blank? || LLM_PROVIDERS.include?(provider)
+
+    raise ValidationError, "LLM provider must be one of: #{LLM_PROVIDERS.join(', ')}"
+  end
 end
