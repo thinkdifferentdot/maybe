@@ -105,7 +105,9 @@ class Provider::Anthropic < Provider
   )
     with_provider_response do
       # Plan 03-03: function_results and multi-turn conversations are now supported
-    # Plan 03-04: streamer support is pending
+    # Plan 03-04: streaming support deferred to future enhancement
+    # TODO: Implement streaming using anthropic.messages.stream with stream.text.each helper
+    # Follow the OpenAI streaming pattern in Provider::Openai#native_chat_response
 
       chat_config = ChatConfig.new(
         functions: functions,
@@ -135,14 +137,21 @@ class Provider::Anthropic < Provider
 
         raw_response = client.messages.create(parameters)
 
-        parsed = ChatParser.new(raw_response).parsed
+        # Convert Anthropic::Message (BaseModel) to hash for parsing
+        # The BaseModel doesn't support dig(), but to_h returns the underlying hash
+        response_hash = raw_response.to_h
+
+        parsed = ChatParser.new(response_hash).parsed
 
         # Map Anthropic usage field names to LlmConcept format
         # Anthropic uses input_tokens/output_tokens, we need prompt_tokens/completion_tokens
+        # Note: raw_response.usage is an Anthropic::Models::Usage object (BaseModel), not a hash
+        # We access its attributes directly instead of using dig
+        raw_usage = raw_response.usage
         usage = {
-          "prompt_tokens" => raw_response.dig("usage", "input_tokens"),
-          "completion_tokens" => raw_response.dig("usage", "output_tokens"),
-          "total_tokens" => raw_response.dig("usage", "input_tokens").to_i + raw_response.dig("usage", "output_tokens").to_i
+          "prompt_tokens" => raw_usage&.input_tokens,
+          "completion_tokens" => raw_usage&.output_tokens,
+          "total_tokens" => (raw_usage&.input_tokens || 0) + (raw_usage&.output_tokens || 0)
         }
 
         output_text = parsed.messages.map(&:output_text).join("\n")

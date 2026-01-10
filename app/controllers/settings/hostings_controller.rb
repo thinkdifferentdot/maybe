@@ -104,6 +104,7 @@ class Settings::HostingsController < ApplicationController
     end
 
     if hosting_params.key?(:llm_provider)
+      Setting.validate_llm_provider!(hosting_params[:llm_provider])
       Setting.llm_provider = hosting_params[:llm_provider]
     end
 

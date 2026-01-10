@@ -41,6 +41,8 @@
                       data: { "auto-submit-form-target": "auto" } %>
 
   <p class="text-xs text-secondary mt-1"><%= t(".model_help") %></p>
+
+  <%= form.submit t(".save_button") unless ENV["ANTHROPIC_API_KEY"].present? && ENV["ANTHROPIC_MODEL"].present? %>
   <% end %>
   </div>
 </div>

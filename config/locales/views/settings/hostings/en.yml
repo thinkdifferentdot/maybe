@@ -63,6 +63,7 @@ en:
         json_mode_json_object: JSON Object
         json_mode_help: "Strict mode works best with thinking models (qwen-thinking, deepseek-reasoner). None mode works best with standard models (llama, mistral, gpt-oss)."
         title: OpenAI
+        save_button: Save Settings
       anthropic_settings:
         title: Anthropic
         description: Enter your Anthropic API key and model for Claude support

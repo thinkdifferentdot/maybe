@@ -64,6 +64,8 @@
                   { disabled: ENV["LLM_JSON_MODE"].present?,
                     data: { "auto-submit-form-target": "auto" } } %>
   <p class="text-xs text-secondary mt-1"><%= t(".json_mode_help") %></p>
+
+  <%= form.submit t(".save_button") %>
   <% end %>
   </div>
 </div>

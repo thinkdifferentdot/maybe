@@ -148,4 +148,60 @@ class Settings::HostingsControllerTest < ActionDispatch::IntegrationTest
       assert_equal I18n.t("settings.hostings.not_authorized"), flash[:alert]
     end
   end
+
+  test "can update anthropic_access_token" do
+    with_self_hosting do
+      patch settings_hosting_url, params: { setting: { anthropic_access_token: "test-token" } }
+
+      assert_redirected_to settings_hosting_url
+      assert_equal "test-token", Setting.anthropic_access_token
+    end
+  end
+
+  test "can update anthropic_model" do
+    with_self_hosting do
+      patch settings_hosting_url, params: { setting: { anthropic_model: "claude-opus-4-5" } }
+
+      assert_redirected_to settings_hosting_url
+      assert_equal "claude-opus-4-5", Setting.anthropic_model
+    end
+  end
+
+  test "can update llm_provider" do
+    with_self_hosting do
+      patch settings_hosting_url, params: { setting: { llm_provider: "anthropic" } }
+
+      assert_redirected_to settings_hosting_url
+      assert_equal "anthropic", Setting.llm_provider
+    end
+  end
+
+  test "invalid llm_provider shows error" do
+    with_self_hosting do
+      patch settings_hosting_url, params: { setting: { llm_provider: "invalid" } }
+
+      assert_response :unprocessable_entity
+      assert_match(/LLM provider must be one of/, flash[:alert])
+    end
+  end
+
+  test "redaction placeholder preserves existing anthropic_access_token" do
+    with_self_hosting do
+      Setting.anthropic_access_token = "existing-token"
+
+      patch settings_hosting_url, params: { setting: { anthropic_access_token: "********" } }
+
+      assert_redirected_to settings_hosting_url
+      assert_equal "existing-token", Setting.anthropic_access_token
+    end
+  end
+
+  test "invalid anthropic model shows error" do
+    with_self_hosting do
+      patch settings_hosting_url, params: { setting: { anthropic_model: "gpt-4" } }
+
+      assert_response :unprocessable_entity
+      assert_match(/must start with/, flash[:alert])
+    end
+  end
 end

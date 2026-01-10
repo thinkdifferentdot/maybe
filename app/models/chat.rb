@@ -26,9 +26,16 @@ class Chat < ApplicationRecord
     end
 
     # Returns the default AI model to use for chats
-    # Priority: ENV variable > Setting > OpenAI default
+    # Respects the llm_provider setting (OpenAI or Anthropic)
     def default_model
-      ENV["OPENAI_MODEL"].presence || Setting.openai_model.presence || Provider::Openai::DEFAULT_MODEL
+      provider = Setting.llm_provider.presence&.to_sym || :openai
+
+      case provider
+      when :anthropic
+        ENV["ANTHROPIC_MODEL"].presence || Setting.anthropic_model.presence || Provider::Anthropic::DEFAULT_MODEL
+      else # :openai or fallback
+        ENV["OPENAI_MODEL"].presence || Setting.openai_model.presence || Provider::Openai::DEFAULT_MODEL
+      end
     end
   end
 
