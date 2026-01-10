@@ -137,6 +137,16 @@ class Setting < RailsSettings::Base
     end
   end
 
+  # Validates Anthropic configuration requires claude- prefix for model names
+  def self.validate_anthropic_config!(model: nil)
+    return if model.blank?
+
+    # Anthropic models must start with "claude-" prefix
+    unless model.start_with?("claude-")
+      raise ValidationError, I18n.t("settings.hostings.update.invalid_anthropic_model")
+    end
+  end
+
   # Validates LLM provider is one of the supported providers
   def self.validate_llm_provider!(provider)
     return if provider.blank? || LLM_PROVIDERS.include?(provider)
