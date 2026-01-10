@@ -59,9 +59,7 @@ en:
       button_title: AI Categorize
       categorizing: Categorizing...
       error: Failed to categorize. Please try again.
-      confidence:
-        one: "%{percent}% confident"
-        other: "%{percent}% confident"
+      confidence: "%{percent}% confident"
     bulk_ai_categorize:
       button_title: AI Categorize all
       cost_estimate: "Est: $%{cost}"
