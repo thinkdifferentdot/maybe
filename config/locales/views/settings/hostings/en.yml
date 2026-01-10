@@ -71,6 +71,7 @@ en:
         access_token_placeholder: Enter your Anthropic API key
         model_label: Model (Optional)
         model_placeholder: "claude-sonnet-4-5-20250929 (default)"
+        model_help: "Model names must start with 'claude-' (e.g., claude-sonnet-4-5-20250929, claude-opus-4-5)"
       yahoo_finance_settings:
         title: Yahoo Finance
         description: Yahoo Finance provides free access to stock prices, exchange rates, and financial data without requiring an API key.
