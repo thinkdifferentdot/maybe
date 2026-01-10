@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2025-01-09)
 ## Current Position
 
 Phase: 6 of 8 (Settings UI)
-Plan: 02 of 04
+Plan: 03 of 04
 Status: In progress
-Last activity: 2026-01-09 — Completed Phase 6 Plan 02 (Anthropic Configuration Fields)
+Last activity: 2026-01-09 — Completed Phase 6 Plan 03 (Provider Visibility Toggle)
 
-Progress: ██████████████░░░░ 75%
+Progress: ███████████████░░░░ 75%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 14
-- Average duration: 3.6 min
-- Total execution time: ~50 min
+- Total plans completed: 15
+- Average duration: 3.5 min
+- Total execution time: ~52 min
 
 **By Phase:**
 
@@ -32,12 +32,12 @@ Progress: ██████████████░░░░ 75%
 | 3 (Chat Support) | 3 | 17 min | 5.7 min |
 | 4 (Registry Integration) | 1 | 3 min | 3 min |
 | 5 (Settings Model) | 3 | 12 min | 4 min |
-| 6 (Settings UI) | 2 | 4 min | 2 min |
+| 6 (Settings UI) | 3 | 6 min | 2 min |
 | 7 (Langfuse Integration) | 1 | 5 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 4-01 (Registry), 5-01 (Settings Fields), 5-02 (Registry Integration), 5-03 (Controller & Validation), 6-01 (Provider Selector), 6-02 (Anthropic Fields)
-- Trend: Settings UI in progress, next is provider-based field visibility
+- Last 5 plans: 4-01 (Registry), 5-01 (Settings Fields), 5-02 (Registry Integration), 5-03 (Controller & Validation), 6-01 (Provider Selector), 6-02 (Anthropic Fields), 6-03 (Provider Visibility)
+- Trend: Settings UI in progress, next is configuration validation
 
 ## Accumulated Context
 
@@ -61,6 +61,7 @@ Recent decisions affecting current work:
 - **Phase 7-01**: Langfuse integration verified - was already implemented in Phases 02-03; No code changes needed; Token field mapping (input/output_tokens -> prompt/completion_tokens) confirmed correct
 - **Phase 6-01**: Provider selector dropdown follows existing pattern with styled_form_with; Auto-submit on blur for instant feedback
 - **Phase 6-02**: Anthropic settings partial matches OpenAI structure exactly; ENV key is ANTHROPIC_API_KEY (not ACCESS_TOKEN) per Anthropic convention; Redaction placeholder "********" prevents accidental overwrite
+- **Phase 6-03**: Provider visibility controller uses hidden class for show/hide; data-provider attributes on settings sections for targeting; Initial provider value from @llm_provider instance variable; Change event triggers immediate visibility update
 
 ### Deferred Issues
 
@@ -73,5 +74,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-09
-Stopped at: Completed Phase 6 Plan 02 (Anthropic Configuration Fields)
+Stopped at: Completed Phase 6 Plan 03 (Provider Visibility Toggle)
 Resume file: None

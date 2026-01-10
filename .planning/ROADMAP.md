@@ -97,10 +97,10 @@ Plans:
 Plans:
 - [x] 06-01: Add provider selector dropdown to self-hosting settings
 - [x] 06-02: Add Anthropic API key and model input fields
-- [ ] 06-03: Show/hide fields based on selected provider
+- [x] 06-03: Show/hide fields based on selected provider
 - [ ] 06-04: Add configuration validation and error messages
 
-**Status**: In progress (2026-01-09) - Plans 01-02 complete
+**Status**: In progress (2026-01-09) - Plans 01-03 complete
 
 ### Phase 7: Langfuse Integration
 **Goal**: Ensure observability tracing works for Anthropic requests
@@ -134,6 +134,6 @@ Plans:
 | 3. Chat Support | 4/4 | Complete | 2026-01-09 |
 | 4. Registry Integration | 3/3 | Complete | 2026-01-09 |
 | 5. Settings Model | 3/3 | Complete | 2026-01-09 |
-| 6. Settings UI | 2/4 | In progress | 2026-01-09 |
+| 6. Settings UI | 3/4 | In progress | 2026-01-09 |
 | 7. Langfuse Integration | 1/1 | Complete | 2026-01-10 |
 | 8. Validation & Testing | 0/3 | Not started | - |
