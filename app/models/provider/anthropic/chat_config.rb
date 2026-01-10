@@ -13,9 +13,18 @@ class Provider::Anthropic::ChatConfig
     [{ role: "user", content: prompt }]
   end
 
-  # Returns empty array for now - tools will be implemented in plan 03-02
+  # Converts Sure's functions format to Anthropic's tools format
+  # Anthropic uses: {name, description, input_schema}
+  # Unlike OpenAI which uses: {type: "function", function: {name, description, parameters, strict}}
   def tools
-    []
+    functions.map do |fn|
+      {
+        name: fn[:name],
+        description: fn[:description],
+        input_schema: fn[:params_schema]
+        # Note: Anthropic doesn't use "strict" parameter (ignore fn[:strict])
+      }
+    end
   end
 
   private
