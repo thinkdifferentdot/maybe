@@ -205,6 +205,12 @@ class TransactionsController < ApplicationController
       .where(source: "ai", attribute_name: "category_id")
       .destroy_all
 
+    # Clear the confidence score so the badge doesn't appear
+    transaction.update_column(:extra, transaction.extra.except("ai_categorization_confidence"))
+
+    # Unlock the category_id attribute so it can be re-categorized
+    transaction.unlock_attr!(:category_id)
+
     flash[:notice] = t(".rejection_success")
 
     respond_to do |format|
