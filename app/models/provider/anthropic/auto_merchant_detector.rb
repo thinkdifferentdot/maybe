@@ -57,18 +57,96 @@ class Provider::Anthropic::AutoMerchantDetector
   AutoDetectedMerchant = Provider::LlmConcept::AutoDetectedMerchant
 
   def developer_message
-    # Will be implemented in Task 3
-    ""
+    <<~MESSAGE.strip_heredoc
+      Here are the user's available merchants in JSON format:
+
+      ```json
+      #{user_merchants.to_json}
+      ```
+
+      Use BOTH your knowledge AND the user-generated merchants to auto-detect the following transactions:
+
+      ```json
+      #{transactions.to_json}
+      ```
+
+      Return "null" if you are not 80%+ confident in your answer.
+    MESSAGE
   end
 
   def instructions
-    # Will be implemented in Task 3
-    ""
+    <<~INSTRUCTIONS.strip_heredoc
+      You are an assistant to a consumer personal finance app.
+
+      Closely follow ALL the rules below while auto-detecting business names and website URLs:
+
+      - Return 1 result per transaction
+      - Correlate each transaction by ID (transaction_id)
+      - Do not include the subdomain in the business_url (i.e. "amazon.com" not "www.amazon.com")
+      - User merchants are considered "manual" user-generated merchants and should only be used in 100% clear cases
+      - Be slightly pessimistic.  We favor returning "null" over returning a false positive.
+      - NEVER return a name or URL for generic transaction names (e.g. "Paycheck", "Laundromat", "Grocery store", "Local diner")
+
+      Determining a value:
+
+      - First attempt to determine the name + URL from your knowledge of global businesses
+      - If no certain match, attempt to match one of the user-provided merchants
+      - If no match, return "null"
+
+      Example 1 (known business):
+
+      ```
+      Transaction name: "Some Amazon purchases"
+
+      Result:
+      - business_name: "Amazon"
+      - business_url: "amazon.com"
+      ```
+
+      Example 2 (generic business):
+
+      ```
+      Transaction name: "local diner"
+
+      Result:
+      - business_name: null
+      - business_url: null
+      ```
+    INSTRUCTIONS
   end
 
   def json_schema
-    # Will be implemented in Task 3
-    {}
+    {
+      type: "object",
+      properties: {
+        merchants: {
+          type: "array",
+          description: "An array of auto-detected merchant businesses for each transaction",
+          items: {
+            type: "object",
+            properties: {
+              transaction_id: {
+                type: "string",
+                description: "The internal ID of the original transaction",
+                enum: transactions.map { |t| t[:id] }
+              },
+              business_name: {
+                type: ["string", "null"],
+                description: "The detected business name of the transaction, or `null` if uncertain"
+              },
+              business_url: {
+                type: ["string", "null"],
+                description: "The URL of the detected business, or `null` if uncertain"
+              }
+            },
+            required: ["transaction_id", "business_name", "business_url"],
+            additionalProperties: false
+          }
+        }
+      },
+      required: ["merchants"],
+      additionalProperties: false
+    }
   end
 
   def build_response(merchants)
