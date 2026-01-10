@@ -132,13 +132,15 @@ class Assistant::Function::GetTransactions < Assistant::Function
   end
 
   def call(params = {})
-    search_params = params.except("order", "page")
+    search_params = params.except("order", "page", :order, :page)
 
     search = Transaction::Search.new(family, filters: search_params)
     transactions_query = search.transactions_scope
-    pagy_query = params["order"] == "asc" ? transactions_query.chronological : transactions_query.reverse_chronological
+    order = params["order"] || params[:order]
+    pagy_query = order == "asc" ? transactions_query.chronological : transactions_query.reverse_chronological
 
     # By default, we give a small page size to force the AI to use filters effectively and save on tokens
+    page_num = params["page"] || params[:page]
     pagy, paginated_transactions = pagy(
       pagy_query.includes(
         { entry: :account },
@@ -146,7 +148,7 @@ class Assistant::Function::GetTransactions < Assistant::Function
         transfer_as_outflow: { inflow_transaction: { entry: :account } },
         transfer_as_inflow: { outflow_transaction: { entry: :account } }
       ),
-      page: params["page"] || 1,
+      page: page_num || 1,
       limit: default_page_size
     )
 
