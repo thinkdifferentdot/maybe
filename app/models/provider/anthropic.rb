@@ -104,8 +104,7 @@ class Provider::Anthropic < Provider
     family: nil
   )
     with_provider_response do
-      # For plan 03-01: functions, function_results, streamer, previous_response_id are ignored
-      # These will be implemented in plans 03-02, 03-03, 03-04
+      # Plan 03-02: tools are implemented, function_results/streamer/previous_response_id are for 03-03/03-04
 
       chat_config = ChatConfig.new(
         functions: functions,
@@ -131,6 +130,7 @@ class Provider::Anthropic < Provider
           messages: messages
         }
         parameters[:system] = instructions if instructions.present?
+        parameters[:tools] = chat_config.tools if chat_config.tools.present?
 
         raw_response = client.messages.create(parameters)
 
