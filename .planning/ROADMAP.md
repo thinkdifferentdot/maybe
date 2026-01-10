@@ -41,7 +41,7 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: Implement auto_categorize method using Anthropic Messages API
+- [x] 02-01: Foundation - Add Anthropic gem and create Provider::Anthropic class skeleton
 - [ ] 02-02: Implement auto_detect_merchants method using Anthropic Messages API
 - [ ] 02-03: Handle JSON responses and error cases for both operations
 
@@ -118,8 +118,8 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 2/3 | In progress | 2026-01-09 |
-| 2. Core Operations | 0/3 | Not started | - |
+| 1. Foundation | 3/3 | Complete | 2026-01-09 |
+| 2. Core Operations | 1/3 | In progress | 2026-01-09 |
 | 3. Chat Support | 0/4 | Not started | - |
 | 4. Registry Integration | 0/3 | Not started | - |
 | 5. Settings Model | 0/3 | Not started | - |
