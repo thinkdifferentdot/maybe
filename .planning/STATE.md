@@ -10,14 +10,14 @@ See: .planning/PROJECT.md (updated 2026-01-10)
 ## Current Position
 
 Phase: v1.1 AI Auto-Categorization Triggers — Phase 12 (Transaction UI Actions)
-Plan: 12-01 (Backend Provider Selection & Confidence) — COMPLETE
-Status: 1/3 plans complete in Phase 12 (12-01)
-Last activity: 2026-01-10 — Dynamic provider selection and confidence tracking added
+Plan: 12-02 (Individual AI Categorize Button) — COMPLETE
+Status: 2/3 plans complete in Phase 12 (12-01, 12-02)
+Last activity: 2026-01-10 — Individual AI categorize button with loading states and confidence display
 
-Progress for Phase 12: ▓▓▓░░░░░░░░░░░░░░░░ 33% (1 of 3 plans complete)
-Overall v1.1 Progress: ▓▓▓▓░░░░░░░░░░░░░░ 19% (5 of ~27 plans estimated)
+Progress for Phase 12: ▓▓▓▓▓▓░░░░░░░░░░░░░░ 67% (2 of 3 plans complete)
+Overall v1.1 Progress: ▓▓▓▓▓░░░░░░░░░░░░░░ 22% (6 of ~27 plans estimated)
 
-**Summary (12-01):** AutoCategorizer now supports dynamic provider selection based on Setting.llm_provider (openai/anthropic) instead of hardcoded OpenAI. Added AutoCategorizer::Result struct with confidence score (default 1.0) and stores confidence in transaction.extra["ai_categorization_confidence"]. Tests verify provider selection works for both providers.
+**Summary (12-02):** Individual AI categorize button added to transaction rows with sparkle icon. AiCategorizationsController handles POST requests with Turbo Stream responses for inline category and confidence updates. ai_categorize Stimulus controller manages loading states (spinner icon, disabled button). Confidence badge displays with color coding (green >80%, yellow 60-80%, orange <60%).
 
 ## Next Milestone Goals
 
@@ -82,9 +82,9 @@ Overall v1.1 Progress: ▓▓▓▓░░░░░░░░░░░░░░ 19
 - 11-03: AI categorization trigger in Lunchflow sync jobs
 - 11-04: Bulk review workflow (PENDING)
 
-**Phase 12 - Transaction UI Actions (IN PROGRESS - 1/3 complete):**
+**Phase 12 - Transaction UI Actions (IN PROGRESS - 2/3 complete):**
 - 12-01: Backend Provider Selection & Confidence
-- 12-02: Individual AI categorize button (PENDING)
+- 12-02: Individual AI categorize button
 - 12-03: Bulk AI categorize workflow (PENDING)
 
 **Decisions:**
@@ -112,7 +112,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-10
-Phase: 12-01 complete (Backend Provider Selection & Confidence)
+Phase: 12-02 complete (Individual AI Categorize Button)
 Milestone: v1.1
-Next: Execute 12-02-PLAN.md (Individual AI categorize button in UI)
+Next: Execute 12-03-PLAN.md (Bulk AI categorize workflow)
 Resume file: None
