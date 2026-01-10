@@ -6,6 +6,7 @@ class Transaction < ApplicationRecord
 
   has_many :taggings, as: :taggable, dependent: :destroy
   has_many :tags, through: :taggings
+  has_many :data_enrichments, as: :enrichable, dependent: :destroy
 
   accepts_nested_attributes_for :taggings, allow_destroy: true
 
@@ -17,6 +18,20 @@ class Transaction < ApplicationRecord
     cc_payment: "cc_payment", # A CC payment, excluded from budget analytics (CC payments offset the sum of expense transactions)
     loan_payment: "loan_payment", # A payment to a Loan account, treated as an expense in budgets
     one_time: "one_time" # A one-time expense/income, excluded from budget analytics
+  }
+
+  # Scope to find transactions categorized by AI within the specified time window
+  scope :recent_ai, ->(family, since: 7.days.ago) {
+    joins(:entry, :data_enrichments)
+      .where(
+        data_enrichments: {
+          source: "ai",
+          attribute_name: "category_id",
+          created_at: since..
+        },
+        entries: { family_id: family.id }
+      )
+      .distinct
   }
 
   # Overarching grouping method for all transfer-type transactions
