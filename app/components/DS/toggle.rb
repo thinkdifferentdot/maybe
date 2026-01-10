@@ -1,13 +1,14 @@
 class DS::Toggle < DesignSystemComponent
-  attr_reader :id, :name, :checked, :disabled, :checked_value, :unchecked_value, :opts
+  attr_reader :id, :name, :checked, :disabled, :checked_value, :unchecked_value, :label, :opts
 
-  def initialize(id:, name: nil, checked: false, disabled: false, checked_value: "1", unchecked_value: "0", **opts)
+  def initialize(id:, name: nil, checked: false, disabled: false, checked_value: "1", unchecked_value: "0", label: nil, **opts)
     @id = id
     @name = name
     @checked = checked
     @disabled = disabled
     @checked_value = checked_value
     @unchecked_value = unchecked_value
+    @label = label
     @opts = opts
   end
 
