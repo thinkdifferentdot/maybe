@@ -1,39 +1,56 @@
-<%# locals: (success_count:, error_count:, skipped_count:) %>
+<%# Locals: success_count, error_count, skipped_count %>
+
+<% success_count = local_assigns[:success_count] || 0 %>
+<% error_count = local_assigns[:error_count] || 0 %>
+<% skipped_count = local_assigns[:skipped_count] || 0 %>
 
 <% total_count = success_count + error_count + skipped_count %>
 
-<%= render DS::Dialog.new(variant: "modal", width: "sm", auto_open: true, disable_frame: true) do |dialog| %>
-  <% dialog.with_header title: t("transactions.bulk_ai_categorize.summary.title") %>
+<turbo-stream action="append" target="body">
+  <template>
+    <dialog id="bulk_ai_summary_modal" class="bg-black/50 backdrop-blur-sm fixed inset-0 z-50 flex items-center justify-center p-4" open>
+      <div class="bg-container rounded-xl shadow-border-xs w-full max-w-sm p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-medium text-primary text-lg"><%= t("transactions.bulk_ai_categorize.summary.title") %></h2>
+          <button type="button" onclick="this.closest('dialog').remove()" class="text-secondary hover:text-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 6 6 18M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
 
-  <% dialog.with_body do %>
-    <div class="space-y-4">
-      <div class="flex items-center justify-between py-2 border-b border-border">
-        <span class="text-primary"><%= t("transactions.bulk_ai_categorize.summary.categorized", count: success_count) %></span>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between py-2 border-b border-border">
+            <span class="text-primary"><%= t("transactions.bulk_ai_categorize.summary.categorized", count: success_count) %></span>
+          </div>
+
+          <% if skipped_count > 0 %>
+            <div class="flex items-center justify-between py-2 border-b border-border">
+              <span class="text-secondary"><%= t("transactions.bulk_ai_categorize.summary.skipped", count: skipped_count) %></span>
+            </div>
+          <% end %>
+
+          <% if error_count > 0 %>
+            <div class="flex items-center justify-between py-2 border-b border-border">
+              <span class="text-red-500"><%= t("transactions.bulk_ai_categorize.summary.errors", count: error_count) %></span>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="mt-6">
+          <button type="button" class="w-full py-2 px-4 text-secondary hover:text-primary" onclick="this.closest('dialog').remove()">
+            <%= t("transactions.bulk_ai_categorize.summary.close") %>
+          </button>
+        </div>
       </div>
+    </dialog>
 
-      <% if skipped_count > 0 %>
-        <div class="flex items-center justify-between py-2 border-b border-border">
-          <span class="text-secondary"><%= t("transactions.bulk_ai_categorize.summary.skipped", count: skipped_count) %></span>
-        </div>
-      <% end %>
-
-      <% if error_count > 0 %>
-        <div class="flex items-center justify-between py-2 border-b border-border">
-          <span class="text-red-500"><%= t("transactions.bulk_ai_categorize.summary.errors", count: error_count) %></span>
-        </div>
-      <% end %>
-    </div>
-  <% end %>
-
-  <% dialog.with_actions cancel_action: true do %>
-    <%= t("transactions.bulk_ai_categorize.summary.close") %>
-  <% end %>
-<% end %>
-
-<script>
-  // Auto-dismiss after 5 seconds if user doesn't interact
-  setTimeout(function() {
-    const dialog = document.querySelector("[data-DS--dialog-auto-open-value]");
-    if (dialog) dialog.remove();
-  }, 5000);
-</script>
+    <script>
+      // Auto-dismiss after 5 seconds
+      setTimeout(function() {
+        const dialog = document.getElementById("bulk_ai_summary_modal");
+        if (dialog) dialog.remove();
+      }, 5000);
+    </script>
+  </template>
+</turbo-stream>

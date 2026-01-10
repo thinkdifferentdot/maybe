@@ -35,7 +35,7 @@ class Transactions::BulkAiCategorizationsController < ApplicationController
       modified_count = categorizer.auto_categorize
 
       # Reload transactions to get updated categories and confidence scores
-      transactions.reload
+      transactions = Current.family.transactions.where(id: transaction_ids).to_a
 
       # Build results array
       results = transactions.map do |txn|
