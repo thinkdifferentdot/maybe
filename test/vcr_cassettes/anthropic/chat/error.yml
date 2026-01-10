@@ -1,0 +1,78 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.anthropic.com/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"invalid-model-that-will-trigger-api-error","max_tokens":4096,"messages":[{"role":"user","content":"Test"}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - Anthropic::Client/Ruby 1.16.3
+      Host:
+      - api.anthropic.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 1.16.3
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 3.4.7
+      Content-Type:
+      - application/json
+      Anthropic-Version:
+      - '2023-06-01'
+      X-Api-Key:
+      - "<ANTHROPIC_API_KEY>"
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '117'
+  response:
+    status:
+      code: 404
+      message: Not Found
+    headers:
+      Date:
+      - Sat, 10 Jan 2026 04:22:10 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Should-Retry:
+      - 'false'
+      Request-Id:
+      - req_011CWy4KwJyZm31MPGufQzQ5
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Anthropic-Organization-Id:
+      - 8c28b4a2-23d6-4d84-8df7-9fa16ad01694
+      Server:
+      - cloudflare
+      X-Envoy-Upstream-Service-Time:
+      - '28'
+      Cf-Cache-Status:
+      - DYNAMIC
+      X-Robots-Tag:
+      - none
+      Cf-Ray:
+      - 9bb9644a4a4e8408-YVR
+    body:
+      encoding: ASCII-8BIT
+      string: '{"type":"error","error":{"type":"not_found_error","message":"model:
+        invalid-model-that-will-trigger-api-error"},"request_id":"req_011CWy4KwJyZm31MPGufQzQ5"}'
+  recorded_at: Sat, 10 Jan 2026 04:22:10 GMT
+recorded_with: VCR 6.3.1

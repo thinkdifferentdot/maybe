@@ -1,0 +1,132 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.anthropic.com/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"claude-sonnet-4-5-20250929","max_tokens":1024,"messages":[{"role":"user","content":"Here
+        are the user''s available merchants in JSON format:\n\n```json\n[{\"name\":\"Shooters\"}]\n```\n\nUse
+        BOTH your knowledge AND the user-generated merchants to auto-detect the following
+        transactions:\n\n```json\n[{\"id\":\"1\",\"name\":\"McDonalds\",\"amount\":20,\"classification\":\"expense\"},{\"id\":\"2\",\"name\":\"local
+        pub\",\"amount\":20,\"classification\":\"expense\"},{\"id\":\"3\",\"name\":\"WMT
+        purchases\",\"amount\":20,\"classification\":\"expense\"},{\"id\":\"4\",\"name\":\"amzn
+        123 abc\",\"amount\":20,\"classification\":\"expense\"},{\"id\":\"5\",\"name\":\"chaseX1231\",\"amount\":2000,\"classification\":\"income\"},{\"id\":\"6\",\"name\":\"check
+        deposit 022\",\"amount\":200,\"classification\":\"income\"},{\"id\":\"7\",\"name\":\"shooters
+        bar and grill\",\"amount\":200,\"classification\":\"expense\"},{\"id\":\"8\",\"name\":\"Microsoft
+        Office subscription\",\"amount\":200,\"classification\":\"expense\"}]\n```\n\nReturn
+        \"null\" if you are not 80%+ confident in your answer.\n"}],"system":"You
+        are an assistant to a consumer personal finance app.\n\nClosely follow ALL
+        the rules below while auto-detecting business names and website URLs:\n\n-
+        Return 1 result per transaction\n- Correlate each transaction by ID (transaction_id)\n-
+        Do not include the subdomain in the business_url (i.e. \"amazon.com\" not
+        \"www.amazon.com\")\n- User merchants are considered \"manual\" user-generated
+        merchants and should only be used in 100% clear cases\n- Be slightly pessimistic.  We
+        favor returning \"null\" over returning a false positive.\n- NEVER return
+        a name or URL for generic transaction names (e.g. \"Paycheck\", \"Laundromat\",
+        \"Grocery store\", \"Local diner\")\n\nDetermining a value:\n\n- First attempt
+        to determine the name + URL from your knowledge of global businesses\n- If
+        no certain match, attempt to match one of the user-provided merchants\n- If
+        no match, return \"null\"\n\nExample 1 (known business):\n\n```\nTransaction
+        name: \"Some Amazon purchases\"\n\nResult:\n- business_name: \"Amazon\"\n-
+        business_url: \"amazon.com\"\n```\n\nExample 2 (generic business):\n\n```\nTransaction
+        name: \"local diner\"\n\nResult:\n- business_name: null\n- business_url: null\n```\n"}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - Anthropic::Client/Ruby 1.16.3
+      Host:
+      - api.anthropic.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 1.16.3
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 3.4.7
+      Content-Type:
+      - application/json
+      Anthropic-Version:
+      - '2023-06-01'
+      X-Api-Key:
+      - "<ANTHROPIC_API_KEY>"
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '2301'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sat, 10 Jan 2026 04:22:07 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Anthropic-Ratelimit-Input-Tokens-Limit:
+      - '30000'
+      Anthropic-Ratelimit-Input-Tokens-Remaining:
+      - '30000'
+      Anthropic-Ratelimit-Input-Tokens-Reset:
+      - '2026-01-10T04:22:05Z'
+      Anthropic-Ratelimit-Output-Tokens-Limit:
+      - '8000'
+      Anthropic-Ratelimit-Output-Tokens-Remaining:
+      - '8000'
+      Anthropic-Ratelimit-Output-Tokens-Reset:
+      - '2026-01-10T04:22:10Z'
+      Anthropic-Ratelimit-Requests-Limit:
+      - '50'
+      Anthropic-Ratelimit-Requests-Remaining:
+      - '49'
+      Anthropic-Ratelimit-Requests-Reset:
+      - '2026-01-10T04:22:05Z'
+      Anthropic-Ratelimit-Tokens-Limit:
+      - '38000'
+      Anthropic-Ratelimit-Tokens-Remaining:
+      - '38000'
+      Anthropic-Ratelimit-Tokens-Reset:
+      - '2026-01-10T04:22:05Z'
+      Request-Id:
+      - req_011CWy4KTgpAbKf29N6Ey36u
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Anthropic-Organization-Id:
+      - 8c28b4a2-23d6-4d84-8df7-9fa16ad01694
+      Server:
+      - cloudflare
+      X-Envoy-Upstream-Service-Time:
+      - '3934'
+      Cf-Cache-Status:
+      - DYNAMIC
+      X-Robots-Tag:
+      - none
+      Cf-Ray:
+      - 9bb96421ec4358f2-YVR
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-sonnet-4-5-20250929","id":"msg_012J3isa7V7PpSiUMMVKNdrS","type":"message","role":"assistant","content":[{"type":"text","text":"```json\n[\n  {\n    \"transaction_id\":
+        \"1\",\n    \"business_name\": \"McDonald''s\",\n    \"business_url\": \"mcdonalds.com\"\n  },\n  {\n    \"transaction_id\":
+        \"2\",\n    \"business_name\": null,\n    \"business_url\": null\n  },\n  {\n    \"transaction_id\":
+        \"3\",\n    \"business_name\": \"Walmart\",\n    \"business_url\": \"walmart.com\"\n  },\n  {\n    \"transaction_id\":
+        \"4\",\n    \"business_name\": \"Amazon\",\n    \"business_url\": \"amazon.com\"\n  },\n  {\n    \"transaction_id\":
+        \"5\",\n    \"business_name\": null,\n    \"business_url\": null\n  },\n  {\n    \"transaction_id\":
+        \"6\",\n    \"business_name\": null,\n    \"business_url\": null\n  },\n  {\n    \"transaction_id\":
+        \"7\",\n    \"business_name\": \"Shooters\",\n    \"business_url\": null\n  },\n  {\n    \"transaction_id\":
+        \"8\",\n    \"business_name\": \"Microsoft\",\n    \"business_url\": \"microsoft.com\"\n  }\n]\n```"}],"stop_reason":"end_turn","stop_sequence":null,"usage":{"input_tokens":544,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":303,"service_tier":"standard"}}'
+  recorded_at: Sat, 10 Jan 2026 04:22:07 GMT
+recorded_with: VCR 6.3.1

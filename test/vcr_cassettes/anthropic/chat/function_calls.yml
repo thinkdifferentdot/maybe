@@ -1,0 +1,200 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.anthropic.com/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"claude-sonnet-4-5-20250929","max_tokens":4096,"messages":[{"role":"user","content":"What
+        is my net worth?"}],"system":"Use the tools available to you to answer the
+        user''s question.","tools":[{"name":"get_net_worth","description":"Gets a
+        user''s net worth","input_schema":{"type":"object","properties":{},"required":[],"additionalProperties":false}}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - Anthropic::Client/Ruby 1.16.3
+      Host:
+      - api.anthropic.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 1.16.3
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 3.4.7
+      Content-Type:
+      - application/json
+      Anthropic-Version:
+      - '2023-06-01'
+      X-Api-Key:
+      - "<ANTHROPIC_API_KEY>"
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '359'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sat, 10 Jan 2026 04:23:59 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Anthropic-Ratelimit-Input-Tokens-Limit:
+      - '30000'
+      Anthropic-Ratelimit-Input-Tokens-Remaining:
+      - '30000'
+      Anthropic-Ratelimit-Input-Tokens-Reset:
+      - '2026-01-10T04:23:59Z'
+      Anthropic-Ratelimit-Output-Tokens-Limit:
+      - '8000'
+      Anthropic-Ratelimit-Output-Tokens-Remaining:
+      - '8000'
+      Anthropic-Ratelimit-Output-Tokens-Reset:
+      - '2026-01-10T04:23:59Z'
+      Anthropic-Ratelimit-Requests-Limit:
+      - '50'
+      Anthropic-Ratelimit-Requests-Remaining:
+      - '49'
+      Anthropic-Ratelimit-Requests-Reset:
+      - '2026-01-10T04:23:58Z'
+      Anthropic-Ratelimit-Tokens-Limit:
+      - '38000'
+      Anthropic-Ratelimit-Tokens-Remaining:
+      - '38000'
+      Anthropic-Ratelimit-Tokens-Reset:
+      - '2026-01-10T04:23:59Z'
+      Request-Id:
+      - req_011CWy4TqTio8Gjv6dy2QP83
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Anthropic-Organization-Id:
+      - 8c28b4a2-23d6-4d84-8df7-9fa16ad01694
+      Server:
+      - cloudflare
+      X-Envoy-Upstream-Service-Time:
+      - '1947'
+      Cf-Cache-Status:
+      - DYNAMIC
+      X-Robots-Tag:
+      - none
+      Cf-Ray:
+      - 9bb966e80c707bf4-YVR
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-sonnet-4-5-20250929","id":"msg_01EHZdgcXWR3FZwp8FbCCYdT","type":"message","role":"assistant","content":[{"type":"tool_use","id":"toolu_016jznzcAhCEq5XrenZffB5u","name":"get_net_worth","input":{}}],"stop_reason":"tool_use","stop_sequence":null,"usage":{"input_tokens":576,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":38,"service_tier":"standard"}}'
+  recorded_at: Sat, 10 Jan 2026 04:23:59 GMT
+- request:
+    method: post
+    uri: https://api.anthropic.com/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"claude-sonnet-4-5-20250929","max_tokens":4096,"messages":[{"role":"user","content":"What
+        is my net worth?"},{"role":"assistant","content":[{"type":"tool_use","id":"toolu_016jznzcAhCEq5XrenZffB5u","name":"get_net_worth","input":{}}]},{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_016jznzcAhCEq5XrenZffB5u","content":"{\"amount\":10000,\"currency\":\"USD\"}"}]}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - Anthropic::Client/Ruby 1.16.3
+      Host:
+      - api.anthropic.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 1.16.3
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 3.4.7
+      Content-Type:
+      - application/json
+      Anthropic-Version:
+      - '2023-06-01'
+      X-Api-Key:
+      - "<ANTHROPIC_API_KEY>"
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '394'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sat, 10 Jan 2026 04:24:02 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Anthropic-Ratelimit-Input-Tokens-Limit:
+      - '30000'
+      Anthropic-Ratelimit-Input-Tokens-Remaining:
+      - '30000'
+      Anthropic-Ratelimit-Input-Tokens-Reset:
+      - '2026-01-10T04:24:02Z'
+      Anthropic-Ratelimit-Output-Tokens-Limit:
+      - '8000'
+      Anthropic-Ratelimit-Output-Tokens-Remaining:
+      - '8000'
+      Anthropic-Ratelimit-Output-Tokens-Reset:
+      - '2026-01-10T04:24:02Z'
+      Anthropic-Ratelimit-Requests-Limit:
+      - '50'
+      Anthropic-Ratelimit-Requests-Remaining:
+      - '49'
+      Anthropic-Ratelimit-Requests-Reset:
+      - '2026-01-10T04:24:00Z'
+      Anthropic-Ratelimit-Tokens-Limit:
+      - '38000'
+      Anthropic-Ratelimit-Tokens-Remaining:
+      - '38000'
+      Anthropic-Ratelimit-Tokens-Reset:
+      - '2026-01-10T04:24:02Z'
+      Request-Id:
+      - req_011CWy4TzLmabeiVZgLZ2HwY
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Anthropic-Organization-Id:
+      - 8c28b4a2-23d6-4d84-8df7-9fa16ad01694
+      Server:
+      - cloudflare
+      X-Envoy-Upstream-Service-Time:
+      - '2928'
+      Cf-Cache-Status:
+      - DYNAMIC
+      X-Robots-Tag:
+      - none
+      Cf-Ray:
+      - 9bb966f50ffd7bf4-YVR
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-sonnet-4-5-20250929","id":"msg_01Pn4amCt8NM73wVv37CdzEg","type":"message","role":"assistant","content":[{"type":"text","text":"Your
+        current net worth is **$10,000 USD**."}],"stop_reason":"end_turn","stop_sequence":null,"usage":{"input_tokens":74,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":16,"service_tier":"standard"}}'
+  recorded_at: Sat, 10 Jan 2026 04:24:02 GMT
+recorded_with: VCR 6.3.1

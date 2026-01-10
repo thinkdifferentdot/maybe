@@ -1,0 +1,100 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.anthropic.com/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"claude-sonnet-4-5-20250929","max_tokens":4096,"messages":[{"role":"user","content":"This
+        is a chat test. If it''s working, respond with a single word: Yes"}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - Anthropic::Client/Ruby 1.16.3
+      Host:
+      - api.anthropic.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 1.16.3
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 3.4.7
+      Content-Type:
+      - application/json
+      Anthropic-Version:
+      - '2023-06-01'
+      X-Api-Key:
+      - "<ANTHROPIC_API_KEY>"
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '167'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sat, 10 Jan 2026 04:22:03 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Anthropic-Ratelimit-Input-Tokens-Limit:
+      - '30000'
+      Anthropic-Ratelimit-Input-Tokens-Remaining:
+      - '30000'
+      Anthropic-Ratelimit-Input-Tokens-Reset:
+      - '2026-01-10T04:22:03Z'
+      Anthropic-Ratelimit-Output-Tokens-Limit:
+      - '8000'
+      Anthropic-Ratelimit-Output-Tokens-Remaining:
+      - '8000'
+      Anthropic-Ratelimit-Output-Tokens-Reset:
+      - '2026-01-10T04:22:03Z'
+      Anthropic-Ratelimit-Requests-Limit:
+      - '50'
+      Anthropic-Ratelimit-Requests-Remaining:
+      - '49'
+      Anthropic-Ratelimit-Requests-Reset:
+      - '2026-01-10T04:22:03Z'
+      Anthropic-Ratelimit-Tokens-Limit:
+      - '38000'
+      Anthropic-Ratelimit-Tokens-Remaining:
+      - '38000'
+      Anthropic-Ratelimit-Tokens-Reset:
+      - '2026-01-10T04:22:03Z'
+      Request-Id:
+      - req_011CWy4KLwG1tdTBhEm6xsQn
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Anthropic-Organization-Id:
+      - 8c28b4a2-23d6-4d84-8df7-9fa16ad01694
+      Server:
+      - cloudflare
+      X-Envoy-Upstream-Service-Time:
+      - '1395'
+      Cf-Cache-Status:
+      - DYNAMIC
+      X-Robots-Tag:
+      - none
+      Cf-Ray:
+      - 9bb964180852841d-YVR
+    body:
+      encoding: ASCII-8BIT
+      string: '{"model":"claude-sonnet-4-5-20250929","id":"msg_01TsL3tgrg3YT9obYzDvBZzJ","type":"message","role":"assistant","content":[{"type":"text","text":"Yes"}],"stop_reason":"end_turn","stop_sequence":null,"usage":{"input_tokens":25,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":4,"service_tier":"standard"}}'
+  recorded_at: Sat, 10 Jan 2026 04:22:03 GMT
+recorded_with: VCR 6.3.1
