@@ -34,6 +34,15 @@ class LlmUsage < ApplicationRecord
       "o3-mini" => { prompt: 1.10, completion: 4.40 },
       "o3-pro" => { prompt: 20.00, completion: 80.00 }
     },
+    "anthropic" => {
+      "claude-opus-4" => { prompt: 15.00, completion: 75.00 },
+      "claude-sonnet-4" => { prompt: 3.00, completion: 15.00 },
+      "claude-sonnet-3.7" => { prompt: 3.00, completion: 15.00 },
+      "claude-sonnet-3.5" => { prompt: 3.00, completion: 15.00 },
+      "claude-haiku-3.5" => { prompt: 0.80, completion: 4.00 },
+      "claude-opus-3" => { prompt: 15.00, completion: 75.00 },
+      "claude-haiku-3" => { prompt: 0.25, completion: 1.25 }
+    },
     "google" => {
       "gemini-2.5-pro" => { prompt: 1.25, completion: 10.00 },
       "gemini-2.5-flash" => { prompt: 0.3, completion: 2.50 }

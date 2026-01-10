@@ -78,6 +78,16 @@ class Provider::Registry
         Provider::Openai.new(access_token, uri_base: uri_base, model: model)
       end
 
+      def anthropic
+        access_token = ENV["ANTHROPIC_API_KEY"].presence || Setting["anthropic_access_token"]
+
+        return nil unless access_token.present?
+
+        model = ENV["ANTHROPIC_MODEL"].presence || Setting["anthropic_model"]
+
+        Provider::Anthropic.new(access_token, model: model)
+      end
+
       def yahoo_finance
         Provider::YahooFinance.new
       end
@@ -110,7 +120,7 @@ class Provider::Registry
       when :securities
         %i[twelve_data yahoo_finance]
       when :llm
-        %i[openai]
+        %i[openai anthropic]
       else
         %i[plaid_us plaid_eu github openai]
       end
