@@ -5,6 +5,16 @@ class Provider::Anthropic::ChatParser
     @object = object
   end
 
+  # Parses Anthropic Messages API response into ChatResponse
+  #
+  # Multi-turn conversation flow:
+  # 1. User calls chat_response with prompt
+  # 2. If Claude requests tools, response.function_requests contains tool_use blocks
+  # 3. Caller executes tools and creates function_results via ToolCall::Function.to_result
+  # 4. Caller passes function_results to next chat_response call
+  # 5. ChatConfig reconstructs conversation history (user -> assistant with tool_use -> user with tool_result)
+  #
+  # Note: Caller must manage conversation history across turns (Anthropic lacks OpenAI's previous_response_id)
   def parsed
     ChatResponse.new(
       id: response_id,
