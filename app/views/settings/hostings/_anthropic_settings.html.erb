@@ -39,6 +39,8 @@
                       inputmode: "text",
                       disabled: ENV["ANTHROPIC_MODEL"].present?,
                       data: { "auto-submit-form-target": "auto" } %>
+
+  <p class="text-xs text-secondary mt-1"><%= t(".model_help") %></p>
   <% end %>
   </div>
 </div>
