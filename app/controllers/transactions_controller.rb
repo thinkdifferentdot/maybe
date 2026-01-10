@@ -11,6 +11,7 @@ class TransactionsController < ApplicationController
 
   def index
     @q = search_params
+    @filter = params[:filter]
     @search = Transaction::Search.new(Current.family, filters: @q)
 
     base_scope = @search.transactions_scope
@@ -20,6 +21,12 @@ class TransactionsController < ApplicationController
                          :category, :merchant, :tags,
                          :transfer_as_inflow, :transfer_as_outflow
                        )
+
+    # Apply special filters
+    case @filter
+    when "recent_ai"
+      base_scope = base_scope.merge(Transaction.recent_ai(Current.family))
+    end
 
     @pagy, @transactions = pagy(base_scope, limit: per_page)
 

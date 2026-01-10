@@ -55,8 +55,37 @@ en:
       transactions: transactions
       import: Import
     toggle_recurring_section: Toggle upcoming recurring transactions
+    ai_categorize:
+      button_title: AI Categorize
+      categorizing: Categorizing...
+      error: Failed to categorize. Please try again.
+      confidence:
+        one: "%{percent}% confident"
+        other: "%{percent}% confident"
+    bulk_ai_categorize:
+      button_title: AI Categorize all
+      cost_estimate: "Est: $%{cost}"
+      categorizing: Categorizing...
+      success: "%{count} transactions categorized"
+      partial_success: "%{success_count} categorized, %{error_count} errors, %{skip_count} skipped"
+      error: Failed to categorize. Please try again.
+      confirmation:
+        title: Review AI Suggestions
+        subtitle: Some suggestions have low confidence. Review and select which to apply.
+        transaction_name: Transaction
+        suggested_category: Suggested category
+        confidence: Confidence
+        apply_selected: Apply Selected
+        skip_all: Skip All
+      summary:
+        title: Categorization Complete
+        categorized: "%{count} categorized"
+        skipped: "%{count} skipped"
+        errors: "%{count} errors"
+        close: Close
     searches:
       filters:
+        recent_ai: Recent AI Categorizations
         amount_filter:
           equal_to: Equal to
           greater_than: Greater than
