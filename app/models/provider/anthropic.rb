@@ -156,6 +156,21 @@ class Provider::Anthropic < Provider
 
         output_text = parsed.messages.map(&:output_text).join("\n")
 
+        # If a streamer was provided, manually call it with the parsed response
+        # to maintain the same contract as the streaming version
+        # (See Provider::Openai#generic_chat_response for the same pattern)
+        if streamer.present?
+          # Emit output_text chunks for each message
+          parsed.messages.each do |message|
+            if message.output_text.present?
+              streamer.call(ChatStreamChunk.new(type: "output_text", data: message.output_text, usage: nil))
+            end
+          end
+
+          # Emit response chunk with usage
+          streamer.call(ChatStreamChunk.new(type: "response", data: parsed, usage: usage))
+        end
+
         log_langfuse_generation(
           name: "chat_response",
           model: effective_model,
