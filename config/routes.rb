@@ -179,6 +179,7 @@ Rails.application.routes.draw do
   namespace :transactions do
     resource :bulk_deletion, only: :create
     resource :bulk_update, only: %i[new create]
+    resource :ai_categorization, only: :create, controller: "transactions/ai_categorizations"
   end
 
   resources :transactions, only: %i[index new create show update destroy] do
@@ -192,6 +193,8 @@ Rails.application.routes.draw do
 
     member do
       post :mark_as_recurring
+      post :approve_ai
+      post :reject_ai
     end
   end
 
