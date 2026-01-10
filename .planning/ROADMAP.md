@@ -42,8 +42,8 @@ Plans:
 
 Plans:
 - [x] 02-01: Foundation - Add Anthropic gem and create Provider::Anthropic class skeleton
-- [ ] 02-02: Implement auto_detect_merchants method using Anthropic Messages API
-- [ ] 02-03: Handle JSON responses and error cases for both operations
+- [x] 02-02: Implement AutoCategorizer using Anthropic Messages API with structured outputs
+- [ ] 02-03: Implement auto_detect_merchants method using Anthropic Messages API
 
 ### Phase 3: Chat Support
 **Goal**: Implement chat_response with Anthropic including function/tool calling
@@ -119,7 +119,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete | 2026-01-09 |
-| 2. Core Operations | 1/3 | In progress | 2026-01-09 |
+| 2. Core Operations | 2/3 | In progress | 2026-01-09 |
 | 3. Chat Support | 0/4 | Not started | - |
 | 4. Registry Integration | 0/3 | Not started | - |
 | 5. Settings Model | 0/3 | Not started | - |
