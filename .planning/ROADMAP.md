@@ -10,23 +10,26 @@ None (Rails backend work following established patterns in the Sure codebase)
 
 ## Milestones
 
-- 🚧 **v1.0 Anthropic Support** - Phases 1-9 (in progress, 78% complete)
-- 📋 **v1.1 AI Auto-Categorization Triggers** - Phases 10-13 (planned)
+- ✅ **[v1.0 Anthropic Support](milestones/v1.0-ROADMAP.md)** - Phases 1-9 + 9.1 (shipped 2026-01-10)
+- 🚧 **v1.1 AI Auto-Categorization Triggers** - Phases 10-13 (in progress, 0% complete)
 
 ## Phases
 
 <details>
-<summary>v1.0 Anthropic Support (Phases 1-9)</summary>
+<summary>✅ v1.0 Anthropic Support (Phases 1-9 + 9.1) — SHIPPED 2026-01-10</summary>
 
-- [x] **Phase 1: Foundation** - Add Anthropic gem and create Provider::Anthropic class skeleton
-- [x] **Phase 2: Core Operations** - Implement auto_categorize and auto_detect_merchants for Anthropic
-- [x] **Phase 3: Chat Support** - Implement chat_response with Anthropic (including function/tool calling)
-- [x] **Phase 4: Registry Integration** - Register Anthropic in provider registry and add LlmUsage pricing
-- [x] **Phase 5: Settings Model** - Add Anthropic settings fields (API key, model, provider selection)
-- [x] **Phase 6: Settings UI** - Build provider selector dropdown and configuration form
-- [x] **Phase 7: Langfuse Integration** - Ensure observability tracing works for Anthropic
-- [ ] **Phase 8: Validation & Testing** - Verify all features work and no regressions to OpenAI
-- [ ] **Phase 9: Resolve Anthropic Issues** - Fix any remaining bugs or integration issues discovered during testing
+See [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full details.
+
+- [x] Phase 1: Foundation (3/3 plans) — completed 2026-01-09
+- [x] Phase 2: Core Operations (3/3 plans) — completed 2026-01-10
+- [x] Phase 3: Chat Support (4/4 plans) — completed 2026-01-09
+- [x] Phase 4: Registry Integration (3/3 plans) — completed 2026-01-09
+- [x] Phase 5: Settings Model (3/3 plans) — completed 2026-01-09
+- [x] Phase 6: Settings UI (4/4 plans) — completed 2026-01-09
+- [x] Phase 7: Langfuse Integration (1/1 plans) — completed 2026-01-10
+- [x] Phase 8: Validation & Testing (3/3 plans) — completed 2026-01-10
+- [x] Phase 9: Resolve Anthropic Issues (1/1 plans) — completed 2026-01-10
+- [x] Phase 9.1: Fix get_transactions function tool (1/1 plans) — completed 2026-01-10 (INSERTED)
 
 </details>
 
@@ -166,21 +169,23 @@ Plans:
 Plans:
 - [x] 08-01: Test all AI features with Anthropic provider
 - [x] 08-02: Test all AI features with OpenAI provider (regression check)
-- [ ] 08-03: Test provider switching and settings UI
+- [x] 08-03: Test provider switching and settings UI
 
-**Status**: In progress (2026-01-10) - 2/3 plans complete
+**Status**: Complete (2026-01-10) - 3/3 plans complete
 
 ### Phase 9: Resolve Anthropic Issues
 **Goal**: Fix any remaining bugs or integration issues discovered during testing
 **Depends on**: Phase 8
 **Research**: Unlikely (bug fixing)
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 9 to break down)
+- [x] 9-01: Feature sweep and issue resolution
+
+**Status**: Complete (2026-01-10)
 
 **Details:**
-To be added during planning
+Fixed VCR test environment issue with ANTHROPIC_BASE_URL proxy. Created ISSUES.md catalog. All tests passing (69 tests, 162 assertions).
 
 ### Phase 9.1: Fix get_transactions function tool (INSERTED)
 
@@ -208,8 +213,8 @@ The AI chat was failing when calling the `get_transactions` function because Ant
 | 5. Settings Model | v1.0 | 3/3 | Complete | 2026-01-09 |
 | 6. Settings UI | v1.0 | 4/4 | Complete | 2026-01-09 |
 | 7. Langfuse Integration | v1.0 | 1/1 | Complete | 2026-01-10 |
-| 8. Validation & Testing | v1.0 | 2/3 | In progress | 2026-01-10 |
-| 9. Resolve Anthropic Issues | v1.0 | 0/0 | Not started | - |
+| 8. Validation & Testing | v1.0 | 3/3 | Complete | 2026-01-10 |
+| 9. Resolve Anthropic Issues | v1.0 | 1/1 | Complete | 2026-01-10 |
 | 9.1. Fix get_transactions function tool | v1.0 | 1/1 | Complete | 2026-01-10 | (INSERTED)
 | 10. Settings & Config | v1.1 | 0/? | Not started | - |
 | 11. Import Triggers | v1.1 | 0/? | Not started | - |

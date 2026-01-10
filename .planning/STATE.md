@@ -2,28 +2,36 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2025-01-09)
+See: .planning/PROJECT.md (updated 2026-01-10)
 
 **Core value:** Smooth UX configuration — Users select AI provider through settings dropdown
-**Current focus:** Phase 9.1 — Fix get_transactions function tool (COMPLETE)
+**Current focus:** Milestone v1.0 COMPLETE — Ready for v1.1 planning
 
 ## Current Position
 
-Phase: 9.1 (Fix get_transactions function tool)
-Plan: 1 of 1 in current phase
-Status: Phase complete
-Last activity: 2026-01-10 — Completed 9.1-01-PLAN.md
+Phase: v1.0 Anthropic Support — SHIPPED 2026-01-10
+Plan: Milestone complete
+Status: All 26 plans finished across 10 phases
+Last activity: 2026-01-10 — v1.0 milestone archived
 
-Progress: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100% (v1.0 COMPLETE!)
+Progress: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100% (v1.0 SHIPPED!)
 
-**Note:** Phase 9.1 complete. All v1.0 Anthropic support work is finished. Ready for v1.1 milestone.
+**Summary:** v1.0 delivered full Anthropic Claude integration. Users can now select between OpenAI and Anthropic providers in settings. All AI features (chat, auto-categorization, merchant detection) work with both providers. 62 files changed, 6,372 lines added.
+
+## Next Milestone Goals
+
+**v1.1: AI Auto-Categorization Triggers** — 4 phases (10-13)
+- Phase 10: Settings & Config — User preferences for auto-categorization behavior and cost controls
+- Phase 11: Import Triggers — AI categorization in CSV import and sync jobs (Lunch Flow)
+- Phase 12: Transaction UI Actions — Individual and bulk "AI categorize" buttons in transaction UI
+- Phase 13: Testing & Docs — Verify all trigger paths and document features
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 19
-- Average duration: 5.1 min
-- Total execution time: ~106 min
+- Total plans completed: 26
+- Average duration: ~6 min
+- Total execution time: ~155 min
 
 **By Phase:**
 
@@ -32,63 +40,56 @@ Progress: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100% (
 | 1 (Foundation) | 3 | 9 min | 3 min |
 | 2 (Core Operations) | 3 | 14 min | 4.7 min |
 | 3 (Chat Support) | 4 | 17 min | 4.3 min |
-| 4 (Registry Integration) | 1 | 3 min | 3 min |
-| 5 (Settings Model) | 1 | 12 min | 12 min |
-| 6 (Settings UI) | 3 | 8 min | 2.7 min |
+| 4 (Registry Integration) | 3 | 8 min | 2.7 min |
+| 5 (Settings Model) | 3 | 15 min | 5 min |
+| 6 (Settings UI) | 4 | 10 min | 2.5 min |
 | 7 (Langfuse Integration) | 1 | 5 min | 5 min |
-| 8 (Validation & Testing) | 2 | 40 min | 20 min |
-| 9.1 (Fix get_transactions) | 1 | 26 min | 26 min |
-
-**Recent Trend:**
-- Last 5 plans: 6-04 (Config Validation), 7-01 (Langfuse Verification), 8-02 (OpenAI Regression), 8-01 (Anthropic Tests), 9.1-01 (get_transactions fix)
-- Trend: v1.0 COMPLETE - all 19 plans finished across 9 phases
+| 8 (Validation & Testing) | 3 | 40 min | 13.3 min |
+| 9 (Resolve Issues) | 1 | 15 min | 15 min |
+| 9.1 (get_transactions fix) | 1 | 26 min | 26 min |
 
 ## Accumulated Context
 
-### Decisions
+### v1.0 Milestone Summary
 
-Decisions are logged in PROJECT.md Key Decisions table.
-Recent decisions affecting current work:
+**Delivered:**
+- Provider::Anthropic class with full implementation (auto_categorize, auto_detect_merchants, chat_response)
+- Provider registry integration with Anthropic cost tracking
+- Settings UI with provider selector dropdown and Anthropic configuration form
+- Comprehensive test suite (11 Anthropic tests, 56 OpenAI regression tests)
+- VCR cassettes for offline testing
+- All bugs resolved (provider switching, SDK compatibility, VCR test environment)
 
-- **Phase 1-01**: Used official anthropic gem (not community ruby-anthropic) for long-term support; Version constraint ~> 1.16.0 allows patch/bugfix updates but breaks on major/minor changes; Confirmed Ruby 3.4.7 compatibility (SDK requires 3.2+)
-- **Phase 1-02**: DEFAULT_MODEL set to "claude-sonnet-4-5-20250929"; Model prefix matching uses start_with? for flexibility
-- **Phase 2-01**: Client initialization pattern with private attr_reader; effective_model class method with ANTHROPIC_MODEL ENV fallback
-- **Phase 2-02**: Used structured outputs beta (2025-11-13) for JSON schema compliance; Content extraction from response.content array (Anthropic-specific); Reused OpenAI's categorization prompts
-- **Phase 2-03**: AutoMerchantDetector with Messages API; Merchant detection returns business_name and business_url (both nullable); Comprehensive Anthropic error handling (APIConnectionError, RateLimitError, etc.)
-- **Phase 3-01**: ChatConfig/ChatParser pattern for API format conversion; Token field mapping: input_tokens -> prompt_tokens, output_tokens -> completion_tokens; System instructions via separate "system" parameter (Anthropic convention); max_tokens required (4096 default); Langfuse tracing with "anthropic.chat_response" name
-- **Phase 3-02**: Anthropic uses "input_schema" not "parameters" for tool definitions; Anthropic's id serves as both id and call_id (unlike OpenAI); Anthropic's input is already a Hash (not JSON string); Parallel tool use supported (iterate all tool_use blocks)
-- **Phase 3-03**: Tool_result blocks MUST come FIRST in user message content array (Anthropic requirement); Assistant message with tool_use blocks is reconstructed from function_results; Caller manages conversation history (no previous_response_id like OpenAI); ChatConfig.build_input handles full multi-turn conversation structure
-- **Phase 4-01**: Registered Anthropic in Provider::Registry with cost tracking; Uses Setting method calls (not bracket notation) for consistency
-- **Phase 5-01**: Used ANTHROPIC_API_KEY ENV (not ACCESS_TOKEN) to match official gem convention
-- **Phase 5-02**: Provider selection is global (single llm_provider field, not per-feature)
-- **Phase 5-03**: Simple validation for llm_provider using validate_llm_provider! method
-- **Phase 6-01**: Provider selector dropdown follows existing pattern with styled_form_with; Auto-submit on blur for instant feedback
-- **Phase 6-02**: Anthropic settings partial matches OpenAI structure exactly; ENV key is ANTHROPIC_API_KEY (not ACCESS_TOKEN) per Anthropic convention; Redaction placeholder "********" prevents accidental overwrite
-- **Phase 6-03**: Provider visibility controller uses hidden class for show/hide; data-provider attributes on settings sections for targeting; Initial provider value from @llm_provider instance variable; Change event triggers immediate visibility update
-- **Phase 6-04**: Anthropic config validation uses claude- prefix check; validate_anthropic_config! follows OpenAI pattern; Help text provides inline guidance; Placeholder shows valid model example
-- **Phase 7-01**: Langfuse integration verified - was already implemented in Phases 02-03; No code changes needed; Token field mapping (input/output_tokens -> prompt/completion_tokens) confirmed correct
-- **Phase 8-02**: OpenAI regression verified - 56 tests passing across 4 test files; LlmUsage test file created for comprehensive pricing coverage; No code changes needed (ideal outcome)
-- **Phase 8-01**: Fixed ChatParser to use symbol keys (:id, :content, :type) - Anthropic SDK returns BaseModel with symbolized keys from to_h
-- **Phase 8-01**: Fixed extract methods to check if parsed.is_a?(Array) before calling dig - API returns direct arrays in some cases
-- **Phase 8-01**: Fixed test function_results format for Anthropic - must include name and arguments, not just call_id and output (Anthropic requires full conversation history)
-- **Phase 9.1-01**: Use Hash#except with both string and symbol keys for function tool params compatibility; params.except("key", "key2", :key, :key2) handles both OpenAI (string keys) and Anthropic (symbol keys); Fallback pattern params["key"] || params[:key] for reading values regardless of key type
+**Stats:**
+- 62 files changed
+- 6,372 lines added
+- 59 milestone-related commits
+- ~1 day development time (2026-01-09 → 2026-01-10)
+
+**Decisions logged in PROJECT.md:**
+- Single provider selection (not per-feature routing)
+- Official anthropic gem (not community alternative)
+- claude-sonnet-4-5-20250929 as default model
+- Symbol keys for Anthropic BaseModel access
+- ANTHROPIC_API_KEY ENV variable name
+- Default provider is "openai" for backward compatibility
 
 ### Deferred Issues
 
-None yet.
+None. All v1.0 issues resolved.
 
 ### Roadmap Evolution
 
-- **Phase 9 added**: Resolve Anthropic Issues (2026-01-10) - New phase to address any bugs or integration issues discovered during testing
-- **Phase 9.1 inserted**: Fix get_transactions function tool (2026-01-10) - URGENT bug fix for "unknown attribute 'page' for Transaction::Search" error in AI chat when using Anthropic provider
-- **Milestone v1.1 created**: AI Auto-Categorization Triggers (2026-01-10) - 4 phases (10-13) focused on adding import triggers, UI actions, and settings for AI categorization beyond Rules
+- **v1.0 COMPLETE**: Anthropic Support (2026-01-10) — Full provider integration shipped
+- **v1.1 PLANNED**: AI Auto-Categorization Triggers — 4 phases focused on import triggers, UI actions, and settings
 
 ### Blockers/Concerns
 
-None yet.
+None. Ready to proceed with v1.1 planning.
 
 ## Session Continuity
 
 Last session: 2026-01-10
-Stopped at: Phase 9.1 complete (v1.0 finished)
+Milestone: v1.0 SHIPPED
+Next: Run `/gsd:discuss-milestone` to plan v1.1
 Resume file: None
