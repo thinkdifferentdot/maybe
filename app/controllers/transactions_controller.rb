@@ -177,7 +177,7 @@ class TransactionsController < ApplicationController
     @entry = Current.family.entries.find(params[:id])
     transaction = @entry.transaction
 
-    transaction.family.learn_pattern_from!(transaction)
+    Current.family.learn_pattern_from!(transaction)
     transaction.lock_attr!(:category_id)
 
     flash[:notice] = t(".approval_success")

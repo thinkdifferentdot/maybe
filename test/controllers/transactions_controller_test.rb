@@ -283,4 +283,55 @@ end
     assert_redirected_to transactions_path
     assert_equal "An unexpected error occurred while creating the recurring transaction", flash[:alert]
   end
+
+  test "approve_ai creates learned pattern and locks category" do
+    family = families(:empty)
+    sign_in users(:empty)
+    account = family.accounts.create! name: "Test", balance: 0, currency: "USD", accountable: Depository.new
+    category = family.categories.create! name: "Coffee", color: "#ff0000"
+    merchant = family.merchants.create! name: "Coffee Shop"
+    entry = create_transaction(account: account, name: "Coffee Shop", amount: 100, merchant: merchant, category: category)
+    transaction = entry.entryable
+
+    # Simulate AI categorization
+    transaction.data_enrichments.create!(
+      source: "ai",
+      attribute_name: "category_id",
+      value: category.id
+    )
+
+    assert_difference "family.learned_patterns.count", 1 do
+      post approve_ai_transaction_path(entry.id), as: :turbo_stream
+    end
+
+    assert transaction.reload.locked_attributes["category_id"].present?
+    assert_response :success
+    assert_equal "Pattern learned! Future transactions will be auto-categorized.", flash[:notice]
+  end
+
+  test "reject_ai removes category and enrichment record" do
+    family = families(:empty)
+    sign_in users(:empty)
+    account = family.accounts.create! name: "Test", balance: 0, currency: "USD", accountable: Depository.new
+    category = family.categories.create! name: "Coffee", color: "#ff0000"
+    merchant = family.merchants.create! name: "Coffee Shop"
+    entry = create_transaction(account: account, name: "Coffee Shop", amount: 100, merchant: merchant, category: category)
+    transaction = entry.entryable
+
+    # Simulate AI categorization
+    enrichment = transaction.data_enrichments.create!(
+      source: "ai",
+      attribute_name: "category_id",
+      value: category.id
+    )
+
+    assert_no_difference "family.learned_patterns.count" do
+      post reject_ai_transaction_path(entry.id), as: :turbo_stream
+    end
+
+    assert_nil transaction.reload.category_id
+    assert_not DataEnrichment.exists?(enrichment.id)
+    assert_response :success
+    assert_equal "Category removed. This transaction won't be auto-categorized.", flash[:notice]
+  end
 end
