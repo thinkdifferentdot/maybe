@@ -121,11 +121,11 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 08-01: Test all AI features with Anthropic provider
+- [x] 08-01: Test all AI features with Anthropic provider
 - [x] 08-02: Test all AI features with OpenAI provider (regression check)
 - [ ] 08-03: Test provider switching and settings UI
 
-**Status**: In progress (2026-01-10) - 1/3 plans complete
+**Status**: In progress (2026-01-10) - 2/3 plans complete
 
 ## Progress
 

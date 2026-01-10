@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2025-01-09)
 ## Current Position
 
 Phase: 8 of 8 (Validation & Testing)
-Plan: 02 of 03
+Plan: 01 of 03
 Status: In progress
-Last activity: 2026-01-10 — Completed Phase 8 Plan 02 (OpenAI Regression Tests)
+Last activity: 2026-01-10 — Completed Phase 8 Plan 01 (Anthropic Provider Tests)
 
-Progress: ████████████████░░░ 74% (17/23 plans complete)
+Progress: ████████████████░░░ 78% (18/23 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 17
-- Average duration: 3.9 min
-- Total execution time: ~66 min
+- Total plans completed: 18
+- Average duration: 4.4 min
+- Total execution time: ~80 min
 
 **By Phase:**
 
@@ -34,11 +34,11 @@ Progress: ████████████████░░░ 74% (17/23 p
 | 5 (Settings Model) | 1 | 12 min | 12 min |
 | 6 (Settings UI) | 3 | 8 min | 2.7 min |
 | 7 (Langfuse Integration) | 1 | 5 min | 5 min |
-| 8 (Validation & Testing) | 1 | 15 min | 15 min |
+| 8 (Validation & Testing) | 2 | 40 min | 20 min |
 
 **Recent Trend:**
-- Last 5 plans: 6-04 (Config Validation), 7-01 (Langfuse Verification), 8-02 (OpenAI Regression)
-- Trend: Phase 8 in progress, 2 plans remaining (08-01, 08-03)
+- Last 5 plans: 6-04 (Config Validation), 7-01 (Langfuse Verification), 8-02 (OpenAI Regression), 8-01 (Anthropic Tests)
+- Trend: Phase 8 in progress, 1 plan remaining (08-03 Integration Smoke)
 
 ## Accumulated Context
 
@@ -65,6 +65,9 @@ Recent decisions affecting current work:
 - **Phase 6-04**: Anthropic config validation uses claude- prefix check; validate_anthropic_config! follows OpenAI pattern; Help text provides inline guidance; Placeholder shows valid model example
 - **Phase 7-01**: Langfuse integration verified - was already implemented in Phases 02-03; No code changes needed; Token field mapping (input/output_tokens -> prompt/completion_tokens) confirmed correct
 - **Phase 8-02**: OpenAI regression verified - 56 tests passing across 4 test files; LlmUsage test file created for comprehensive pricing coverage; No code changes needed (ideal outcome)
+- **Phase 8-01**: Fixed ChatParser to use symbol keys (:id, :content, :type) - Anthropic SDK returns BaseModel with symbolized keys from to_h
+- **Phase 8-01**: Fixed extract methods to check if parsed.is_a?(Array) before calling dig - API returns direct arrays in some cases
+- **Phase 8-01**: Fixed test function_results format for Anthropic - must include name and arguments, not just call_id and output (Anthropic requires full conversation history)
 
 ### Deferred Issues
 
@@ -77,5 +80,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-10
-Stopped at: Completed Phase 8 Plan 02 (OpenAI Regression Tests)
+Stopped at: Completed Phase 8 Plan 01 (Anthropic Provider Tests)
 Resume file: None
