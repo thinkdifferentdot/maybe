@@ -1,6 +1,6 @@
 <%# locals: (transaction:) %>
 
-<div id="<%= dom_id(transaction, "category_menu") %>">
+<div id="<%= dom_id(transaction, "category_menu") %>" class="flex items-center gap-1">
   <% if transaction.transfer&.categorizable? || transaction.transfer.nil? %>
     <%= render "categories/menu", transaction: transaction %>
   <% else %>
@@ -11,4 +11,6 @@
       <%= render "categories/badge_mobile", category: transaction.transfer&.payment? ? payment_category :  transfer_category %>
     </div>
   <% end %>
+
+  <%= render "transactions/confidence_badge", transaction: transaction %>
 </div>

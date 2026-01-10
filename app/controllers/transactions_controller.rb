@@ -180,6 +180,8 @@ class TransactionsController < ApplicationController
     transaction.family.learn_pattern_from!(transaction)
     transaction.lock_attr!(:category_id)
 
+    flash[:notice] = t(".approval_success")
+
     respond_to do |format|
       format.turbo_stream
       format.html { redirect_to transactions_path(q: { filter: "recent_ai" }) }
@@ -197,6 +199,8 @@ class TransactionsController < ApplicationController
     transaction.data_enrichments
       .where(source: "ai", attribute_name: "category_id")
       .destroy_all
+
+    flash[:notice] = t(".rejection_success")
 
     respond_to do |format|
       format.turbo_stream

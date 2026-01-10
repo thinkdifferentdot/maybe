@@ -179,6 +179,7 @@ Rails.application.routes.draw do
   namespace :transactions do
     resource :bulk_deletion, only: :create
     resource :bulk_update, only: %i[new create]
+    resource :bulk_ai_categorization, only: :create, controller: "bulk_ai_categorizations"
     resource :ai_categorization, only: :create, controller: "transactions/ai_categorizations"
   end
 

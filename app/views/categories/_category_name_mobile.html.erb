@@ -1,7 +1,12 @@
-<span id="category_name_mobile_<%= transaction.id %>" class="text-secondary lg:hidden">
+<span id="category_name_mobile_<%= transaction.id %>" class="text-secondary lg:hidden flex items-center gap-1">
   <% if transaction.transfer&.categorizable? || transaction.transfer.nil? %>
-    <%= transaction.category&.name || Category.uncategorized.name %>
+    <span>
+      <%= transaction.category&.name || Category.uncategorized.name %>
+    </span>
   <% else %>
-    <%= transaction.transfer&.payment? ? payment_category.name :  transfer_category.name %>
+    <span>
+      <%= transaction.transfer&.payment? ? payment_category.name :  transfer_category.name %>
+    </span>
   <% end %>
+  <%= render "transactions/confidence_badge", transaction: transaction %>
 </span>

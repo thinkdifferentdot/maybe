@@ -1,0 +1,18 @@
+<%# locals: (transaction:) %>
+
+<% confidence = transaction.extra.dig("ai_categorization_confidence") %>
+
+<% if confidence.present? %>
+  <% percent = (confidence * 100).round %>
+  <% color_class = if percent >= 80
+                     "text-green-600"
+                   elsif percent >= 60
+                     "text-yellow-600"
+                   else
+                     "text-orange-600"
+                   end %>
+
+  <span class="text-xs <%= color_class %> font-medium" title="AI confidence score">
+    <%= t("transactions.ai_categorize.confidence", percent: percent) %>
+  </span>
+<% end %>
