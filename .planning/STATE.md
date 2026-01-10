@@ -9,15 +9,17 @@ See: .planning/PROJECT.md (updated 2026-01-10)
 
 ## Current Position
 
-Phase: v1.1 AI Auto-Categorization Triggers — Phase 12 (Transaction UI Actions)
-Plan: 12-03 (Bulk AI Categorization) — COMPLETE
-Status: Phase 12 COMPLETE! All 3 plans finished (12-01, 12-02, 12-03)
-Last activity: 2026-01-10 — Bulk AI categorization with cost estimation and low-confidence confirmations
+Phase: v1.1 AI Auto-Categorization Triggers — Phase 13 (Testing & Docs)
+Plan: 13-01 (LearnedPattern Model Tests) — COMPLETE
+Status: Phase 13 IN PROGRESS (1 of ? plans complete)
+Last activity: 2026-01-10 — LearnedPattern model and matcher test coverage (50 new tests)
 
-Progress for Phase 12: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100% (3 of 3 plans complete)
-Overall v1.1 Progress: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░ 40% (10 of ~25 plans estimated)
+Progress for Phase 13: ▓▓▓░░░░░░░░░░░░░░░░░ 25% (1 of ~4 plans estimated)
+Overall v1.1 Progress: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓░▓░░░░ 44% (11 of ~25 plans estimated)
 
 **Summary (12-03):** Bulk AI categorization from selection bar with sparkle icon button. Cost estimation updates dynamically based on selection count (100 tokens/transaction + 50/category * model pricing). Low-confidence (<60%) results require user confirmation; high-confidence results apply immediately. Summary modal shows success/skip/error counts. All 1644 tests passing.
+
+**Summary (13-01):** Comprehensive test coverage for LearnedPattern model and LearnedPatternMatcher service (50 new tests: 23 model tests, 22 matcher tests, 5 Family integration tests). All tests follow existing patterns (fixtures, EntriesTestHelper, descriptive names).
 
 ## Next Milestone Goals
 
@@ -25,14 +27,14 @@ Overall v1.1 Progress: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░
 - Phase 10: Settings & Config — User preferences for auto-categorization behavior and cost controls ✅ COMPLETE
 - Phase 11: Import Triggers — AI categorization in CSV import and sync jobs ✅ COMPLETE
 - Phase 12: Transaction UI Actions — Individual and bulk "AI categorize" buttons in transaction UI ✅ COMPLETE
-- Phase 13: Testing & Docs — Verify all trigger paths and document features
+- Phase 13: Testing & Docs — Verify all trigger paths and document features (IN PROGRESS: 1 plan complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 38 (26 v1.0 + 12 v1.1)
+- Total plans completed: 39 (26 v1.0 + 13 v1.1)
 - Average duration: ~6 min
-- Total execution time: ~240 min
+- Total execution time: ~245 min
 
 **By Phase:**
 
@@ -51,6 +53,7 @@ Overall v1.1 Progress: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░
 | 10 (Settings & Config) | 1 | ~5 min | ~5 min |
 | 11 (Import Triggers) | 4 | ~35 min | ~9 min |
 | 12 (Transaction UI Actions) | 3 | ~15 min | ~5 min |
+| 13 (Testing & Docs) | 1 | ~5 min | ~5 min |
 
 ## Accumulated Context
 
@@ -88,6 +91,9 @@ Overall v1.1 Progress: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░
 - 12-02: Individual AI categorize button
 - 12-03: Bulk AI categorize workflow
 
+**Phase 13 - Testing & Docs (IN PROGRESS):**
+- 13-01: LearnedPattern model tests (50 tests: validations, normalization, matching)
+
 **Decisions:**
 - Use PostProcessor pattern for batch AI categorization after sync
 - Track imported transaction IDs in memory (no DB schema changes)
@@ -118,7 +124,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-10
-Phase: 12-03 complete (Bulk AI Categorization)
+Phase: 13-01 complete (LearnedPattern Tests)
 Milestone: v1.1
-Next: Phase 13 (Testing & Docs) or discuss next phase
+Next: Phase 13 (Testing & Docs) - continue with 13-02 or discuss next phase
 Resume file: None

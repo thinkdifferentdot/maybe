@@ -76,6 +76,9 @@ See [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full details.
 **Depends on**: Phases 10, 11, 12
 **Research**: Unlikely (verification)
 **Plans**: TBD
+- [x] 13-01: LearnedPattern model and matcher tests (2026-01-10)
+
+**Status**: In progress (1/? plans complete - 2026-01-10)
 
 ## Phase Details
 
@@ -231,4 +234,4 @@ The AI chat was failing when calling the `get_transactions` function because Ant
 | 10. Settings & Config | v1.1 | 1/1 | Complete | 2026-01-10 |
 | 11. Import Triggers | v1.1 | 4/4 | Complete | 2026-01-10 |
 | 12. Transaction UI Actions | v1.1 | 3/3 | Complete | 2026-01-10 |
-| 13. Testing & Docs | v1.1 | 0/? | Not started | - |
+| 13. Testing & Docs | v1.1 | 1/? | In progress | 2026-01-10 |
