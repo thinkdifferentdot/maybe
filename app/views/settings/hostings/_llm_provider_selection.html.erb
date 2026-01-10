@@ -1,0 +1,43 @@
+<div class="space-y-4" data-controller="provider-visibility">
+  <div>
+    <h2 class="font-medium mb-1"><%= t(".title") %></h2>
+    <p class="text-secondary text-sm mb-4"><%= t(".description") %></p>
+  </div>
+
+  <%= styled_form_with model: Setting.new,
+                       url: settings_hosting_path,
+                       method: :patch,
+                       data: {
+                         controller: "auto-submit-form",
+                         "auto-submit-form-trigger-event-value": "change"
+                       } do |form| %>
+    <div class="space-y-4">
+      <%= form.select :llm_provider,
+                      [
+                        [t(".providers.openai"), "openai"],
+                        [t(".providers.anthropic"), "anthropic"]
+                      ],
+                      { label: t(".llm_provider_label") },
+                      {
+                        value: @llm_provider,
+                        disabled: ENV["LLM_PROVIDER"].present?,
+                        data: {
+                          "auto-submit-form-target": "auto",
+                          "action": "change->provider-visibility#providerChanged",
+                          "provider-visibility-provider-value": @llm_provider.to_s
+                        }
+                      } %>
+
+      <% if ENV["LLM_PROVIDER"].present? %>
+        <div class="mt-4 bg-warning-50 border border-warning-200 rounded-lg p-3">
+          <div class="flex items-start gap-2">
+            <%= icon("alert-circle", class: "w-5 h-5 text-warning-600 mt-0.5 shrink-0") %>
+            <p class="text-sm text-warning-800">
+              <%= t(".env_configured_message") %>
+            </p>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

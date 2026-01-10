@@ -39,6 +39,14 @@ en:
         label: Client ID
         placeholder: Enter your Client ID here
         title: Brand Fetch Settings
+      llm_provider_selection:
+        title: AI Provider
+        description: Select your AI provider for chat, auto-categorization, and merchant detection
+        llm_provider_label: AI Provider
+        providers:
+          openai: OpenAI
+          anthropic: Anthropic
+        env_configured_message: Provider selection is disabled because the LLM_PROVIDER environment variable is set. To enable selection here, remove this environment variable from your configuration.
       openai_settings:
         description: Enter the access token and optionally configure a custom OpenAI-compatible provider
         env_configured_message: Successfully configured through environment variables.
