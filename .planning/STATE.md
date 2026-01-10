@@ -10,18 +10,16 @@ See: .planning/PROJECT.md (updated 2026-01-10)
 ## Current Position
 
 Phase: v1.1 AI Auto-Categorization Triggers — Phase 13 (Testing & Docs)
-Plan: 13-03 (Settings & Confidence Integration) — COMPLETE
-Status: Phase 13 IN PROGRESS (3 of ? plans complete)
-Last activity: 2026-01-10 — Verified AI trigger settings and added confidence badge color coding tests
+Plan: 13-02 (AI Categorization Controllers Tests) — COMPLETE
+Status: Phase 13 IN PROGRESS (3 of 4 plans complete)
+Last activity: 2026-01-10 — Added comprehensive controller tests for individual and bulk AI categorization (29 new tests)
 
-Progress for Phase 13: ▓▓▓▓▓▓░░░░░░░░░░░░░░ 60% (3 of 5 estimated plans complete)
-Overall v1.1 Progress: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░ 60% (13 of ~22 plans estimated)
-
-**Summary (12-03):** Bulk AI categorization from selection bar with sparkle icon button. Cost estimation updates dynamically based on selection count (100 tokens/transaction + 50/category * model pricing). Low-confidence (<60%) results require user confirmation; high-confidence results apply immediately. Summary modal shows success/skip/error counts. All 1644 tests passing.
+Progress for Phase 13: ▓▓▓▓▓▓▓▓░░░░░░░░░░░ 75% (3 of 4 plans complete)
+Overall v1.1 Progress: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░ 65% (15 of ~23 plans estimated)
 
 **Summary (13-01):** Comprehensive test coverage for LearnedPattern model and LearnedPatternMatcher service (50 new tests: 23 model tests, 22 matcher tests, 5 Family integration tests). All tests follow existing patterns (fixtures, EntriesTestHelper, descriptive names).
 
-**Summary (13-02):** Verified AutoCategorizer job enqueuing with assert_enqueued_jobs pattern. Tests cover import trigger, sync trigger, and UI action trigger with Setting toggles.
+**Summary (13-02):** Added comprehensive test coverage for AI categorization controllers (29 new tests: 10 individual controller tests, 13 bulk controller tests, 6 system tests). Tests cover auth, authorization, Turbo Stream responses, confidence handling, error handling, and Stimulus integration. Fixed route definition bug (ai_categorization controller path) and controller bug (transactions.reload on Array).
 
 **Summary (13-03):** Verified existing AI trigger tests for CSV import and Lunchflow sync settings integration. Created confidence badge view tests (9 test cases) covering all confidence ranges (>80% green, 60-80% yellow, <60% orange) and boundary conditions.
 
@@ -36,9 +34,9 @@ Overall v1.1 Progress: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 41 (26 v1.0 + 15 v1.1)
+- Total plans completed: 42 (26 v1.0 + 16 v1.1)
 - Average duration: ~6 min
-- Total execution time: ~260 min
+- Total execution time: ~270 min
 
 **By Phase:**
 
@@ -57,7 +55,7 @@ Overall v1.1 Progress: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░
 | 10 (Settings & Config) | 1 | ~5 min | ~5 min |
 | 11 (Import Triggers) | 4 | ~35 min | ~9 min |
 | 12 (Transaction UI Actions) | 3 | ~15 min | ~5 min |
-| 13 (Testing & Docs) | 3 | ~22 min | ~7 min |
+| 13 (Testing & Docs) | 3 | ~30 min | ~10 min |
 
 ## Accumulated Context
 
@@ -97,7 +95,7 @@ Overall v1.1 Progress: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░
 
 **Phase 13 - Testing & Docs (IN PROGRESS):**
 - 13-01: LearnedPattern model tests (50 tests: validations, normalization, matching)
-- 13-02: AutoCategorizer job enqueuing tests (verified with assert_enqueued_jobs)
+- 13-02: AI categorization controllers tests (29 tests: individual controller, bulk controller, system tests)
 - 13-03: Settings & confidence integration tests (verified existing, added confidence badge view tests)
 
 **Decisions:**
@@ -130,7 +128,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-10
-Phase: 13-03 complete (Settings & Confidence Integration)
+Phase: 13-02 complete (AI Categorization Controllers Tests)
 Milestone: v1.1
-Next: Phase 13 (Testing & Docs) - continue with 13-04 or discuss next phase
+Next: Phase 13 (Testing & Docs) - continue with 13-04 (Full AI Regression Tests)
 Resume file: None
