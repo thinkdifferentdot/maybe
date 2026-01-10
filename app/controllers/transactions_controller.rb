@@ -166,6 +166,37 @@ class TransactionsController < ApplicationController
     head :unprocessable_entity
   end
 
+  def approve_ai
+    @entry = Current.family.entries.find(params[:id])
+    transaction = @entry.transaction
+
+    transaction.family.learn_pattern_from!(transaction)
+    transaction.lock_attr!(:category_id)
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to transactions_path(q: { filter: "recent_ai" }) }
+    end
+  end
+
+  def reject_ai
+    @entry = Current.family.entries.find(params[:id])
+    transaction = @entry.transaction
+
+    # Remove the AI-assigned category
+    transaction.update!(category_id: nil)
+
+    # Remove the enrichment record so it doesn't show as "recent AI" anymore
+    transaction.data_enrichments
+      .where(source: "ai", attribute_name: "category_id")
+      .destroy_all
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to transactions_path(q: { filter: "recent_ai" }) }
+    end
+  end
+
   private
     def per_page
       params[:per_page].to_i.positive? ? params[:per_page].to_i : 20
