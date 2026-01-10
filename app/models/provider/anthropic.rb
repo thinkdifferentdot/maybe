@@ -91,6 +91,91 @@ class Provider::Anthropic < Provider
     end
   end
 
+  def chat_response(
+    prompt,
+    model:,
+    instructions: nil,
+    functions: [],
+    function_results: [],
+    streamer: nil,
+    previous_response_id: nil,
+    session_id: nil,
+    user_identifier: nil,
+    family: nil
+  )
+    with_provider_response do
+      # For plan 03-01: functions, function_results, streamer, previous_response_id are ignored
+      # These will be implemented in plans 03-02, 03-03, 03-04
+
+      chat_config = ChatConfig.new(
+        functions: functions,
+        function_results: function_results
+      )
+
+      effective_model = model.presence || @default_model
+
+      trace = create_langfuse_trace(
+        name: "anthropic.chat_response",
+        input: { prompt: prompt, model: effective_model, instructions: instructions },
+        session_id: session_id,
+        user_identifier: user_identifier
+      )
+
+      messages = chat_config.build_input(prompt)
+
+      begin
+        # Build parameters for Anthropic Messages API
+        parameters = {
+          model: effective_model,
+          max_tokens: 4096, # Required by Anthropic API
+          messages: messages
+        }
+        parameters[:system] = instructions if instructions.present?
+
+        raw_response = client.messages.create(parameters)
+
+        parsed = ChatParser.new(raw_response).parsed
+
+        # Map Anthropic usage field names to LlmConcept format
+        # Anthropic uses input_tokens/output_tokens, we need prompt_tokens/completion_tokens
+        usage = {
+          "prompt_tokens" => raw_response.dig("usage", "input_tokens"),
+          "completion_tokens" => raw_response.dig("usage", "output_tokens"),
+          "total_tokens" => raw_response.dig("usage", "input_tokens").to_i + raw_response.dig("usage", "output_tokens").to_i
+        }
+
+        output_text = parsed.messages.map(&:output_text).join("\n")
+
+        log_langfuse_generation(
+          name: "chat_response",
+          model: effective_model,
+          input: messages,
+          output: output_text,
+          usage: usage,
+          session_id: session_id,
+          user_identifier: user_identifier
+        )
+
+        record_llm_usage(family: family, model: effective_model, operation: "chat", usage: usage)
+
+        parsed
+      rescue => e
+        log_langfuse_generation(
+          name: "chat_response",
+          model: effective_model,
+          input: messages,
+          error: e,
+          session_id: session_id,
+          user_identifier: user_identifier
+        )
+
+        record_llm_usage(family: family, model: effective_model, operation: "chat", error: e)
+
+        raise
+      end
+    end
+  end
+
   private
 
     attr_reader :client
@@ -114,5 +199,124 @@ class Provider::Anthropic < Provider
     rescue => e
       Rails.logger.warn("Langfuse trace creation failed: #{e.message}")
       nil
+    end
+
+    def log_langfuse_generation(name:, model:, input:, output: nil, usage: nil, error: nil, session_id: nil, user_identifier: nil)
+      return unless langfuse_client
+
+      trace = create_langfuse_trace(
+        name: "anthropic.#{name}",
+        input: input,
+        session_id: session_id,
+        user_identifier: user_identifier
+      )
+
+      generation = trace&.generation(
+        name: name,
+        model: model,
+        input: input
+      )
+
+      if error
+        generation&.end(
+          output: { error: error.message },
+          level: "ERROR"
+        )
+        trace&.update(
+          output: { error: error.message },
+          level: "ERROR"
+        )
+      else
+        generation&.end(output: output, usage: usage)
+        trace&.update(output: output)
+      end
+    rescue => e
+      Rails.logger.warn("Langfuse logging failed: #{e.message}")
+    end
+
+    def record_llm_usage(family:, model:, operation:, usage: nil, error: nil)
+      return unless family
+
+      # For error cases, record with zero tokens
+      if error.present?
+        Rails.logger.info("Recording failed LLM usage - Error: #{error.message}")
+
+        # Extract HTTP status code if available from the error
+        http_status_code = extract_http_status_code(error)
+
+        inferred_provider = LlmUsage.infer_provider(model)
+        family.llm_usages.create!(
+          provider: inferred_provider,
+          model: model,
+          operation: operation,
+          prompt_tokens: 0,
+          completion_tokens: 0,
+          total_tokens: 0,
+          estimated_cost: nil,
+          metadata: {
+            error: error.message,
+            http_status_code: http_status_code
+          }
+        )
+
+        Rails.logger.info("Failed LLM usage recorded successfully - Status: #{http_status_code}")
+        return
+      end
+
+      return unless usage
+
+      Rails.logger.info("Recording LLM usage - Raw usage data: #{usage.inspect}")
+
+      prompt_tokens = usage["prompt_tokens"] || 0
+      completion_tokens = usage["completion_tokens"] || 0
+      total_tokens = usage["total_tokens"] || 0
+
+      Rails.logger.info("Extracted tokens - prompt: #{prompt_tokens}, completion: #{completion_tokens}, total: #{total_tokens}")
+
+      estimated_cost = LlmUsage.calculate_cost(
+        model: model,
+        prompt_tokens: prompt_tokens,
+        completion_tokens: completion_tokens
+      )
+
+      # Log when we can't estimate the cost (e.g., custom/self-hosted models)
+      if estimated_cost.nil?
+        Rails.logger.info("Recording LLM usage without cost estimate for unknown model: #{model}")
+      end
+
+      inferred_provider = LlmUsage.infer_provider(model)
+      family.llm_usages.create!(
+        provider: inferred_provider,
+        model: model,
+        operation: operation,
+        prompt_tokens: prompt_tokens,
+        completion_tokens: completion_tokens,
+        total_tokens: total_tokens,
+        estimated_cost: estimated_cost,
+        metadata: {}
+      )
+
+      Rails.logger.info("LLM usage recorded successfully - Cost: #{estimated_cost.inspect}")
+    rescue => e
+      Rails.logger.error("Failed to record LLM usage: #{e.message}")
+    end
+
+    def extract_http_status_code(error)
+      # Try to extract HTTP status code from various error types
+      # Anthropic gem errors may have status codes in different formats
+      if error.respond_to?(:code)
+        error.code
+      elsif error.respond_to?(:http_status)
+        error.http_status
+      elsif error.respond_to?(:status_code)
+        error.status_code
+      elsif error.respond_to?(:response) && error.response.respond_to?(:code)
+        error.response.code.to_i
+      elsif error.message =~ /(\d{3})/
+        # Extract 3-digit HTTP status code from error message
+        $1.to_i
+      else
+        nil
+      end
     end
 end
