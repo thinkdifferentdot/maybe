@@ -79,11 +79,11 @@ class Provider::Registry
       end
 
       def anthropic
-        access_token = ENV["ANTHROPIC_API_KEY"].presence || Setting["anthropic_access_token"]
+        access_token = ENV["ANTHROPIC_API_KEY"].presence || Setting.anthropic_access_token
 
         return nil unless access_token.present?
 
-        model = ENV["ANTHROPIC_MODEL"].presence || Setting["anthropic_model"]
+        model = ENV["ANTHROPIC_MODEL"].presence || Setting.anthropic_model
 
         Provider::Anthropic.new(access_token, model: model)
       end
