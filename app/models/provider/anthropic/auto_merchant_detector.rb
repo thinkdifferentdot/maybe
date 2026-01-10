@@ -47,9 +47,27 @@ class Provider::Anthropic::AutoMerchantDetector
     })
 
     result
+  rescue Anthropic::Errors::APIConnectionError => e
+    span&.end(output: { error: e.message }, level: "ERROR")
+    raise Provider::Anthropic::Error, "Failed to connect to Anthropic API: #{e.message}"
+  rescue Anthropic::Errors::APITimeoutError => e
+    span&.end(output: { error: e.message }, level: "ERROR")
+    raise Provider::Anthropic::Error, "Anthropic API request timed out: #{e.message}"
+  rescue Anthropic::Errors::RateLimitError => e
+    span&.end(output: { error: e.message }, level: "ERROR")
+    raise Provider::Anthropic::Error, "Anthropic API rate limit exceeded: #{e.message}"
+  rescue Anthropic::Errors::AuthenticationError => e
+    span&.end(output: { error: e.message }, level: "ERROR")
+    raise Provider::Anthropic::Error, "Anthropic API authentication failed: #{e.message}"
+  rescue Anthropic::Errors::APIStatusError => e
+    span&.end(output: { error: e.message, status: e.status }, level: "ERROR")
+    raise Provider::Anthropic::Error, "Anthropic API error (#{e.status}): #{e.message}"
+  rescue JSON::ParserError => e
+    span&.end(output: { error: e.message }, level: "ERROR")
+    raise Provider::Anthropic::Error, "Invalid JSON response from Anthropic: #{e.message}"
   rescue => e
     span&.end(output: { error: e.message }, level: "ERROR")
-    raise
+    raise Provider::Anthropic::Error, "Unexpected error during merchant detection: #{e.message}"
   end
 
   private
