@@ -15,8 +15,8 @@ None (Rails backend work following established patterns in the Sure codebase)
 - [x] **Phase 3: Chat Support** - Implement chat_response with Anthropic (including function/tool calling)
 - [x] **Phase 4: Registry Integration** - Register Anthropic in provider registry and add LlmUsage pricing
 - [x] **Phase 5: Settings Model** - Add Anthropic settings fields (API key, model, provider selection)
-- [ ] **Phase 6: Settings UI** - Build provider selector dropdown and configuration form
-- [ ] **Phase 7: Langfuse Integration** - Ensure observability tracing works for Anthropic
+- [x] **Phase 6: Settings UI** - Build provider selector dropdown and configuration form
+- [x] **Phase 7: Langfuse Integration** - Ensure observability tracing works for Anthropic
 - [ ] **Phase 8: Validation & Testing** - Verify all features work and no regressions to OpenAI
 
 ## Phase Details
@@ -98,9 +98,9 @@ Plans:
 - [x] 06-01: Add provider selector dropdown to self-hosting settings
 - [x] 06-02: Add Anthropic API key and model input fields
 - [x] 06-03: Show/hide fields based on selected provider
-- [ ] 06-04: Add configuration validation and error messages
+- [x] 06-04: Add configuration validation and error messages
 
-**Status**: In progress (2026-01-09) - Plans 01-03 complete
+**Status**: Complete (2026-01-09) - All 4 plans finished
 
 ### Phase 7: Langfuse Integration
 **Goal**: Ensure observability tracing works for Anthropic requests
@@ -134,6 +134,6 @@ Plans:
 | 3. Chat Support | 4/4 | Complete | 2026-01-09 |
 | 4. Registry Integration | 3/3 | Complete | 2026-01-09 |
 | 5. Settings Model | 3/3 | Complete | 2026-01-09 |
-| 6. Settings UI | 3/4 | In progress | 2026-01-09 |
+| 6. Settings UI | 4/4 | Complete | 2026-01-09 |
 | 7. Langfuse Integration | 1/1 | Complete | 2026-01-10 |
 | 8. Validation & Testing | 0/3 | Not started | - |
