@@ -128,7 +128,7 @@
         <% if transaction.transfer&.categorizable? || transaction.transfer.nil? %>
           <button type="button"
                   data-controller="ai-categorize"
-                  data-ai-categorize-transaction-id-value="<%= transaction.id %>"
+                  data-ai-categorize-transaction-id-value="<%= entry.id %>"
                   data-action="click->ai-categorize#categorize"
                   class="p-1 hover:bg-gray-100 rounded text-secondary hover:text-primary transition-colors"
                   title="<%= t("transactions.ai_categorize.button_title") %>">
