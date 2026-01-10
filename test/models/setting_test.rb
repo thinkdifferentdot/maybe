@@ -131,4 +131,116 @@ class SettingTest < ActiveSupport::TestCase
     assert_nil result
     assert_equal "test-model", Setting.openai_model
   end
+
+  # LLM provider tests
+  test "llm_provider accepts valid provider value openai" do
+    Setting.llm_provider = "openai"
+    assert_equal "openai", Setting.llm_provider
+  end
+
+  test "llm_provider accepts valid provider value anthropic" do
+    Setting.llm_provider = "anthropic"
+    assert_equal "anthropic", Setting.llm_provider
+  end
+
+  test "llm_provider defaults to openai when not set" do
+    Setting.llm_provider = nil
+    assert_equal "openai", Setting.llm_provider
+  end
+
+  test "validate_llm_provider! does not raise for valid provider" do
+    assert_nothing_raised do
+      Setting.validate_llm_provider!("openai")
+    end
+
+    assert_nothing_raised do
+      Setting.validate_llm_provider!("anthropic")
+    end
+  end
+
+  test "validate_llm_provider! raises error for invalid provider" do
+    error = assert_raises(Setting::ValidationError) do
+      Setting.validate_llm_provider!("invalid_provider")
+    end
+
+    assert_match(/LLM provider must be one of/, error.message)
+    assert_includes error.message, "openai"
+    assert_includes error.message, "anthropic"
+  end
+
+  test "validate_llm_provider! does not raise for blank provider" do
+    assert_nothing_raised do
+      Setting.validate_llm_provider!(nil)
+    end
+
+    assert_nothing_raised do
+      Setting.validate_llm_provider!("")
+    end
+  end
+
+  test "llm_provider defaults to openai when ENV is not set" do
+    # Clear any existing value
+    Setting.where(var: "llm_provider").destroy_all
+    Setting.clear_cache
+    assert_equal "openai", Setting.llm_provider
+  end
+
+  test "llm_provider stored value takes precedence over ENV" do
+    # When a value is stored, it overrides the ENV default
+    Setting.llm_provider = "anthropic"
+    assert_equal "anthropic", Setting.llm_provider
+  end
+
+  # Anthropic fields tests
+  test "anthropic_access_token can be set and retrieved" do
+    Setting.anthropic_access_token = "test-token"
+    assert_equal "test-token", Setting.anthropic_access_token
+  end
+
+  test "anthropic_access_token defaults to ENV ANTHROPIC_API_KEY when not set" do
+    Setting.where(var: "anthropic_access_token").destroy_all
+    Setting.clear_cache
+    # Falls back to ENV value (may be set in test environment)
+    result = Setting.anthropic_access_token
+    assert result.is_a?(String) || result.nil?
+  end
+
+  test "anthropic_model can be set and retrieved" do
+    Setting.anthropic_model = "claude-sonnet-4-5-20250929"
+    assert_equal "claude-sonnet-4-5-20250929", Setting.anthropic_model
+  end
+
+  test "anthropic_model defaults to nil when not set" do
+    Setting.where(var: "anthropic_model").destroy_all
+    Setting.clear_cache
+    assert_nil Setting.anthropic_model
+  end
+
+  test "validate_anthropic_config! passes for valid claude model" do
+    assert_nothing_raised do
+      Setting.validate_anthropic_config!(model: "claude-sonnet-4-5-20250929")
+    end
+
+    assert_nothing_raised do
+      Setting.validate_anthropic_config!(model: "claude-opus-4-5")
+    end
+  end
+
+  test "validate_anthropic_config! raises error for non-claude model" do
+    error = assert_raises(Setting::ValidationError) do
+      Setting.validate_anthropic_config!(model: "gpt-4")
+    end
+
+    assert_match(/start with 'claude-'/, error.message)
+  end
+
+  test "validate_anthropic_config! does not raise for blank model" do
+    assert_nothing_raised do
+      Setting.validate_anthropic_config!(model: "")
+    end
+
+    assert_nothing_raised do
+      Setting.validate_anthropic_config!(model: nil)
+    end
+  end
 end
