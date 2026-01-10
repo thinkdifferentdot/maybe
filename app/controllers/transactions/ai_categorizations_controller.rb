@@ -4,17 +4,25 @@ class Transactions::AiCategorizationsController < ApplicationController
   def create
     @entry = Current.family.entries.transactions.find(params[:transaction_id])
 
-    begin
-      transaction = @entry.entryable
-    rescue ActiveRecord::RecordNotFound
-      flash[:error] = t("transactions.ai_categorize.error")
-      respond_to do |format|
-        format.turbo_stream { head :unprocessable_entity }
+    # Check if entryable exists without triggering RecordNotFound exception
+    # (StoreLocation concern would catch it and return 404)
+    transaction = begin
+      # Check if the entryable record exists in the database
+      entryable_class = @entry.entryable_type
+      entryable_id = @entry.entryable_id
+
+      if entryable_class.nil? || entryable_id.nil?
+        nil
+      elsif entryable_class.constantize.where(id: entryable_id).exists?
+        @entry.entryable
+      else
+        nil
       end
-      return
+    rescue ActiveRecord::RecordNotFound
+      nil
     end
 
-    # Check if entryable exists (handle orphaned entries)
+    # Handle orphaned entries (Entry exists but Transaction was deleted)
     if transaction.nil?
       flash[:error] = t("transactions.ai_categorize.error")
       respond_to do |format|
