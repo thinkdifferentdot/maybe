@@ -1,9 +1,10 @@
 class TransactionImport < Import
   def import!
+    new_transactions = []
+
     transaction do
       mappings.each(&:create_mappable!)
 
-      new_transactions = []
       updated_entries = []
       claimed_entry_ids = Set.new # Track entries we've already claimed in this import
 
@@ -76,6 +77,18 @@ class TransactionImport < Import
 
       # Bulk import new transactions
       Transaction.import!(new_transactions, recursive: true) if new_transactions.any?
+    end
+
+    # Trigger AI categorization for newly imported uncategorized transactions
+    # Runs after transaction commit to avoid blocking import
+    if ai_categorize_enabled?
+      uncategorized_imported_ids = new_transactions.select { |t| t.category_id.nil? }.map(&:id)
+
+      if uncategorized_imported_ids.any?
+        family.auto_categorize_transactions_later(
+          Transaction.where(id: uncategorized_imported_ids)
+        )
+      end
     end
   end
 
