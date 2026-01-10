@@ -10,7 +10,7 @@ class Provider::Anthropic::ChatParser
       id: response_id,
       model: response_model,
       messages: messages,
-      function_requests: [] # No tool_use handling yet (plan 03-02)
+      function_requests: function_requests
     )
   end
 
@@ -20,6 +20,7 @@ class Provider::Anthropic::ChatParser
 
   ChatResponse = Provider::LlmConcept::ChatResponse
   ChatMessage = Provider::LlmConcept::ChatMessage
+  ChatFunctionRequest = Provider::LlmConcept::ChatFunctionRequest
 
   def response_id
     object.dig("id")
@@ -30,7 +31,7 @@ class Provider::Anthropic::ChatParser
   end
 
   # Anthropic Messages API returns content as an array of blocks
-  # For basic text-only responses, extract text blocks
+  # Extract text blocks for regular messages
   def messages
     # content is an array of blocks with type and text fields
     text_blocks = object.dig("content")&.select { |block| block["type"] == "text" } || []
@@ -42,5 +43,22 @@ class Provider::Anthropic::ChatParser
       id: response_id,
       output_text: output_text
     )]
+  end
+
+  # Extract tool_use blocks from Anthropic response
+  # Anthropic returns tool_use blocks in the content array with type="tool_use"
+  # Each tool_use block has: {type: "tool_use", id:, name:, input:}
+  # Unlike OpenAI, Anthropic may call multiple tools in one response (parallel tool use)
+  def function_requests
+    tool_use_blocks = object.dig("content")&.select { |block| block["type"] == "tool_use" } || []
+
+    tool_use_blocks.map do |block|
+      ChatFunctionRequest.new(
+        id: block["id"],
+        call_id: block["id"], # Anthropic uses same id for both (unlike OpenAI's separate id/call_id)
+        function_name: block["name"],
+        function_args: block["input"] # Already a Hash (not JSON string like OpenAI)
+      )
+    end
   end
 end
