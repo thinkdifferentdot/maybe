@@ -8,8 +8,18 @@ class Provider::Anthropic < Provider
   DEFAULT_ANTHROPIC_MODEL_PREFIXES = %w[claude-]
   DEFAULT_MODEL = "claude-sonnet-4-5-20250929"
 
+  class << self
+    # Returns the effective model that would be used by the provider
+    # Uses the same logic as Provider::Registry and the initializer
+    def effective_model
+      configured_model = ENV.fetch("ANTHROPIC_MODEL", nil)
+      configured_model.presence || DEFAULT_MODEL
+    end
+  end
+
   def initialize(access_token, model: nil)
-    raise NotImplementedError, "Client initialization to be implemented in plan 1-03"
+    @client = ::Anthropic::Client.new(api_key: access_token)
+    @default_model = model.presence || DEFAULT_MODEL
   end
 
   def provider_name
@@ -23,4 +33,7 @@ class Provider::Anthropic < Provider
   def supported_models_description
     "models starting with: #{DEFAULT_ANTHROPIC_MODEL_PREFIXES.join(', ')}"
   end
+
+  private
+    attr_reader :client
 end
