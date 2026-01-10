@@ -11,7 +11,7 @@ None (Rails backend work following established patterns in the Sure codebase)
 ## Milestones
 
 - ✅ **[v1.0 Anthropic Support](milestones/v1.0-ROADMAP.md)** - Phases 1-9 + 9.1 (shipped 2026-01-10)
-- 🚧 **v1.1 AI Auto-Categorization Triggers** - Phases 10-13 (in progress, 0% complete)
+- 🚧 **v1.1 AI Auto-Categorization Triggers** - Phases 10-13 (in progress, 3% complete)
 
 ## Phases
 
@@ -42,14 +42,19 @@ See [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full details.
 **Goal**: Add user preferences for auto-categorization behavior and cost controls
 **Depends on**: v1.0 complete
 **Research**: Unlikely (existing Settings patterns)
-**Plans**: TBD
+**Plans**: 1 plan
+- [x] 10-01: Add AI trigger settings to Settings model and UI (2026-01-10)
 
 #### Phase 11: Import Triggers
 
 **Goal**: Add AI categorization to CSV import and general sync jobs (Lunch Flow)
 **Depends on**: None (parallel with 10, 12)
-**Research**: Unlikely (existing ImportJob/SyncJob patterns)
-**Plans**: TBD
+**Research**: Complete
+**Plans**: 3 plans
+- [x] 11-01: Add LearnedPattern model and matcher for AI categorization (2026-01-10)
+- [x] 11-02: Add AI categorization trigger to CSV import (2026-01-10)
+- [x] 11-03: Add AI categorization trigger to Lunchflow sync (2026-01-10)
+- [ ] 11-04: Bulk review workflow (TBD)
 
 #### Phase 12: Transaction UI Actions
 
@@ -216,7 +221,7 @@ The AI chat was failing when calling the `get_transactions` function because Ant
 | 8. Validation & Testing | v1.0 | 3/3 | Complete | 2026-01-10 |
 | 9. Resolve Anthropic Issues | v1.0 | 1/1 | Complete | 2026-01-10 |
 | 9.1. Fix get_transactions function tool | v1.0 | 1/1 | Complete | 2026-01-10 | (INSERTED)
-| 10. Settings & Config | v1.1 | 0/? | Not started | - |
-| 11. Import Triggers | v1.1 | 0/? | Not started | - |
+| 10. Settings & Config | v1.1 | 1/1 | Complete | 2026-01-10 |
+| 11. Import Triggers | v1.1 | 3/4 | In progress | 2026-01-10 |
 | 12. Transaction UI Actions | v1.1 | 0/? | Not started | - |
 | 13. Testing & Docs | v1.1 | 0/? | Not started | - |
