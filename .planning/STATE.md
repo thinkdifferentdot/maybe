@@ -9,15 +9,15 @@ See: .planning/PROJECT.md (updated 2026-01-10)
 
 ## Current Position
 
-Phase: v1.1 AI Auto-Categorization Triggers — Phase 14 (Manual Testing)
-Plan: 14-01 (Manual Testing Checklist) — COMPLETE
-Status: Phase 13 COMPLETE (4/4 plans), Phase 14 COMPLETE (1/1 plan)
-Last activity: 2026-01-10 — Created comprehensive manual testing checklist for all v1.1 AI features (275 checkable items)
+Phase: v1.1 AI Auto-Categorization Triggers — Phase 14.1 (Fix AI Categorize Route)
+Plan: 14.1 (Fix AI categorize route) — COMPLETE
+Status: Phase 14.1 COMPLETE (1/1 plan)
+Last activity: 2026-01-10 — Fixed 404 error on AI categorize button
 
-Progress for Phase 14: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100% (1 of 1 plan complete)
-Overall v1.1 Progress: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100% (18 of 18 plans complete)
+Progress for Phase 14.1: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100% (1 of 1 plan complete)
+Overall v1.1 Progress: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100% (19 of 19 plans complete)
 
-**Summary (13-01):** Comprehensive test coverage for LearnedPattern model and LearnedPatternMatcher service (50 new tests: 23 model tests, 22 matcher tests, 5 Family integration tests). All tests follow existing patterns (fixtures, EntriesTestHelper, descriptive names).
+**Summary (14.1-01):** Fixed 404 error on individual AI categorize button. Root cause was view sending transaction.id instead of entry.id (different UUIDs in delegated_type pattern). Added controller-level rescue_from to override StoreLocation concern's 404 handling. Returns 422 for orphaned entries instead of 404.
 
 **Summary (13-02):** Added comprehensive test coverage for AI categorization controllers (29 new tests: 10 individual controller tests, 13 bulk controller tests, 6 system tests). Tests cover auth, authorization, Turbo Stream responses, confidence handling, error handling, and Stimulus integration. Fixed route definition bug (ai_categorization controller path) and controller bug (transactions.reload on Array).
 
@@ -35,6 +35,7 @@ Overall v1.1 Progress: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100% 
 - Phase 12: Transaction UI Actions — Individual and bulk "AI categorize" buttons in transaction UI ✅ COMPLETE
 - Phase 13: Testing & Docs — Verify all trigger paths and document features ✅ COMPLETE
 - Phase 14: Manual Testing — User QA checklist for v1.1 features ✅ COMPLETE
+- Phase 14.1: Fix AI Categorize Route — Fixed 404 error on individual AI categorize button ✅ COMPLETE
 
 ## Performance Metrics
 
@@ -130,6 +131,7 @@ None.
 
 - **v1.0 COMPLETE**: Anthropic Support (2026-01-10) — Full provider integration shipped
 - **v1.1 COMPLETE**: AI Auto-Categorization Triggers — All 5 phases complete (settings, import triggers, UI actions, testing & docs, manual testing)
+- **Phase 14.1 INSERTED** (2026-01-10): Fix AI categorize route — Urgent bug discovered during manual testing, POST to `/transactions/ai_categorization` returns 404
 
 ### Blockers/Concerns
 
@@ -138,7 +140,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-10
-Phase: 14-01 complete (Manual Testing Checklist)
-Milestone: v1.1 COMPLETE
-Next: User performs manual testing using checklist, then milestone v1.1 completion (/gsd:complete-milestone)
+Phase: 14.1 COMPLETE (Fix AI Categorize Route)
+Milestone: v1.1 COMPLETE - all 19 plans finished
+Next: Continue with manual testing or start next milestone
 Resume file: None

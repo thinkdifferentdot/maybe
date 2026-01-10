@@ -93,6 +93,21 @@ See [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full details.
 
 **Status**: Complete (1/1 plan complete - 2026-01-10)
 
+### Phase 14.1: Fix AI Categorize Route (INSERTED)
+
+**Goal**: Fix 404 error when clicking individual AI categorize button
+**Depends on**: Phase 14
+**Research**: Unlikely (bug fixing)
+**Plans**: 1 plan
+
+Plans:
+- [x] 14.1-01: Fix AI categorize route 404 error (2026-01-10)
+
+**Status**: Complete (1/1 plan complete - 2026-01-10)
+
+**Details:**
+Urgent bug discovered during manual testing: POST to `/transactions/ai_categorization` returns 404. Root cause was view sending `transaction.id` instead of `entry.id` (different UUIDs in delegated_type pattern). Fixed by correcting the view and adding controller-level rescue_from for proper error handling.
+
 ### Phase Details
 
 ### Phase 1: Foundation
@@ -249,3 +264,4 @@ The AI chat was failing when calling the `get_transactions` function because Ant
 | 12. Transaction UI Actions | v1.1 | 3/3 | Complete | 2026-01-10 |
 | 13. Testing & Docs | v1.1 | 4/4 | Complete | 2026-01-10 |
 | 14. Manual Testing | v1.1 | 1/1 | Complete | 2026-01-10 |
+| 14.1. Fix AI Categorize Route | v1.1 | 0/0 | In Progress | 2026-01-10 | (INSERTED) |
