@@ -104,7 +104,8 @@ class Provider::Anthropic < Provider
     family: nil
   )
     with_provider_response do
-      # Plan 03-02: tools are implemented, function_results/streamer/previous_response_id are for 03-03/03-04
+      # Plan 03-03: function_results and multi-turn conversations are now supported
+    # Plan 03-04: streamer support is pending
 
       chat_config = ChatConfig.new(
         functions: functions,
