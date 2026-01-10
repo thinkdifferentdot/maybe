@@ -108,6 +108,21 @@ Plans:
 **Details:**
 Urgent bug discovered during manual testing: POST to `/transactions/ai_categorization` returns 404. Root cause was view sending `transaction.id` instead of `entry.id` (different UUIDs in delegated_type pattern). Fixed by correcting the view and adding controller-level rescue_from for proper error handling.
 
+### Phase 14.2: Fix Auto-Categorize Page Labels (INSERTED)
+
+**Goal**: Fix missing option labels on auto-categorization settings page
+**Depends on**: Phase 14.1
+**Research**: Unlikely (UI bug fixing)
+**Plans**: 1 plan
+
+Plans:
+- [x] 14.2-01: Add label support to DS::Toggle component (2026-01-10)
+
+**Status**: Complete (1/1 plan complete - 2026-01-10)
+
+**Details:**
+Urgent bug discovered during manual testing: The auto-categorization settings page was not showing the option labels. Root cause was DS::Toggle component not accepting or displaying label parameter. Fixed by adding label attribute to component and updating template to render label text conditionally.
+
 ### Phase Details
 
 ### Phase 1: Foundation
@@ -264,4 +279,5 @@ The AI chat was failing when calling the `get_transactions` function because Ant
 | 12. Transaction UI Actions | v1.1 | 3/3 | Complete | 2026-01-10 |
 | 13. Testing & Docs | v1.1 | 4/4 | Complete | 2026-01-10 |
 | 14. Manual Testing | v1.1 | 1/1 | Complete | 2026-01-10 |
-| 14.1. Fix AI Categorize Route | v1.1 | 0/0 | In Progress | 2026-01-10 | (INSERTED) |
+| 14.1. Fix AI Categorize Route | v1.1 | 1/1 | Complete | 2026-01-10 | (INSERTED) |
+| 14.2. Fix Auto-Categorize Page Labels | v1.1 | 1/1 | Complete | 2026-01-10 | (INSERTED) |
