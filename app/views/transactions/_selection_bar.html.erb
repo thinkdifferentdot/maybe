@@ -14,6 +14,17 @@
       <%= icon "pencil-line", class: "group-hover:text-inverse" %>
     <% end %>
 
+    <%= form_with url: transactions_bulk_ai_categorization_path, data: { turbo_frame: "_top" } do %>
+      <button type="button"
+              data-bulk-select-scope-param="bulk_ai_categorize"
+              data-action="bulk-select#submitBulkRequest"
+              class="p-1.5 group hover:bg-inverse flex items-center justify-center rounded-md"
+              title="<%= t("transactions.bulk_ai_categorize.button_title") %>">
+        <%= icon "sparkles", class: "group-hover:text-inverse" %>
+        <span data-bulk-select-target="costDisplay" class="ml-1 text-xs text-secondary"></span>
+      </button>
+    <% end %>
+
     <%= form_with url: transactions_bulk_deletion_path, data: { turbo_confirm: true, turbo_frame: "_top" } do %>
       <button type="button" data-bulk-select-scope-param="bulk_delete" data-action="bulk-select#submitBulkRequest" class="p-1.5 group hover:bg-inverse flex items-center justify-center rounded-md" title="Delete">
         <%= icon "trash-2", class: "group-hover:text-inverse" %>

@@ -8,11 +8,14 @@ export default class extends Controller {
     "selectionBar",
     "selectionBarText",
     "bulkEditDrawerHeader",
+    "costDisplay",
   ];
   static values = {
     singularLabel: String,
     pluralLabel: String,
     selectedIds: { type: Array, default: [] },
+    categoryCount: { type: Number, default: 0 },
+    modelName: { type: String, default: "gpt-4.1" },
   };
 
   connect() {
@@ -135,6 +138,60 @@ export default class extends Controller {
     this.selectionBarTarget.classList.toggle("hidden", count === 0);
     this.selectionBarTarget.querySelector("input[type='checkbox']").checked =
       count > 0;
+    this._updateCostEstimation();
+  }
+
+  _updateCostEstimation() {
+    if (!this.hasCostDisplayTarget) return;
+
+    const count = this.selectedIdsValue.length;
+    if (count === 0) {
+      this.costDisplayTarget.innerText = "";
+      return;
+    }
+
+    const cost = this._estimateCost(count);
+    const key = "transactions.bulk_ai_categorize.cost_estimate";
+    const message = window.I18n?.t?.(key, { cost: cost.toFixed(4) }) || `Est: $${cost.toFixed(4)}`;
+    this.costDisplayTarget.innerText = message;
+  }
+
+  _estimateCost(selectedCount) {
+    // Simple client-side estimation based on LlmUsage.estimate_auto_categorize_cost
+    // Formula: (selected_count * 100 tokens + category_count * 50 + 150 base) * model_pricing
+    const basePromptTokens = 150;
+    const transactionTokens = selectedCount * 100;
+    const categoryTokens = this.categoryCountValue * 50;
+    const estimatedPromptTokens = basePromptTokens + transactionTokens + categoryTokens;
+    const estimatedCompletionTokens = selectedCount * 50;
+
+    // Rough pricing per 1M tokens (will be refined with actual backend data)
+    const modelPricing = this._getModelPricing();
+    const promptCost = (estimatedPromptTokens * modelPricing.prompt) / 1_000_000;
+    const completionCost = (estimatedCompletionTokens * modelPricing.completion) / 1_000_000;
+
+    return promptCost + completionCost;
+  }
+
+  _getModelPricing() {
+    // Default pricing (GPT-4.1 per 1M tokens)
+    const pricing = {
+      "gpt-4.1": { prompt: 2.00, completion: 8.00 },
+      "gpt-4o": { prompt: 2.50, completion: 10.00 },
+      "gpt-4o-mini": { prompt: 0.15, completion: 0.60 },
+      "claude-sonnet-4": { prompt: 3.00, completion: 15.00 },
+      "claude-sonnet-3.5": { prompt: 3.00, completion: 15.00 },
+      "claude-haiku-3.5": { prompt: 0.80, completion: 4.00 },
+    };
+
+    // Check for prefix match (e.g., "gpt-4.1-2024-08-06" matches "gpt-4.1")
+    for (const [model, cost] of Object.entries(pricing)) {
+      if (this.modelNameValue.startsWith(model)) {
+        return cost;
+      }
+    }
+
+    return pricing["gpt-4.1"];
   }
 
   _pluralizedResourceName() {

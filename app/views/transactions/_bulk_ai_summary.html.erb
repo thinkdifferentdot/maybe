@@ -1,0 +1,39 @@
+<%# locals: (success_count:, error_count:, skipped_count:) %>
+
+<% total_count = success_count + error_count + skipped_count %>
+
+<%= render DS::Dialog.new(variant: "modal", width: "sm", auto_open: true, disable_frame: true) do |dialog| %>
+  <% dialog.with_header title: t("transactions.bulk_ai_categorize.summary.title") %>
+
+  <% dialog.with_body do %>
+    <div class="space-y-4">
+      <div class="flex items-center justify-between py-2 border-b border-border">
+        <span class="text-primary"><%= t("transactions.bulk_ai_categorize.summary.categorized", count: success_count) %></span>
+      </div>
+
+      <% if skipped_count > 0 %>
+        <div class="flex items-center justify-between py-2 border-b border-border">
+          <span class="text-secondary"><%= t("transactions.bulk_ai_categorize.summary.skipped", count: skipped_count) %></span>
+        </div>
+      <% end %>
+
+      <% if error_count > 0 %>
+        <div class="flex items-center justify-between py-2 border-b border-border">
+          <span class="text-red-500"><%= t("transactions.bulk_ai_categorize.summary.errors", count: error_count) %></span>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% dialog.with_actions cancel_action: true do %>
+    <%= t("transactions.bulk_ai_categorize.summary.close") %>
+  <% end %>
+<% end %>
+
+<script>
+  // Auto-dismiss after 5 seconds if user doesn't interact
+  setTimeout(function() {
+    const dialog = document.querySelector("[data-DS--dialog-auto-open-value]");
+    if (dialog) dialog.remove();
+  }, 5000);
+</script>

@@ -1,0 +1,51 @@
+<%# locals: (results:) - results is an array of {transaction_id, entry_id, transaction_name, category_name, confidence} %>
+
+<%= render DS::Dialog.new(variant: "modal", width: "lg", auto_open: true) do |dialog| %>
+  <% dialog.with_header title: t("transactions.bulk_ai_categorize.confirmation.title"), subtitle: t("transactions.bulk_ai_categorize.confirmation.subtitle") %>
+
+  <% dialog.with_body do %>
+    <div class="space-y-3 max-h-96 overflow-y-auto">
+      <% results.each do |result| %>
+        <div class="flex items-start gap-3 p-3 bg-container-inset rounded-lg">
+          <%= check_box_tag "apply_#{result[:transaction_id]}",
+              result[:transaction_id],
+              true,
+              class: "checkbox checkbox--light mt-1",
+              data: {
+                "bulk-ai-categorize-target": "confirmationCheckbox",
+                "transaction-id": result[:transaction_id]
+              } %>
+
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between gap-2">
+              <p class="font-medium text-primary truncate"><%= result[:transaction_name] %></p>
+              <span class="text-xs text-secondary">
+                <%= t("transactions.bulk_ai_categorize.confirmation.confidence") %>: <%= (result[:confidence] * 100).round(0) %>%
+              </span>
+            </div>
+            <div class="flex items-center gap-2 text-sm">
+              <span class="text-secondary"><%= t("transactions.bulk_ai_categorize.confirmation.suggested_category") %>:</span>
+              <span class="text-primary font-medium"><%= result[:category_name] %></span>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% dialog.with_actions do %>
+    <%= button_to(
+        t("transactions.bulk_ai_categorize.confirmation.skip_all"),
+        "#",
+        type: "button",
+        data: { action: "bulk-ai-categorize#skipAll" },
+        class: "text-secondary hover:text-primary"
+      ) %>
+  <% end %>
+
+  <% dialog.with_actions variant: "primary" do %>
+    <button type="button" data-action="bulk-ai-categorize#applySelected" data-bulk-ai-categorize-target="applyButton">
+      <%= t("transactions.bulk_ai_categorize.confirmation.apply_selected") %>
+    </button>
+  <% end %>
+<% end %>

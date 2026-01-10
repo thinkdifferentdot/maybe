@@ -9,30 +9,30 @@ See: .planning/PROJECT.md (updated 2026-01-10)
 
 ## Current Position
 
-Phase: v1.1 AI Auto-Categorization Triggers — Phase 12 (Transaction UI Actions)
-Plan: 12-02 (Individual AI Categorize Button) — COMPLETE
-Status: 2/3 plans complete in Phase 12 (12-01, 12-02)
-Last activity: 2026-01-10 — Individual AI categorize button with loading states and confidence display
+Phase: v1.1 AI Auto-Categorization Triggers — Phase 11 (Import Triggers)
+Plan: 11-04 (Bulk Review Workflow) — COMPLETE
+Status: Phase 11 COMPLETE! All 4 plans finished (11-01, 11-02, 11-03, 11-04)
+Last activity: 2026-01-10 — Bulk review workflow for AI-categorized transactions
 
-Progress for Phase 12: ▓▓▓▓▓▓░░░░░░░░░░░░░░ 67% (2 of 3 plans complete)
-Overall v1.1 Progress: ▓▓▓▓▓░░░░░░░░░░░░░░ 22% (6 of ~27 plans estimated)
+Progress for Phase 11: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100% (4 of 4 plans complete)
+Overall v1.1 Progress: ▓▓▓▓▓▓▓░░░░░░░░░░░░░ 28% (7 of ~25 plans estimated)
 
-**Summary (12-02):** Individual AI categorize button added to transaction rows with sparkle icon. AiCategorizationsController handles POST requests with Turbo Stream responses for inline category and confidence updates. ai_categorize Stimulus controller manages loading states (spinner icon, disabled button). Confidence badge displays with color coding (green >80%, yellow 60-80%, orange <60%).
+**Summary (11-04):** Bulk review workflow for approving/rejecting AI-categorized transactions. Users can filter to "Recent AI Categorizations" and see approve/reject buttons on each transaction. Approve creates a learned pattern and locks category; reject removes category and enrichment. Turbo Stream provides inline updates without page reload.
 
 ## Next Milestone Goals
 
 **v1.1: AI Auto-Categorization Triggers** — 4 phases (10-13)
 - Phase 10: Settings & Config — User preferences for auto-categorization behavior and cost controls ✅ COMPLETE
-- Phase 11: Import Triggers — AI categorization in CSV import and sync jobs (Lunch Flow) 🔄 IN PROGRESS (3/4)
+- Phase 11: Import Triggers — AI categorization in CSV import and sync jobs ✅ COMPLETE
 - Phase 12: Transaction UI Actions — Individual and bulk "AI categorize" buttons in transaction UI
 - Phase 13: Testing & Docs — Verify all trigger paths and document features
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 31 (26 v1.0 + 5 v1.1)
+- Total plans completed: 35 (26 v1.0 + 9 v1.1)
 - Average duration: ~6 min
-- Total execution time: ~190 min
+- Total execution time: ~225 min
 
 **By Phase:**
 
@@ -49,7 +49,7 @@ Overall v1.1 Progress: ▓▓▓▓▓░░░░░░░░░░░░░░
 | 9 (Resolve Issues) | 1 | 15 min | 15 min |
 | 9.1 (get_transactions fix) | 1 | 26 min | 26 min |
 | 10 (Settings & Config) | 1 | ~5 min | ~5 min |
-| 11 (Import Triggers) | 3/4 | ~20 min | ~7 min |
+| 11 (Import Triggers) | 4 | ~35 min | ~9 min |
 
 ## Accumulated Context
 
@@ -76,11 +76,11 @@ Overall v1.1 Progress: ▓▓▓▓▓░░░░░░░░░░░░░░
 - Settings UI for toggling AI auto-categorization triggers
 - All default to false (opt-in)
 
-**Phase 11 - Import Triggers (IN PROGRESS - 3/4 complete):**
+**Phase 11 - Import Triggers (COMPLETE):**
 - 11-01: LearnedPattern model for AI categorization pattern learning
 - 11-02: AI categorization trigger in CSV import flow
 - 11-03: AI categorization trigger in Lunchflow sync jobs
-- 11-04: Bulk review workflow (PENDING)
+- 11-04: Bulk review workflow for approving/rejecting AI suggestions
 
 **Phase 12 - Transaction UI Actions (IN PROGRESS - 2/3 complete):**
 - 12-01: Backend Provider Selection & Confidence

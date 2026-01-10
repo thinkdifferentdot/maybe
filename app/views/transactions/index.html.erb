@@ -49,6 +49,8 @@
        data-controller="bulk-select checkbox-toggle"
        data-bulk-select-singular-label-value="<%= t(".transaction") %>"
        data-bulk-select-plural-label-value="<%= t(".transactions") %>"
+       data-bulk-select-category-count-value="<%= Current.family.categories.count %>"
+       data-bulk-select-model-name-value="<%= Setting.llm_provider == "anthropic" ? Setting.anthropic_model : Setting.openai_model %>">
        class="flex flex-col bg-container rounded-xl shadow-border-xs px-3 py-4 lg:p-4">
     <%= render "transactions/searches/search" %>
 
