@@ -10,11 +10,16 @@ class Setting < RailsSettings::Base
   field :openai_uri_base, type: :string, default: ENV["OPENAI_URI_BASE"]
   field :openai_model, type: :string, default: ENV["OPENAI_MODEL"]
   field :openai_json_mode, type: :string, default: ENV["LLM_JSON_MODE"]
+  field :anthropic_access_token, type: :string, default: ENV["ANTHROPIC_API_KEY"]
+  field :anthropic_model, type: :string, default: ENV["ANTHROPIC_MODEL"]
   field :brand_fetch_client_id, type: :string, default: ENV["BRAND_FETCH_CLIENT_ID"]
 
   # Provider selection
   field :exchange_rate_provider, type: :string, default: ENV.fetch("EXCHANGE_RATE_PROVIDER", "twelve_data")
   field :securities_provider, type: :string, default: ENV.fetch("SECURITIES_PROVIDER", "twelve_data")
+
+  LLM_PROVIDERS = %w[openai anthropic].freeze
+  field :llm_provider, type: :string, default: ENV.fetch("LLM_PROVIDER", "openai")
 
   # Dynamic fields are now stored as individual entries with "dynamic:" prefix
   # This prevents race conditions and ensures each field is independently managed
