@@ -357,4 +357,77 @@ class TransactionImportTest < ActiveSupport::TestCase
     assert_equal 1, checking.entries.where(import: @import).count
     assert_equal 1, credit_card.entries.where(import: @import).count
   end
+
+  test "triggers AI categorization when ai_categorize_on_import is enabled and transactions are uncategorized" do
+    @family = families(:dylan_family)
+    @account = accounts(:depository)
+    Setting.ai_categorize_on_import = true
+
+    import = @family.imports.create!(
+      type: "TransactionImport",
+      account: @account,
+      date_format: "%m-%d-%Y",
+      amount_type_strategy: "signed_amount",
+      signage_convention: "inflows_negative"
+    )
+
+    # Add row without category - will be uncategorized
+    import.rows.create!(date: "01-15-2024", amount: "-10.00", name: "Coffee Shop", currency: "USD")
+
+    # Mock to ensure no duplicates found
+    Account::ProviderImportAdapter.any_instance.stubs(:find_duplicate_transaction).returns(nil)
+
+    assert_enqueued_jobs 1, only: AutoCategorizeJob do
+      import.import!
+    end
+  end
+
+  test "does not trigger AI categorization when ai_categorize_on_import is disabled" do
+    @family = families(:dylan_family)
+    @account = accounts(:depository)
+    Setting.ai_categorize_on_import = false
+
+    import = @family.imports.create!(
+      type: "TransactionImport",
+      account: @account,
+      date_format: "%m-%d-%Y",
+      amount_type_strategy: "signed_amount",
+      signage_convention: "inflows_negative"
+    )
+
+    import.rows.create!(date: "01-15-2024", amount: "-10.00", name: "Coffee Shop", currency: "USD")
+
+    Account::ProviderImportAdapter.any_instance.stubs(:find_duplicate_transaction).returns(nil)
+
+    assert_enqueued_jobs 0, only: AutoCategorizeJob do
+      import.import!
+    end
+  end
+
+  test "does not trigger AI categorization when all transactions are categorized" do
+    @family = families(:dylan_family)
+    @account = accounts(:depository)
+    @category = categories(:food_and_drink)
+    Setting.ai_categorize_on_import = true
+
+    import = @family.imports.create!(
+      type: "TransactionImport",
+      account: @account,
+      date_format: "%m-%d-%Y",
+      amount_type_strategy: "signed_amount",
+      signage_convention: "inflows_negative"
+    )
+
+    # Add row WITH category (will be categorized via mapping)
+    import.rows.create!(date: "01-15-2024", amount: "-10.00", name: "Coffee Shop", category: "Food", currency: "USD")
+
+    # Setup category mapping
+    import.mappings.categories.create!(key: "Food", mappable: @category)
+
+    Account::ProviderImportAdapter.any_instance.stubs(:find_duplicate_transaction).returns(nil)
+
+    assert_enqueued_jobs 0, only: AutoCategorizeJob do
+      import.import!
+    end
+  end
 end
