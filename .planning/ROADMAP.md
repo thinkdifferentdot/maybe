@@ -10,11 +10,11 @@ None (Rails backend work following established patterns in the Sure codebase)
 
 ## Phases
 
-- [ ] **Phase 1: Foundation** - Add Anthropic gem and create Provider::Anthropic class skeleton
-- [ ] **Phase 2: Core Operations** - Implement auto_categorize and auto_detect_merchants for Anthropic
-- [ ] **Phase 3: Chat Support** - Implement chat_response with Anthropic (including function/tool calling)
-- [ ] **Phase 4: Registry Integration** - Register Anthropic in provider registry and add LlmUsage pricing
-- [ ] **Phase 5: Settings Model** - Add Anthropic settings fields (API key, model, provider selection)
+- [x] **Phase 1: Foundation** - Add Anthropic gem and create Provider::Anthropic class skeleton
+- [x] **Phase 2: Core Operations** - Implement auto_categorize and auto_detect_merchants for Anthropic
+- [x] **Phase 3: Chat Support** - Implement chat_response with Anthropic (including function/tool calling)
+- [x] **Phase 4: Registry Integration** - Register Anthropic in provider registry and add LlmUsage pricing
+- [x] **Phase 5: Settings Model** - Add Anthropic settings fields (API key, model, provider selection)
 - [ ] **Phase 6: Settings UI** - Build provider selector dropdown and configuration form
 - [ ] **Phase 7: Langfuse Integration** - Ensure observability tracing works for Anthropic
 - [ ] **Phase 8: Validation & Testing** - Verify all features work and no regressions to OpenAI
@@ -57,8 +57,10 @@ Plans:
 Plans:
 - [x] 03-01: Implement basic chat_response without tools
 - [x] 03-02: Add tool/function calling support for chat
-- [ ] 03-03: Handle function results and multi-turn conversations
-- [ ] 03-04: Add streaming support (if feasible, otherwise defer)
+- [x] 03-03: Handle function results and multi-turn conversations
+- [x] 03-04: Add streaming support (deferred for future work)
+
+**Status**: Complete (2026-01-09)
 
 ### Phase 4: Registry Integration
 **Goal**: Register Anthropic in provider registry and add cost tracking
@@ -67,9 +69,11 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 04-01: Add anthropic method to Provider::Registry
-- [ ] 04-02: Add anthropic to LLM concept available providers
-- [ ] 04-03: Add Anthropic model pricing to LlmUsage.calculate_cost
+- [x] 04-01: Add anthropic method to Provider::Registry
+- [x] 04-02: Add anthropic to LLM concept available providers
+- [x] 04-03: Add Anthropic model pricing to LlmUsage.calculate_cost
+
+**Status**: Complete (2026-01-09)
 
 ### Phase 5: Settings Model
 **Goal**: Add Anthropic settings fields with ENV fallbacks
@@ -78,9 +82,11 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 05-01: Add anthropic_access_token and anthropic_model fields to Setting
-- [ ] 05-02: Add llm_provider field for provider selection (openai/anthropic)
-- [ ] 05-03: Add validation for Anthropic configuration
+- [x] 05-01: Add anthropic_access_token and anthropic_model fields to Setting
+- [x] 05-02: Add llm_provider field for provider selection (openai/anthropic)
+- [x] 05-03: Add validation for Anthropic configuration
+
+**Status**: Complete (2026-01-09)
 
 ### Phase 6: Settings UI
 **Goal**: Build provider selector dropdown and Anthropic configuration form
@@ -122,9 +128,9 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete | 2026-01-09 |
 | 2. Core Operations | 3/3 | Complete | 2026-01-10 |
-| 3. Chat Support | 2/4 | In progress | 2026-01-10 |
-| 4. Registry Integration | 0/3 | Not started | - |
-| 5. Settings Model | 0/3 | Not started | - |
+| 3. Chat Support | 4/4 | Complete | 2026-01-09 |
+| 4. Registry Integration | 3/3 | Complete | 2026-01-09 |
+| 5. Settings Model | 3/3 | Complete | 2026-01-09 |
 | 6. Settings UI | 0/4 | Not started | - |
 | 7. Langfuse Integration | 0/2 | Not started | - |
 | 8. Validation & Testing | 0/3 | Not started | - |

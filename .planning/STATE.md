@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2025-01-09)
 
 **Core value:** Smooth UX configuration — Users select AI provider through settings dropdown
-**Current focus:** Phase 3 — Chat Support
+**Current focus:** Phase 6 — Settings UI
 
 ## Current Position
 
-Phase: 3 of 8 (Chat Support)
-Plan: 2 of 4 in current phase
-Status: In progress
-Last activity: 2026-01-10 — Completed 03-02-PLAN.md (Tool Calling Support)
+Phase: 6 of 8 (Settings UI)
+Plan: Not started
+Status: Ready to execute
+Last activity: 2026-01-09 — Completed Phase 5 (Settings Model)
 
-Progress: ██████████████░░░░ 38%
+Progress: ████████████████░░░ 63%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
-- Average duration: 3.4 min
-- Total execution time: ~1 hour
+- Total plans completed: 13
+- Average duration: 3.5 min
+- Total execution time: ~45 min
 
 **By Phase:**
 
@@ -29,11 +29,13 @@ Progress: ██████████████░░░░ 38%
 |-------|-------|-------|----------|
 | 1 (Foundation) | 3 | 9 min | 3 min |
 | 2 (Core Operations) | 3 | 14 min | 4.7 min |
-| 3 (Chat Support) | 2 | 13 min | 6.5 min |
+| 3 (Chat Support) | 3 | 17 min | 5.7 min |
+| 4 (Registry Integration) | 1 | 3 min | 3 min |
+| 5 (Settings Model) | 3 | 12 min | 4 min |
 
 **Recent Trend:**
-- Last 7 plans: 1-03 (Client Init), 2-01 (Foundation), 2-02 (AutoCategorizer), 2-03 (AutoMerchantDetector), 3-01 (Basic Chat), 3-02 (Tool Calling)
-- Trend: Phase 3 in progress, tool calling complete
+- Last 5 plans: 4-01 (Registry), 5-01 (Settings Fields), 5-02 (Registry Integration), 5-03 (Controller & Validation)
+- Trend: Settings Model complete, ready for UI implementation
 
 ## Accumulated Context
 
@@ -49,6 +51,11 @@ Recent decisions affecting current work:
 - **Phase 2-03**: AutoMerchantDetector with Messages API; Merchant detection returns business_name and business_url (both nullable); Comprehensive Anthropic error handling (APIConnectionError, RateLimitError, etc.)
 - **Phase 3-01**: ChatConfig/ChatParser pattern for API format conversion; Token field mapping: input_tokens -> prompt_tokens, output_tokens -> completion_tokens; System instructions via separate "system" parameter (Anthropic convention); max_tokens required (4096 default); Langfuse tracing with "anthropic.chat_response" name
 - **Phase 3-02**: Anthropic uses "input_schema" not "parameters" for tool definitions; Anthropic's id serves as both id and call_id (unlike OpenAI); Anthropic's input is already a Hash (not JSON string); Parallel tool use supported (iterate all tool_use blocks)
+- **Phase 3-03**: Tool_result blocks MUST come FIRST in user message content array (Anthropic requirement); Assistant message with tool_use blocks is reconstructed from function_results; Caller manages conversation history (no previous_response_id like OpenAI); ChatConfig.build_input handles full multi-turn conversation structure
+- **Phase 4-01**: Registered Anthropic in Provider::Registry with cost tracking; Uses Setting method calls (not bracket notation) for consistency
+- **Phase 5-01**: Used ANTHROPIC_API_KEY ENV (not ACCESS_TOKEN) to match official gem convention
+- **Phase 5-02**: Provider selection is global (single llm_provider field, not per-feature)
+- **Phase 5-03**: Simple validation for llm_provider using validate_llm_provider! method
 
 ### Deferred Issues
 
@@ -60,6 +67,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-10
-Stopped at: Completed 03-02-PLAN.md (Tool Calling Support)
+Last session: 2026-01-09
+Stopped at: Completed Phase 5 (Settings Model)
 Resume file: None
