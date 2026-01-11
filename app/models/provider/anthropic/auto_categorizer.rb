@@ -301,6 +301,19 @@ class Provider::Anthropic::AutoCategorizer
       # Try multiple extraction strategies in order of preference
 
       # Strategy 1: Closed markdown code blocks (```json...```)
+      # Handle both objects {...} and arrays [...]
+      if cleaned =~ /```(?:json)?\s*(\[[\s\S]*?\])\s*```/m
+        matches = cleaned.scan(/```(?:json)?\s*(\[[\s\S]*?\])\s*```/m).flatten
+        matches.reverse_each do |match|
+          begin
+            return JSON.parse(match)
+          rescue JSON::ParserError
+            next
+          end
+        end
+      end
+
+      # Strategy 1b: Closed markdown code blocks with objects (fallback)
       if cleaned =~ /```(?:json)?\s*(\{[\s\S]*?\})\s*```/m
         matches = cleaned.scan(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/m).flatten
         matches.reverse_each do |match|
@@ -313,7 +326,16 @@ class Provider::Anthropic::AutoCategorizer
       end
 
       # Strategy 2: Unclosed markdown code blocks (thinking models often forget to close)
-      # Pattern: ```json followed by JSON that goes to end of string
+      # Pattern: ```json followed by JSON (array or object) that goes to end of string
+      if cleaned =~ /```(?:json)?\s*(\[[\s\S]*\])\s*$/m
+        begin
+          return JSON.parse($1)
+        rescue JSON::ParserError
+          # Continue to next strategy
+        end
+      end
+
+      # Strategy 2b: Unclosed markdown code blocks with objects
       if cleaned =~ /```(?:json)?\s*(\{[\s\S]*\})\s*$/m
         begin
           return JSON.parse($1)
