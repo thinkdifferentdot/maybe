@@ -1,6 +1,7 @@
 class Provider::Anthropic::AutoMerchantDetector
   include Provider::Concerns::UsageRecorder
   include Provider::Concerns::JsonParser
+  include Provider::Concerns::ErrorHandler
 
   attr_reader :client, :model, :transactions, :user_merchants, :langfuse_trace, :family
 
@@ -20,59 +21,40 @@ class Provider::Anthropic::AutoMerchantDetector
       user_merchants: user_merchants
     })
 
-    response = client.messages.create(
-      model: model,
-      max_tokens: 1024,
-      messages: [ { role: "user", content: developer_message } ],
-      system: instructions
-    )
+    with_anthropic_error_handler(span: span, operation: "merchant detection") do
+      response = client.messages.create(
+        model: model,
+        max_tokens: 1024,
+        messages: [ { role: "user", content: developer_message } ],
+        system: instructions
+      )
 
-    # Note: response.usage is an Anthropic::Models::Usage BaseModel with input_tokens/output_tokens attributes
-    usage_total = response.usage.input_tokens + response.usage.output_tokens
-    Rails.logger.info("Tokens used to auto-detect merchants: #{usage_total}")
+      # Note: response.usage is an Anthropic::Models::Usage BaseModel with input_tokens/output_tokens attributes
+      usage_total = response.usage.input_tokens + response.usage.output_tokens
+      Rails.logger.info("Tokens used to auto-detect merchants: #{usage_total}")
 
-    merchants = extract_merchants(response)
-    Rails.logger.debug("Extracted merchants: #{merchants.inspect}")
-    result = build_response(merchants)
+      merchants = extract_merchants(response)
+      Rails.logger.debug("Extracted merchants: #{merchants.inspect}")
+      result = build_response(merchants)
 
-    record_usage(
-      model,
-      response.usage,
-      operation: "auto_detect_merchants",
-      metadata: {
-        transaction_count: transactions.size,
-        merchant_count: user_merchants.size
-      }
-    )
+      record_usage(
+        model,
+        response.usage,
+        operation: "auto_detect_merchants",
+        metadata: {
+          transaction_count: transactions.size,
+          merchant_count: user_merchants.size
+        }
+      )
 
-    span&.end(output: result.map(&:to_h), usage: {
-      input_tokens: response.usage.input_tokens,
-      output_tokens: response.usage.output_tokens,
-      total_tokens: usage_total
-    })
+      span&.end(output: result.map(&:to_h), usage: {
+        input_tokens: response.usage.input_tokens,
+        output_tokens: response.usage.output_tokens,
+        total_tokens: usage_total
+      })
 
-    result
-  rescue Anthropic::Errors::APIConnectionError => e
-    span&.end(output: { error: e.message }, level: "ERROR")
-    raise Provider::Anthropic::Error, "Failed to connect to Anthropic API: #{e.message}"
-  rescue Anthropic::Errors::APITimeoutError => e
-    span&.end(output: { error: e.message }, level: "ERROR")
-    raise Provider::Anthropic::Error, "Anthropic API request timed out: #{e.message}"
-  rescue Anthropic::Errors::RateLimitError => e
-    span&.end(output: { error: e.message }, level: "ERROR")
-    raise Provider::Anthropic::Error, "Anthropic API rate limit exceeded: #{e.message}"
-  rescue Anthropic::Errors::AuthenticationError => e
-    span&.end(output: { error: e.message }, level: "ERROR")
-    raise Provider::Anthropic::Error, "Anthropic API authentication failed: #{e.message}"
-  rescue Anthropic::Errors::APIStatusError => e
-    span&.end(output: { error: e.message, status: e.status }, level: "ERROR")
-    raise Provider::Anthropic::Error, "Anthropic API error (#{e.status}): #{e.message}"
-  rescue JSON::ParserError => e
-    span&.end(output: { error: e.message }, level: "ERROR")
-    raise Provider::Anthropic::Error, "Invalid JSON response from Anthropic: #{e.message}"
-  rescue => e
-    span&.end(output: { error: e.message }, level: "ERROR")
-    raise Provider::Anthropic::Error, "Unexpected error during merchant detection: #{e.message}"
+      result
+    end
   end
 
   private
