@@ -122,3 +122,13 @@ en:
     reject_ai_title: Reject this categorization and remove the category
     approval_success: Pattern learned! Future transactions will be auto-categorized.
     rejection_success: Category removed. This transaction won't be auto-categorized.
+    feedback:
+      title: Review AI Categorizations
+      empty_state: No recent AI categorizations to review
+      transaction: Transaction
+      merchant: Merchant
+      suggested_category: Suggested Category
+      confidence: Confidence
+      actions: Actions
+    feedback_approved: Approved
+    feedback_rejected: Rejected
