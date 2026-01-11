@@ -195,4 +195,48 @@ class Provider::AnthropicTest < ActiveSupport::TestCase
       assert_equal "claude-sonnet-4-5-20250929", Provider::Anthropic.effective_model
     end
   end
+
+  test "auto categorizes transactions by various attributes" do
+    ClimateControl.modify ANTHROPIC_BASE_URL: nil do
+      subject = create_provider
+      VCR.use_cassette("anthropic/auto_categorize") do
+        input_transactions = [
+          { id: "1", name: "McDonalds", amount: 20, classification: "expense", merchant: "McDonalds", hint: "Fast Food" },
+          { id: "2", name: "Amazon purchase", amount: 100, classification: "expense", merchant: "Amazon" },
+          { id: "3", name: "Netflix subscription", amount: 10, classification: "expense", merchant: "Netflix", hint: "Subscriptions" },
+          { id: "4", name: "paycheck", amount: 3000, classification: "income" },
+          { id: "5", name: "Italian dinner with friends", amount: 100, classification: "expense" },
+          { id: "6", name: "1212XXXBCaaa charge", amount: 2.99, classification: "expense" }
+        ]
+
+        response = subject.auto_categorize(
+          transactions: input_transactions,
+          user_categories: [
+            { id: "shopping_id", name: "Shopping", is_subcategory: false, parent_id: nil, classification: "expense" },
+            { id: "subscriptions_id", name: "Subscriptions", is_subcategory: true, parent_id: nil, classification: "expense" },
+            { id: "restaurants_id", name: "Restaurants", is_subcategory: false, parent_id: nil, classification: "expense" },
+            { id: "fast_food_id", name: "Fast Food", is_subcategory: true, parent_id: "restaurants_id", classification: "expense" },
+            { id: "income_id", name: "Income", is_subcategory: false, parent_id: nil, classification: "income" }
+          ]
+        )
+
+        assert response.success?
+        assert_equal input_transactions.size, response.data.size
+
+        txn1 = response.data.find { |c| c.transaction_id == "1" }
+        txn2 = response.data.find { |c| c.transaction_id == "2" }
+        txn3 = response.data.find { |c| c.transaction_id == "3" }
+        txn4 = response.data.find { |c| c.transaction_id == "4" }
+        txn5 = response.data.find { |c| c.transaction_id == "5" }
+        txn6 = response.data.find { |c| c.transaction_id == "6" }
+
+        assert_equal "Fast Food", txn1.category_name
+        assert_equal "Shopping", txn2.category_name
+        assert_equal "Subscriptions", txn3.category_name
+        assert_equal "Income", txn4.category_name
+        assert_equal "Restaurants", txn5.category_name
+        assert_nil txn6.category_name
+      end
+    end
+  end
 end
