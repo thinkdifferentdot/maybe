@@ -13,7 +13,7 @@ None (Rails backend work following established patterns in the Sure codebase)
 - ✅ **[v1.0 Anthropic Support](milestones/v1.0-ROADMAP.md)** - Phases 1-9 + 9.1 (shipped 2026-01-10)
 - ✅ **[v1.1 AI Auto-Categorization Triggers](milestones/v1.1-ROADMAP.md)** - Phases 10-15 + 14.1 + 14.2 (shipped 2026-01-10)
 - ✅ **[v1.2 Anthropic Feature Parity](milestones/v1.2-ROADMAP.md)** - Phases 16-18, 20 (shipped 2026-01-11)
-- ✅ **v1.3 Codebase Health** - Phases 24-29 (shipped 2026-01-11)
+- ✅ **[v1.3 Codebase Health](milestones/v1.3-ROADMAP.md)** - Phases 24-29 (shipped 2026-01-11)
 
 ## Phases
 
@@ -68,7 +68,7 @@ See [milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md) for full details.
 <details>
 <summary>✅ v1.3 Codebase Health (Phases 24-29) — SHIPPED 2026-01-11</summary>
 
-**Milestone Goal:** Reduce technical debt and fix known bugs to establish clean patterns for future feature work. Focuses on DRY-ing up duplicated code, improving error handling, and enhancing AI categorization accuracy.
+See [milestones/v1.3-ROADMAP.md](milestones/v1.3-ROADMAP.md) for full details.
 
 - [x] Phase 24: Env Example Updates (1/1 plans) — completed 2026-01-11
 - [x] Phase 25: Extract JSON Parser (1/1 plans) — completed 2026-01-11
@@ -78,8 +78,6 @@ See [milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md) for full details.
 - [x] Phase 29: Improve Categorization Prompts (1/1 plans) — completed 2026-01-11
 
 </details>
-
----
 
 ## v1.4 Future — AI Observability (Planned)
 

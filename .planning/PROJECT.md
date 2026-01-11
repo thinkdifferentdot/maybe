@@ -6,9 +6,9 @@ Add native Anthropic Claude support to Sure (self-hosted financial tracking app)
 
 ## Current State
 
-**Shipped:** v1.2 Anthropic Feature Parity (2026-01-11)
+**Shipped:** v1.3 Codebase Health (2026-01-11)
 
-The v1.2 milestone achieved feature parity between OpenAI and Anthropic implementations. Anthropic now has real streaming support for chat, fuzzy category/merchant matching for better normalization, and shares a centralized UsageRecorder concern with OpenAI for DRY code. Both providers are now fully equivalent in capabilities.
+The v1.3 milestone focused on reducing technical debt and establishing clean patterns for future feature work. Eliminated ~450 lines of duplicate code through shared concerns (JsonParser, ErrorHandler, FewShotExamples). Standardized error handling across all AI providers. Implemented few-shot examples system to improve AI categorization accuracy. Added comprehensive test coverage (50+ new tests).
 
 ## Core Value
 
@@ -29,6 +29,10 @@ The v1.2 milestone achieved feature parity between OpenAI and Anthropic implemen
 - ✓ Real streaming support for Anthropic chat responses — v1.2
 - ✓ Fuzzy category/merchant matching for Anthropic (feature parity with OpenAI) — v1.2
 - ✓ Shared UsageRecorder concern for DRY code across providers — v1.2
+- ✓ Shared JsonParser concern eliminating ~390 lines of duplicate code — v1.3
+- ✓ Shared ErrorHandler concern with consistent error handling across all providers — v1.3
+- ✓ FewShotExamples concern to improve AI categorization accuracy — v1.3
+- ✓ Environment documentation complete (ANTHROPIC_* in .env.example) — v1.3
 
 ### Active
 
@@ -93,6 +97,10 @@ The v1.2 milestone achieved feature parity between OpenAI and Anthropic implemen
 | Real streaming for Anthropic (v1.2) | Users expect progressive text output, not all-at-once responses | ✓ Good — ChatStreamParser handles all event types |
 | Shared UsageRecorder concern (v1.2) | DRY principle — eliminate 160+ lines of duplicate code | ✓ Good — Format detection handles both Hash and BaseModel |
 | Port fuzzy matching from OpenAI (v1.2) | Feature parity — Anthropic should match OpenAI's normalization capabilities | ✓ Good — Synonym and substring matching working |
+| Shared JsonParser concern (v1.3) | DRY principle — eliminate 390+ lines of duplicate JSON parsing code | ✓ Good — 4-strategy parsing with dual tag format support |
+| Shared ErrorHandler concern (v1.3) | Consistent error handling patterns across all providers | ✓ Good — Provider-specific error translation with Langfuse logging |
+| Few-shot examples for categorization (v1.3) | Reduce >50% null categorization results by providing concrete examples | ✓ Pending — Two-tier system (static + dynamic) implemented |
+| Simplify parse_json_flexibly (v1.3) | 85-line method too complex for maintainability | ✓ Good — Extracted 5 focused helper methods with unit tests |
 
 ---
-*Last updated: 2026-01-11 after v1.2 milestone*
+*Last updated: 2026-01-11 after v1.3 milestone*
