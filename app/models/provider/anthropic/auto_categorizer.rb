@@ -1,6 +1,7 @@
 class Provider::Anthropic::AutoCategorizer
   include Provider::Concerns::UsageRecorder
   include Provider::Concerns::JsonParser
+  include Provider::Concerns::ErrorHandler
 
   attr_reader :client, :model, :transactions, :user_categories, :langfuse_trace, :family
 
@@ -20,42 +21,41 @@ class Provider::Anthropic::AutoCategorizer
       user_categories: user_categories
     })
 
-    # Use tool use for structured JSON output
-    response = client.messages.create(
-      model: model,
-      max_tokens: 4096,
-      messages: [ { role: "user", content: developer_message } ],
-      system: instructions,
-      tools: [ categorization_tool ]
-    )
+    with_anthropic_error_handler(span: span, operation: "auto_categorize") do
+      # Use tool use for structured JSON output
+      response = client.messages.create(
+        model: model,
+        max_tokens: 4096,
+        messages: [ { role: "user", content: developer_message } ],
+        system: instructions,
+        tools: [ categorization_tool ]
+      )
 
-    # Note: response.usage is an Anthropic::Models::Usage BaseModel with input_tokens/output_tokens attributes
-    usage_total = response.usage.input_tokens + response.usage.output_tokens
-    Rails.logger.info("Tokens used to auto-categorize transactions: #{usage_total}")
+      # Note: response.usage is an Anthropic::Models::Usage BaseModel with input_tokens/output_tokens attributes
+      usage_total = response.usage.input_tokens + response.usage.output_tokens
+      Rails.logger.info("Tokens used to auto-categorize transactions: #{usage_total}")
 
-    categorizations = extract_categorizations(response)
-    result = build_response(categorizations)
+      categorizations = extract_categorizations(response)
+      result = build_response(categorizations)
 
-    record_usage(
-      model,
-      response.usage,
-      operation: "auto_categorize",
-      metadata: {
-        transaction_count: transactions.size,
-        category_count: user_categories.size
-      }
-    )
+      record_usage(
+        model,
+        response.usage,
+        operation: "auto_categorize",
+        metadata: {
+          transaction_count: transactions.size,
+          category_count: user_categories.size
+        }
+      )
 
-    span&.end(output: result.map(&:to_h), usage: {
-      input_tokens: response.usage.input_tokens,
-      output_tokens: response.usage.output_tokens,
-      total_tokens: usage_total
-    })
+      span&.end(output: result.map(&:to_h), usage: {
+        input_tokens: response.usage.input_tokens,
+        output_tokens: response.usage.output_tokens,
+        total_tokens: usage_total
+      })
 
-    result
-  rescue => e
-    span&.end(output: { error: e.message }, level: "ERROR")
-    raise
+      result
+    end
   end
 
   private
