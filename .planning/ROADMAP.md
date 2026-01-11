@@ -100,10 +100,10 @@ Plans:
 **Goal**: DRY up usage recording code by extracting to a concern module (refactor)
 **Depends on**: Phase 19
 **Research**: Unlikely (code organization)
-**Plans**: TBD
+**Status**: Complete (2026-01-11)
 
 Plans:
-- [ ] 20-01: Create concerns/usage_recorder and refactor auto-categorizer/merchant-detector (run /gsd:plan-phase 20 to break down)
+- [x] 20-01: Create concerns/usage_recorder and refactor auto-categorizer/merchant-detector
 
 #### Phase 21: Custom Provider Support
 
@@ -279,7 +279,7 @@ The AI chat was failing when calling the `get_transactions` function because Ant
 | 15. Anthropic Model Autopopulate | v1.1 | 1/1 | Complete | 2026-01-10 |
 | 16. Real Streaming Support | v1.2 | 1/1 | Complete | 2026-01-10 |
 | 17. Auto-Categorization Test Coverage | v1.2 | 0/? | Not started | — |
-| 18. Fuzzy Category & Merchant Matching | v1.2 | 0/? | Not started | — |
+| 18. Fuzzy Category & Merchant Matching | v1.2 | 1/1 | Complete | 2026-01-11 |
 | 19. Flexible JSON Parsing | v1.2 | 0/? | Not started | — |
-| 20. Extract UsageRecorder Concern | v1.2 | 0/? | Not started | — |
+| 20. Extract UsageRecorder Concern | v1.2 | 1/1 | Complete | 2026-01-11 |
 | 21. Custom Provider Support | v1.2 | 0/? | Not started | — |
