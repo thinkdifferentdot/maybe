@@ -1,0 +1,154 @@
+# ===========================================================================
+# Raspberry Pi 5 Docker Compose configuration
+# ===========================================================================
+#
+# This configuration is optimized for Raspberry Pi 5 (ARM64 architecture).
+# It builds the Docker image locally on the Pi to ensure ARM64 compatibility.
+#
+# Setup on Raspberry Pi 5:
+#   1. Clone your fork: git clone https://github.com/YOUR_USERNAME/sure.git
+#   2. Create .env file with ANTHROPIC_API_KEY
+#   3. Run: docker compose -f docker-compose.rpi5.yml build
+#   4. Run: docker compose -f docker-compose.rpi5.yml up -d
+#
+# Performance optimizations for RPi5:
+# - Uses postgres:16 (ARM64 compatible)
+# - Builds Ruby image for ARM64 architecture
+# - Configured for RPi5's 8GB RAM (default PostgreSQL settings)
+#
+
+x-db-env: &db_env
+  POSTGRES_USER: ${POSTGRES_USER:-sure_user}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sure_password}
+  POSTGRES_DB: ${POSTGRES_DB:-sure_production}
+
+x-rails-env: &rails_env
+  <<: *db_env
+  SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+  SELF_HOSTED: "true"
+  RAILS_FORCE_SSL: "false"
+  RAILS_ASSUME_SSL: "false"
+  DB_HOST: db
+  DB_PORT: 5432
+  REDIS_URL: redis://redis:6379/1
+  # Anthropic AI configuration for auto-categorization
+  ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+  ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-claude-sonnet-4-5-20250929}
+  # Optional: Langfuse observability for AI features
+  LANGFUSE_PUBLIC_KEY: ${LANGFUSE_PUBLIC_KEY}
+  LANGFUSE_SECRET_KEY: ${LANGFUSE_SECRET_KEY}
+  # RPi5 optimization: Reduce background workers
+  RAILS_MAX_THREADS: ${RAILS_MAX_THREADS:-3}
+  WEB_CONCURRENCY: ${WEB_CONCURRENCY:-1}
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      # Build for ARM64 architecture explicitly
+      args:
+        RUBY_VERSION: 3.4.7
+    volumes:
+      - app-storage:/rails/storage
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    environment:
+      <<: *rails_env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - sure_net
+    # RPi5: Resource limits to prevent OOM
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 512M
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        RUBY_VERSION: 3.4.7
+    command: bundle exec sidekiq -c 2
+    volumes:
+      - app-storage:/rails/storage
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      <<: *rails_env
+    networks:
+      - sure_net
+    # RPi5: Limit worker memory
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 256M
+
+  db:
+    image: postgres:16-linux-arm64
+    restart: unless-stopped
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      <<: *db_env
+      # RPi5: Tune PostgreSQL for 8GB RAM
+      POSTGRES_SHARED_BUFFERS: 256MB
+      POSTGRES_EFFECTIVE_CACHE_SIZE: 2GB
+      POSTGRES_MAINTENANCE_WORK_MEM: 64MB
+      POSTGRES_WORK_MEM: 16MB
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - sure_net
+    # RPi5: Give database more memory
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 512M
+
+  redis:
+    image: redis:latest-alpine
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - sure_net
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 64M
+
+volumes:
+  app-storage:
+  postgres-data:
+  redis-data:
+
+networks:
+  sure_net:
+    driver: bridge
