@@ -108,6 +108,7 @@ Rails.application.routes.draw do
     resource :bank_sync, only: :show, controller: "bank_sync"
     resource :providers, only: %i[show update]
     resource :auto_categorization, only: %i[show update], controller: "auto_categorization"
+    resource :accuracy_metrics, only: :show, controller: "accuracy_metrics"
   end
 
   resource :subscription, only: %i[new show create] do
@@ -182,6 +183,11 @@ Rails.application.routes.draw do
     resource :bulk_update, only: %i[new create]
     resource :bulk_ai_categorization, only: :create, controller: "bulk_ai_categorizations"
     resource :ai_categorization, only: :create, controller: "ai_categorizations"
+    resource :ai_feedback, only: [], controller: "ai_feedbacks" do
+      post :approve
+      post :reject
+    end
+    resources :reviews, only: :index, controller: "reviews"
   end
 
   resources :transactions, only: %i[index new create show update destroy] do

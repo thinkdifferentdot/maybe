@@ -63,6 +63,16 @@ class Transaction < ApplicationRecord
     merchant&.name || entry&.name
   end
 
+  # Check if this transaction was categorized by AI
+  def ai_categorized?
+    extra&.dig("ai_categorization_confidence").present?
+  end
+
+  # Check if user has given feedback on this AI categorization
+  def ai_feedback_given?
+    extra&.dig("ai_feedback_given").present?
+  end
+
   private
     def clear_merchant_unlinked_association
       return unless merchant_id.present? && merchant.is_a?(ProviderMerchant)
