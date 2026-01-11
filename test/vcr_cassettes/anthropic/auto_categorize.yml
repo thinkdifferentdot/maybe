@@ -1,0 +1,129 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.anthropic.com/v1/messages
+    body:
+      encoding: UTF-8
+      string: '{"model":"claude-sonnet-4-5-20250929","max_tokens":4096,"messages":[{"role":"user","content":"Here
+        are the user''s available categories in JSON format:\n\n```json\n[{\"id\":\"shopping_id\",\"name\":\"Shopping\",\"is_subcategory\":false,\"parent_id\":null,\"classification\":\"expense\"},{\"id\":\"subscriptions_id\",\"name\":\"Subscriptions\",\"is_subcategory\":true,\"parent_id\":null,\"classification\":\"expense\"},{\"id\":\"restaurants_id\",\"name\":\"Restaurants\",\"is_subcategory\":false,\"parent_id\":null,\"classification\":\"expense\"},{\"id\":\"fast_food_id\",\"name\":\"Fast
+        Food\",\"is_subcategory\":true,\"parent_id\":\"restaurants_id\",\"classification\":\"expense\"},{\"id\":\"income_id\",\"name\":\"Income\",\"is_subcategory\":false,\"parent_id\":null,\"classification\":\"income\"}]\n```\n\nUse
+        the available categories to auto-categorize the following transactions:\n\n```json\n[{\"id\":\"1\",\"name\":\"McDonalds\",\"amount\":20,\"classification\":\"expense\",\"merchant\":\"McDonalds\",\"hint\":\"Fast
+        Food\"},{\"id\":\"2\",\"name\":\"Amazon purchase\",\"amount\":100,\"classification\":\"expense\",\"merchant\":\"Amazon\"},{\"id\":\"3\",\"name\":\"Netflix
+        subscription\",\"amount\":10,\"classification\":\"expense\",\"merchant\":\"Netflix\",\"hint\":\"Subscriptions\"},{\"id\":\"4\",\"name\":\"paycheck\",\"amount\":3000,\"classification\":\"income\"},{\"id\":\"5\",\"name\":\"Italian
+        dinner with friends\",\"amount\":100,\"classification\":\"expense\"},{\"id\":\"6\",\"name\":\"1212XXXBCaaa
+        charge\",\"amount\":2.99,\"classification\":\"expense\"}]\n```\n\nUse the
+        categorize_transactions tool to provide your categorizations.\n"}],"system":"You
+        are an assistant to a consumer personal finance app.  You will be provided
+        a list\nof the user''s transactions and a list of the user''s categories.  Your
+        job is to auto-categorize\neach transaction.\n\nClosely follow ALL the rules
+        below while auto-categorizing:\n\n- Return 1 result per transaction\n- Correlate
+        each transaction by ID (transaction_id)\n- Attempt to match the most specific
+        category possible (i.e. subcategory over parent category)\n- Category and
+        transaction classifications should match (i.e. if transaction is an \"expense\",
+        the category must have classification of \"expense\")\n- If you don''t know
+        the category, return \"null\"\n  - You should always favor \"null\" over false
+        positives\n  - Be slightly pessimistic.  Only match a category if you''re
+        60%+ confident it is the correct one.\n- Each transaction has varying metadata
+        that can be used to determine the category\n  - Note: \"hint\" comes from
+        3rd party aggregators and typically represents a category name that\n    may
+        or may not match any of the user-supplied categories\n","tools":[{"name":"categorize_transactions","description":"Categorize
+        the provided transactions into the user''s categories","input_schema":{"type":"object","properties":{"categorizations":{"type":"array","description":"An
+        array of auto-categorizations for each transaction","items":{"type":"object","properties":{"transaction_id":{"type":"string","description":"The
+        internal ID of the original transaction","enum":["1","2","3","4","5","6"]},"category_name":{"type":"string","description":"The
+        matched category name of the transaction, or null if no match","enum":["Shopping","Subscriptions","Restaurants","Fast
+        Food","Income","null"]}},"required":["transaction_id","category_name"],"additionalProperties":false}}},"required":["categorizations"],"additionalProperties":false}}]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - Anthropic::Client/Ruby 1.16.3
+      Host:
+      - api.anthropic.com
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Lang:
+      - ruby
+      X-Stainless-Os:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 1.16.3
+      X-Stainless-Runtime:
+      - ruby
+      X-Stainless-Runtime-Version:
+      - 3.4.7
+      Content-Type:
+      - application/json
+      Anthropic-Version:
+      - '2023-06-01'
+      X-Api-Key:
+      - "<ANTHROPIC_API_KEY>"
+      Authorization:
+      - Bearer a14d12c281be4e02b997e3b7261182e3.dqXKqqQpYGqdoLDe
+      X-Stainless-Retry-Count:
+      - '0'
+      X-Stainless-Timeout:
+      - '600.0'
+      Content-Length:
+      - '3501'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sun, 11 Jan 2026 04:40:45 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Anthropic-Ratelimit-Input-Tokens-Limit:
+      - '30000'
+      Anthropic-Ratelimit-Input-Tokens-Remaining:
+      - '29000'
+      Anthropic-Ratelimit-Input-Tokens-Reset:
+      - '2026-01-11T04:40:42Z'
+      Anthropic-Ratelimit-Output-Tokens-Limit:
+      - '8000'
+      Anthropic-Ratelimit-Output-Tokens-Remaining:
+      - '8000'
+      Anthropic-Ratelimit-Output-Tokens-Reset:
+      - '2026-01-11T04:40:48Z'
+      Anthropic-Ratelimit-Requests-Limit:
+      - '50'
+      Anthropic-Ratelimit-Requests-Remaining:
+      - '49'
+      Anthropic-Ratelimit-Requests-Reset:
+      - '2026-01-11T04:40:41Z'
+      Anthropic-Ratelimit-Tokens-Limit:
+      - '38000'
+      Anthropic-Ratelimit-Tokens-Remaining:
+      - '37000'
+      Anthropic-Ratelimit-Tokens-Reset:
+      - '2026-01-11T04:40:42Z'
+      Request-Id:
+      - req_011CWzyYeZT4XuwUPq1ozxfX
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Anthropic-Organization-Id:
+      - 8c28b4a2-23d6-4d84-8df7-9fa16ad01694
+      Server:
+      - cloudflare
+      X-Envoy-Upstream-Service-Time:
+      - '5994'
+      Cf-Cache-Status:
+      - DYNAMIC
+      X-Robots-Tag:
+      - none
+      Cf-Ray:
+      - 9bc1bcc17e3e393b-YVR
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJtb2RlbCI6ImNsYXVkZS1zb25uZXQtNC01LTIwMjUwOTI5IiwiaWQiOiJtc2dfMDFMcndEWDVwQVBMM0I2U1ZiZ2RhUm1GIiwidHlwZSI6Im1lc3NhZ2UiLCJyb2xlIjoiYXNzaXN0YW50IiwiY29udGVudCI6W3sidHlwZSI6InRleHQiLCJ0ZXh0IjoiSSdsbCBhbmFseXplIGVhY2ggdHJhbnNhY3Rpb24gYW5kIG1hdGNoIGl0IHRvIHRoZSBtb3N0IGFwcHJvcHJpYXRlIGNhdGVnb3J5IGJhc2VkIG9uIHRoZSBhdmFpbGFibGUgaW5mb3JtYXRpb24uXG5cbkxldCBtZSBjYXRlZ29yaXplIGVhY2ggdHJhbnNhY3Rpb246XG5cbjEuICoqTWNEb25hbGRzKiogLSBDbGVhciBmYXN0IGZvb2QgcmVzdGF1cmFudCB3aXRoIGhpbnQgXCJGYXN0IEZvb2RcIiDihpIgKipGYXN0IEZvb2QqKlxuMi4gKipBbWF6b24gcHVyY2hhc2UqKiAtIEFtYXpvbiBpcyBhIHNob3BwaW5nIHBsYXRmb3JtIOKGkiAqKlNob3BwaW5nKipcbjMuICoqTmV0ZmxpeCBzdWJzY3JpcHRpb24qKiAtIFN0cmVhbWluZyBzZXJ2aWNlIHdpdGggaGludCBcIlN1YnNjcmlwdGlvbnNcIiDihpIgKipTdWJzY3JpcHRpb25zKipcbjQuICoqcGF5Y2hlY2sqKiAtIEluY29tZSBjbGFzc2lmaWNhdGlvbiB3aXRoIGRlc2NyaXB0aW9uIFwicGF5Y2hlY2tcIiDihpIgKipJbmNvbWUqKlxuNS4gKipJdGFsaWFuIGRpbm5lciB3aXRoIGZyaWVuZHMqKiAtIFJlc3RhdXJhbnQgbWVhbCwgc2hvdWxkIGJlIHBhcmVudCBjYXRlZ29yeSBzaW5jZSBub3Qgc3BlY2lmaWNhbGx5IGZhc3QgZm9vZCDihpIgKipSZXN0YXVyYW50cyoqXG42LiAqKjEyMTJYWFhCQ2FhYSBjaGFyZ2UqKiAtIFVuY2xlYXIgbWVyY2hhbnQgbmFtZSwgbm8gaGludCwgY2FuJ3QgY29uZmlkZW50bHkgY2F0ZWdvcml6ZSDihpIgKipudWxsKioifSx7InR5cGUiOiJ0b29sX3VzZSIsImlkIjoidG9vbHVfMDE2UU5VdFFySFFhTml0SzlDVmEzSnZ6IiwibmFtZSI6ImNhdGVnb3JpemVfdHJhbnNhY3Rpb25zIiwiaW5wdXQiOnsiY2F0ZWdvcml6YXRpb25zIjpbeyJ0cmFuc2FjdGlvbl9pZCI6IjEiLCJjYXRlZ29yeV9uYW1lIjoiRmFzdCBGb29kIn0seyJ0cmFuc2FjdGlvbl9pZCI6IjIiLCJjYXRlZ29yeV9uYW1lIjoiU2hvcHBpbmcifSx7InRyYW5zYWN0aW9uX2lkIjoiMyIsImNhdGVnb3J5X25hbWUiOiJTdWJzY3JpcHRpb25zIn0seyJ0cmFuc2FjdGlvbl9pZCI6IjQiLCJjYXRlZ29yeV9uYW1lIjoiSW5jb21lIn0seyJ0cmFuc2FjdGlvbl9pZCI6IjUiLCJjYXRlZ29yeV9uYW1lIjoiUmVzdGF1cmFudHMifSx7InRyYW5zYWN0aW9uX2lkIjoiNiIsImNhdGVnb3J5X25hbWUiOiJudWxsIn1dfX1dLCJzdG9wX3JlYXNvbiI6InRvb2xfdXNlIiwic3RvcF9zZXF1ZW5jZSI6bnVsbCwidXNhZ2UiOnsiaW5wdXRfdG9rZW5zIjoxMzIxLCJjYWNoZV9jcmVhdGlvbl9pbnB1dF90b2tlbnMiOjAsImNhY2hlX3JlYWRfaW5wdXRfdG9rZW5zIjowLCJjYWNoZV9jcmVhdGlvbiI6eyJlcGhlbWVyYWxfNW1faW5wdXRfdG9rZW5zIjowLCJlcGhlbWVyYWxfMWhfaW5wdXRfdG9rZW5zIjowfSwib3V0cHV0X3Rva2VucyI6MzM1LCJzZXJ2aWNlX3RpZXIiOiJzdGFuZGFyZCJ9fQ==
+  recorded_at: Sun, 11 Jan 2026 04:40:45 GMT
+recorded_with: VCR 6.3.1
