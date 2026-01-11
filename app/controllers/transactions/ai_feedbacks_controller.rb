@@ -9,6 +9,7 @@ class Transactions::AifeedbacksController < ApplicationController
     @transaction = @entry.entryable
 
     if @transaction.nil?
+      flash[:error] = t("transactions.ai_categorize.error")
       respond_to do |format|
         format.turbo_stream { head :unprocessable_entity }
       end
@@ -17,6 +18,7 @@ class Transactions::AifeedbacksController < ApplicationController
 
     # Validate this is an AI-categorized transaction
     unless @transaction.ai_categorized?
+      flash[:error] = t("transactions.ai_categorize.error")
       respond_to do |format|
         format.turbo_stream { head :unprocessable_entity }
       end
@@ -29,6 +31,8 @@ class Transactions::AifeedbacksController < ApplicationController
     # Mark feedback as given
     update_feedback_state(@transaction, "approved")
 
+    flash[:notice] = t("transactions.approval_success")
+
     respond_to do |format|
       format.turbo_stream
     end
@@ -39,6 +43,7 @@ class Transactions::AifeedbacksController < ApplicationController
     @transaction = @entry.entryable
 
     if @transaction.nil?
+      flash[:error] = t("transactions.ai_categorize.error")
       respond_to do |format|
         format.turbo_stream { head :unprocessable_entity }
       end
@@ -47,6 +52,7 @@ class Transactions::AifeedbacksController < ApplicationController
 
     # Validate this is an AI-categorized transaction
     unless @transaction.ai_categorized?
+      flash[:error] = t("transactions.ai_categorize.error")
       respond_to do |format|
         format.turbo_stream { head :unprocessable_entity }
       end
@@ -58,6 +64,8 @@ class Transactions::AifeedbacksController < ApplicationController
 
     # Mark feedback as given and store rejection
     update_feedback_state(@transaction, "rejected")
+
+    flash[:notice] = t("transactions.rejection_success")
 
     respond_to do |format|
       format.turbo_stream
