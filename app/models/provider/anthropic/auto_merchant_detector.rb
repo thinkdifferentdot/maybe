@@ -1,4 +1,6 @@
 class Provider::Anthropic::AutoMerchantDetector
+  include Provider::Concerns::UsageRecorder
+
   attr_reader :client, :model, :transactions, :user_merchants, :langfuse_trace, :family
 
   def initialize(client, model:, transactions:, user_merchants:, langfuse_trace: nil, family: nil)
@@ -325,39 +327,5 @@ class Provider::Anthropic::AutoMerchantDetector
       merchants
     rescue JSON::ParserError => e
       raise Provider::Anthropic::Error, "Invalid JSON in merchant detection response: #{e.message}"
-    end
-
-    def record_usage(model_name, usage_data, operation:, metadata: {})
-      return unless family && usage_data
-
-      # Note: usage_data is an Anthropic::Models::Usage BaseModel with input_tokens/output_tokens attributes
-      input_toks = usage_data.input_tokens
-      output_toks = usage_data.output_tokens
-      total_toks = input_toks + output_toks
-
-      LlmUsage.calculate_cost(
-        model: model_name,
-        prompt_tokens: input_toks,
-        completion_tokens: output_toks
-      ).yield_self do |estimated_cost|
-        if estimated_cost.nil?
-          Rails.logger.info("Recording LLM usage without cost estimate for unknown model: #{model_name}")
-        end
-
-        family.llm_usages.create!(
-          provider: LlmUsage.infer_provider(model_name),
-          model: model_name,
-          operation: operation,
-          prompt_tokens: input_toks,
-          completion_tokens: output_toks,
-          total_tokens: total_toks,
-          estimated_cost: estimated_cost,
-          metadata: metadata
-        )
-
-        Rails.logger.info("LLM usage recorded - Operation: #{operation}, Cost: #{estimated_cost.inspect}")
-      end
-    rescue => e
-      Rails.logger.error("Failed to record LLM usage: #{e.message}")
     end
 end
