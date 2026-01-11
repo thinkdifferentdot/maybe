@@ -126,7 +126,7 @@ services:
           memory: 512M
 
   redis:
-    image: redis:latest-alpine
+    image: redis:alpine
     restart: unless-stopped
     volumes:
       - redis-data:/data
