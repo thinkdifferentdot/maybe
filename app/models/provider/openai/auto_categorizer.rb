@@ -2,6 +2,7 @@ class Provider::Openai::AutoCategorizer
   include Provider::Openai::Concerns::UsageRecorder
   include Provider::Concerns::JsonParser
   include Provider::Concerns::ErrorHandler
+  include Provider::Concerns::FewShotExamples
 
   # JSON response format modes for custom providers
   # - "strict": Use strict JSON schema (requires full OpenAI API compatibility)
@@ -420,10 +421,12 @@ class Provider::Openai::AutoCategorizer
     end
 
     # Concise developer message optimized for smaller/local LLMs
-    # Uses pattern-based guidance instead of exhaustive examples
+    # Uses pattern-based guidance with few-shot examples
     def developer_message_for_generic
+      few_shot_text = build_few_shot_examples_text
+
       <<~MESSAGE.strip_heredoc
-        AVAILABLE CATEGORIES: #{user_categories.map { |c| c[:name] }.join(", ")}
+        #{few_shot_text}AVAILABLE CATEGORIES: #{user_categories.map { |c| c[:name] }.join(", ")}
 
         TRANSACTIONS TO CATEGORIZE:
         #{format_transactions_simply}
