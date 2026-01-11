@@ -143,9 +143,9 @@ class Settings::HostingsController < ApplicationController
             }
           end
         end
-      rescue ::Anthropic::NotFoundError => e
+      rescue ::Anthropic::Errors::NotFoundError => e
         error = I18n.t("settings.hostings.anthropic_settings.models_fetch_error_invalid_key")
-      rescue ::Anthropic::UnauthorizedError, ::Anthropic::AuthenticationError => e
+      rescue ::Anthropic::Errors::AuthenticationError => e
         error = I18n.t("settings.hostings.anthropic_settings.models_fetch_error_invalid_key")
       rescue => e
         Rails.logger.error("Failed to fetch Anthropic models: #{e.class} - #{e.message}")

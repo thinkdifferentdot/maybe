@@ -204,4 +204,180 @@ class Settings::HostingsControllerTest < ActionDispatch::IntegrationTest
       assert_match(/must start with/, flash[:alert])
     end
   end
+
+  test "admin can fetch anthropic models with valid api key" do
+    with_self_hosting do
+      with_env_overrides("ANTHROPIC_API_KEY" => nil) do
+        Setting.where(var: "anthropic_access_token").destroy_all
+        Setting.clear_cache
+        Setting.anthropic_access_token = "test-api-key"
+
+        mock_client = mock
+        mock_page = mock
+        mock_models = [
+          OpenStruct.new(id: "claude-opus-4-5-20251101", display_name: "Claude Opus 4.5"),
+          OpenStruct.new(id: "claude-sonnet-4-5-20250929", display_name: "Claude Sonnet 4.5"),
+          OpenStruct.new(id: "claude-haiku-4-5-20251001", display_name: "Claude Haiku 4.5")
+        ]
+
+        mock_page.expects(:to_a).returns(mock_models)
+        mock_client.expects(:models).returns(mock("list" => mock_page))
+        ::Anthropic::Client.expects(:new).with(api_key: "test-api-key").returns(mock_client)
+
+        get anthropic_models_settings_hosting_url
+
+        assert_response :success
+        json_response = JSON.parse(response.body)
+
+        assert json_response["models"].is_a?(Array)
+        assert_equal 3, json_response["models"].length
+        assert_equal "claude-opus-4-5-20251101", json_response["models"][0]["id"]
+        assert_equal "Claude Opus 4.5", json_response["models"][0]["display_name"]
+        assert_nil json_response["error"]
+      end
+    end
+  end
+
+  test "non-admin cannot fetch anthropic models" do
+    with_self_hosting do
+      sign_in users(:family_member)
+
+      get anthropic_models_settings_hosting_url
+
+      assert_redirected_to settings_hosting_url
+      assert_equal I18n.t("settings.hostings.not_authorized"), flash[:alert]
+    end
+  end
+
+  test "anthropic models endpoint returns error when no api key" do
+    with_self_hosting do
+      with_env_overrides("ANTHROPIC_API_KEY" => nil) do
+        Setting.where(var: "anthropic_access_token").destroy_all
+        Setting.clear_cache
+
+        get anthropic_models_settings_hosting_url
+
+        assert_response :success
+        json_response = JSON.parse(response.body)
+
+        assert_equal [], json_response["models"]
+        assert_equal "No API key configured", json_response["error"]
+      end
+    end
+  end
+
+  test "anthropic models endpoint returns error when invalid api key" do
+    with_self_hosting do
+      with_env_overrides("ANTHROPIC_API_KEY" => nil) do
+        Setting.where(var: "anthropic_access_token").destroy_all
+        Setting.clear_cache
+        Setting.anthropic_access_token = "invalid-key"
+
+        url = URI("https://api.anthropic.com/v1/models")
+        auth_error = ::Anthropic::Errors::AuthenticationError.new(
+          url: url,
+          status: 401,
+          headers: {},
+          body: nil,
+          request: nil,
+          response: nil,
+          message: "Invalid API key"
+        )
+        mock_client = mock
+        mock_client.expects(:models).raises(auth_error)
+        ::Anthropic::Client.expects(:new).with(api_key: "invalid-key").returns(mock_client)
+
+        get anthropic_models_settings_hosting_url
+
+        assert_response :success
+        json_response = JSON.parse(response.body)
+
+        assert_equal [], json_response["models"]
+        assert_equal "Invalid API key", json_response["error"]
+      end
+    end
+  end
+
+  test "anthropic models endpoint uses env key when setting is blank" do
+    with_self_hosting do
+      with_env_overrides("ANTHROPIC_API_KEY" => "env-api-key") do
+        Setting.where(var: "anthropic_access_token").destroy_all
+        Setting.clear_cache
+
+        mock_client = mock
+        mock_page = mock
+        mock_models = [
+          OpenStruct.new(id: "claude-sonnet-4-5-20250929", display_name: "Claude Sonnet 4.5")
+        ]
+
+        mock_page.expects(:to_a).returns(mock_models)
+        mock_client.expects(:models).returns(mock("list" => mock_page))
+        ::Anthropic::Client.expects(:new).with(api_key: "env-api-key").returns(mock_client)
+
+        get anthropic_models_settings_hosting_url
+
+        assert_response :success
+        json_response = JSON.parse(response.body)
+
+        assert json_response["models"].is_a?(Array)
+        assert_equal 1, json_response["models"].length
+      end
+    end
+  end
+
+  test "anthropic models endpoint filters non-claude models" do
+    with_self_hosting do
+      with_env_overrides("ANTHROPIC_API_KEY" => nil) do
+        Setting.where(var: "anthropic_access_token").destroy_all
+        Setting.clear_cache
+        Setting.anthropic_access_token = "test-api-key"
+
+        mock_client = mock
+        mock_page = mock
+        # Mix of claude and non-claude models
+        mock_models = [
+          OpenStruct.new(id: "claude-opus-4-5-20251101", display_name: "Claude Opus 4.5"),
+          OpenStruct.new(id: "some-other-model", display_name: "Some Other Model"),
+          OpenStruct.new(id: "claude-sonnet-4-5-20250929", display_name: "Claude Sonnet 4.5")
+        ]
+
+        mock_page.expects(:to_a).returns(mock_models)
+        mock_client.expects(:models).returns(mock("list" => mock_page))
+        ::Anthropic::Client.expects(:new).with(api_key: "test-api-key").returns(mock_client)
+
+        get anthropic_models_settings_hosting_url
+
+        assert_response :success
+        json_response = JSON.parse(response.body)
+
+        # Only claude- models should be included
+        assert_equal 2, json_response["models"].length
+        json_response["models"].each do |model|
+          assert_match(/^claude-/, model["id"])
+        end
+      end
+    end
+  end
+
+  test "anthropic models endpoint handles generic errors" do
+    with_self_hosting do
+      with_env_overrides("ANTHROPIC_API_KEY" => nil) do
+        Setting.where(var: "anthropic_access_token").destroy_all
+        Setting.clear_cache
+        Setting.anthropic_access_token = "test-api-key"
+
+        mock_client = mock
+        mock_client.expects(:models).raises(StandardError.new("Network error"))
+        ::Anthropic::Client.expects(:new).with(api_key: "test-api-key").returns(mock_client)
+
+        get anthropic_models_settings_hosting_url
+
+        assert_response :success
+        json_response = JSON.parse(response.body)
+
+        assert_equal [], json_response["models"]
+        assert_equal "Failed to load models: Network error", json_response["error"]
+      end
+    end
+  end
 end
