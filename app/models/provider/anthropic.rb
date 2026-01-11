@@ -104,11 +104,6 @@ class Provider::Anthropic < Provider
     family: nil
   )
     with_provider_response do
-      # Plan 03-03: function_results and multi-turn conversations are now supported
-      # Plan 03-04: streaming support deferred to future enhancement
-      # TODO: Implement streaming using anthropic.messages.stream with stream.text.each helper
-      # Follow the OpenAI streaming pattern in Provider::Openai#native_chat_response
-
       chat_config = ChatConfig.new(
         functions: functions,
         function_results: function_results
@@ -135,55 +130,12 @@ class Provider::Anthropic < Provider
         parameters[:system] = instructions if instructions.present?
         parameters[:tools] = chat_config.tools if chat_config.tools.present?
 
-        raw_response = client.messages.create(parameters)
-
-        # Convert Anthropic::Message (BaseModel) to hash for parsing
-        # The BaseModel doesn't support dig(), but to_h returns the underlying hash
-        response_hash = raw_response.to_h
-
-        parsed = ChatParser.new(response_hash).parsed
-
-        # Map Anthropic usage field names to LlmConcept format
-        # Anthropic uses input_tokens/output_tokens, we need prompt_tokens/completion_tokens
-        # Note: raw_response.usage is an Anthropic::Models::Usage object (BaseModel), not a hash
-        # We access its attributes directly instead of using dig
-        raw_usage = raw_response.usage
-        usage = {
-          "prompt_tokens" => raw_usage&.input_tokens,
-          "completion_tokens" => raw_usage&.output_tokens,
-          "total_tokens" => (raw_usage&.input_tokens || 0) + (raw_usage&.output_tokens || 0)
-        }
-
-        output_text = parsed.messages.map(&:output_text).join("\n")
-
-        # If a streamer was provided, manually call it with the parsed response
-        # to maintain the same contract as the streaming version
-        # (See Provider::Openai#generic_chat_response for the same pattern)
+        # Use streaming if streamer proc is provided
         if streamer.present?
-          # Emit output_text chunks for each message
-          parsed.messages.each do |message|
-            if message.output_text.present?
-              streamer.call(ChatStreamChunk.new(type: "output_text", data: message.output_text, usage: nil))
-            end
-          end
-
-          # Emit response chunk with usage
-          streamer.call(ChatStreamChunk.new(type: "response", data: parsed, usage: usage))
+          streaming_chat_response(parameters:, effective_model:, streamer:, trace:, session_id:, user_identifier:, family:)
+        else
+          non_streaming_chat_response(parameters:, effective_model:, trace:, session_id:, user_identifier:, family:)
         end
-
-        log_langfuse_generation(
-          name: "chat_response",
-          model: effective_model,
-          input: messages,
-          output: output_text,
-          usage: usage,
-          session_id: session_id,
-          user_identifier: user_identifier
-        )
-
-        record_llm_usage(family: family, model: effective_model, operation: "chat", usage: usage)
-
-        parsed
       rescue => e
         log_langfuse_generation(
           name: "chat_response",
@@ -204,6 +156,81 @@ class Provider::Anthropic < Provider
   private
 
     attr_reader :client
+
+    def streaming_chat_response(parameters:, effective_model:, streamer:, trace:, session_id:, user_identifier:, family:)
+      collected_chunks = []
+
+      # Create MessageStream and iterate events
+      stream = client.messages.stream(parameters)
+
+      # Create stream proxy proc that converts Anthropic events to ChatStreamChunk
+      stream_proxy = proc do |event|
+        parsed_chunk = ChatStreamParser.new(event, stream: stream).parsed
+
+        unless parsed_chunk.nil?
+          streamer.call(parsed_chunk)
+          collected_chunks << parsed_chunk
+        end
+      end
+
+      # Consume the stream
+      stream.each(&stream_proxy)
+
+      # Extract response and usage from collected chunks
+      response_chunk = collected_chunks.find { |chunk| chunk.type == "response" }
+      response = response_chunk.data
+      usage = response_chunk.usage
+
+      output_text = response.messages.map(&:output_text).join("\n")
+
+      # Log Langfuse generation
+      log_langfuse_generation(
+        name: "chat_response",
+        model: effective_model,
+        input: parameters[:messages],
+        output: output_text,
+        usage: usage,
+        session_id: session_id,
+        user_identifier: user_identifier
+      )
+
+      record_llm_usage(family: family, model: effective_model, operation: "chat", usage: usage)
+
+      response
+    end
+
+    def non_streaming_chat_response(parameters:, effective_model:, trace:, session_id:, user_identifier:, family:)
+      raw_response = client.messages.create(parameters)
+
+      # Convert Anthropic::Message (BaseModel) to hash for parsing
+      response_hash = raw_response.to_h
+
+      parsed = ChatParser.new(response_hash).parsed
+
+      # Map Anthropic usage field names to LlmConcept format
+      raw_usage = raw_response.usage
+      usage = {
+        "prompt_tokens" => raw_usage&.input_tokens,
+        "completion_tokens" => raw_usage&.output_tokens,
+        "total_tokens" => (raw_usage&.input_tokens || 0) + (raw_usage&.output_tokens || 0)
+      }
+
+      output_text = parsed.messages.map(&:output_text).join("\n")
+
+      log_langfuse_generation(
+        name: "chat_response",
+        model: effective_model,
+        input: parameters[:messages],
+        output: output_text,
+        usage: usage,
+        session_id: session_id,
+        user_identifier: user_identifier
+      )
+
+      record_llm_usage(family: family, model: effective_model, operation: "chat", usage: usage)
+
+      parsed
+    end
 
     def langfuse_client
       return unless ENV["LANGFUSE_PUBLIC_KEY"].present? && ENV["LANGFUSE_SECRET_KEY"].present?
