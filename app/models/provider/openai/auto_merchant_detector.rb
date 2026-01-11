@@ -1,6 +1,7 @@
 class Provider::Openai::AutoMerchantDetector
   include Provider::Openai::Concerns::UsageRecorder
   include Provider::Concerns::JsonParser
+  include Provider::Concerns::ErrorHandler
 
   # JSON response format modes for custom providers
   # - "strict": Use strict JSON schema (requires full OpenAI API compatibility)
@@ -137,40 +138,39 @@ class Provider::Openai::AutoMerchantDetector
         user_merchants: user_merchants
       })
 
-      response = client.responses.create(parameters: {
-        model: model.presence || Provider::Openai::DEFAULT_MODEL,
-        input: [ { role: "developer", content: developer_message } ],
-        text: {
-          format: {
-            type: "json_schema",
-            name: "auto_detect_personal_finance_merchants",
-            strict: true,
-            schema: json_schema
+      with_openai_error_handler(span: span, operation: "merchant detection") do
+        response = client.responses.create(parameters: {
+          model: model.presence || Provider::Openai::DEFAULT_MODEL,
+          input: [ { role: "developer", content: developer_message } ],
+          text: {
+            format: {
+              type: "json_schema",
+              name: "auto_detect_personal_finance_merchants",
+              strict: true,
+              schema: json_schema
+            }
+          },
+          instructions: instructions
+        })
+
+        Rails.logger.info("Tokens used to auto-detect merchants: #{response.dig("usage", "total_tokens")}")
+
+        merchants = extract_merchants_native(response)
+        result = build_response(merchants)
+
+        record_usage(
+          model.presence || Provider::Openai::DEFAULT_MODEL,
+          response.dig("usage"),
+          operation: "auto_detect_merchants",
+          metadata: {
+            transaction_count: transactions.size,
+            merchant_count: user_merchants.size
           }
-        },
-        instructions: instructions
-      })
+        )
 
-      Rails.logger.info("Tokens used to auto-detect merchants: #{response.dig("usage", "total_tokens")}")
-
-      merchants = extract_merchants_native(response)
-      result = build_response(merchants)
-
-      record_usage(
-        model.presence || Provider::Openai::DEFAULT_MODEL,
-        response.dig("usage"),
-        operation: "auto_detect_merchants",
-        metadata: {
-          transaction_count: transactions.size,
-          merchant_count: user_merchants.size
-        }
-      )
-
-      span&.end(output: result.map(&:to_h), usage: response.dig("usage"))
-      result
-    rescue => e
-      span&.end(output: { error: e.message }, level: "ERROR")
-      raise
+        span&.end(output: result.map(&:to_h), usage: response.dig("usage"))
+        result
+      end
     end
 
     def auto_detect_merchants_openai_generic
@@ -219,54 +219,53 @@ class Provider::Openai::AutoMerchantDetector
         json_mode: mode
       })
 
-      # Build parameters with configurable JSON response format
-      params = {
-        model: model.presence || Provider::Openai::DEFAULT_MODEL,
-        messages: [
-          { role: "system", content: instructions },
-          { role: "user", content: developer_message_for_generic }
-        ]
-      }
+      with_openai_error_handler(span: span, operation: "merchant detection") do
+        # Build parameters with configurable JSON response format
+        params = {
+          model: model.presence || Provider::Openai::DEFAULT_MODEL,
+          messages: [
+            { role: "system", content: instructions },
+            { role: "user", content: developer_message_for_generic }
+          ]
+        }
 
-      # Add response format based on json_mode setting
-      case mode
-      when JSON_MODE_STRICT
-        params[:response_format] = {
-          type: "json_schema",
-          json_schema: {
-            name: "auto_detect_personal_finance_merchants",
-            strict: true,
-            schema: json_schema
+        # Add response format based on json_mode setting
+        case mode
+        when JSON_MODE_STRICT
+          params[:response_format] = {
+            type: "json_schema",
+            json_schema: {
+              name: "auto_detect_personal_finance_merchants",
+              strict: true,
+              schema: json_schema
+            }
           }
-        }
-      when JSON_MODE_OBJECT
-        params[:response_format] = { type: "json_object" }
-        # JSON_MODE_NONE: no response_format constraint
+        when JSON_MODE_OBJECT
+          params[:response_format] = { type: "json_object" }
+          # JSON_MODE_NONE: no response_format constraint
+        end
+
+        response = client.chat(parameters: params)
+
+        Rails.logger.info("Tokens used to auto-detect merchants: #{response.dig("usage", "total_tokens")} (json_mode: #{mode})")
+
+        merchants = extract_merchants_generic(response)
+        result = build_response(merchants)
+
+        record_usage(
+          model.presence || Provider::Openai::DEFAULT_MODEL,
+          response.dig("usage"),
+          operation: "auto_detect_merchants",
+          metadata: {
+            transaction_count: transactions.size,
+            merchant_count: user_merchants.size,
+            json_mode: mode
+          }
+        )
+
+        span&.end(output: result.map(&:to_h), usage: response.dig("usage"))
+        result
       end
-
-      response = client.chat(parameters: params)
-
-      Rails.logger.info("Tokens used to auto-detect merchants: #{response.dig("usage", "total_tokens")} (json_mode: #{mode})")
-
-      merchants = extract_merchants_generic(response)
-      result = build_response(merchants)
-
-      record_usage(
-        model.presence || Provider::Openai::DEFAULT_MODEL,
-        response.dig("usage"),
-        operation: "auto_detect_merchants",
-        metadata: {
-          transaction_count: transactions.size,
-          merchant_count: user_merchants.size,
-          json_mode: mode
-        }
-      )
-
-      span&.end(output: result.map(&:to_h), usage: response.dig("usage"))
-      result
-    rescue => e
-      span&.end(output: { error: e.message }, level: "ERROR")
-      raise
     end
 
     AutoDetectedMerchant = Provider::LlmConcept::AutoDetectedMerchant
