@@ -1,7 +1,6 @@
 class Transactions::AiFeedbacksController < ApplicationController
   include ActionView::RecordIdentifier
 
-  before_action :authenticate_family!
   rescue_from ActiveRecord::RecordNotFound, with: :handle_not_found
 
   def approve
