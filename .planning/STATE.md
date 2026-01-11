@@ -9,19 +9,21 @@ See: .planning/PROJECT.md (updated 2026-01-11)
 
 ## Current Position
 
-Phase: Phase 26 of 29 (Extract Thinking Tags)
+Phase: Phase 27 of 29 (Simplify JSON Parsing)
 Plan: 1 of 1 in current phase
-Status: Phase complete (obsolete - work done in Phase 25)
-Last activity: 2026-01-11 — Completed 26-01-PLAN.md (verification only)
+Status: Phase complete
+Last activity: 2026-01-11 — Completed 27-01-PLAN.md
 
-Progress for Phase 26: ███████████ 100%
-Overall v1.3 Progress: █████░░░░░░ 50% (3 of 6 phases complete)
+Progress for Phase 27: ███████████ 100%
+Overall v1.3 Progress: ██████░░░░░ 67% (4 of 6 phases complete)
 
 **✅ v1.2 Milestone COMPLETE:** Anthropic Feature Parity achieved.
 
 **Summary (25-01):** Extracted duplicated parse_json_flexibly and strip_thinking_tags methods to shared Provider::Concerns::JsonParser module. Eliminated ~390 lines of duplicate code across 4 provider classes (Anthropic::AutoCategorizer, Anthropic::AutoMerchantDetector, OpenAI::AutoCategorizer, OpenAI::AutoMerchantDetector). Shared concern handles both <thinking> (Anthropic) and  (OpenAI/o1) tag formats. All 174 provider tests passing.
 
 **Summary (26-01):** Phase obsolete — verification confirmed all planned work was completed in Phase 25. All 4 provider files include Provider::Concerns::JsonParser, no duplicate parse_json_flexibly or strip_thinking_tags methods exist.
+
+**Summary (27-01):** Refactored 85-line parse_json_flexibly method into 5 focused helper methods (extract_from_closed_code_blocks, extract_from_unclosed_code_blocks, extract_json_with_key, extract_any_json_object). Simplified main method from ~85 to ~30 lines. Added comprehensive unit tests in json_parser_test.rb with 36 test cases covering all helper methods. Fixed regex interpolation issue in extract_json_with_key. All 210 provider tests passing.
 
 **Summary (20-01):** Extracted duplicated usage recording code into shared Provider::Concerns::UsageRecorder module. Eliminated ~160 lines of duplicate code across AutoCategorizer, AutoMerchantDetector, and OpenAI concern. Format-detecting extract_tokens helper handles both Hash (OpenAI) and BaseModel (Anthropic) usage data formats. Backward-compatible alias preserves existing OpenAI includes. All 26 provider tests passing.
 
@@ -183,5 +185,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-11
-Stopped at: Completed 26-01-PLAN.md (verification)
+Stopped at: Completed 27-01-PLAN.md
 Resume file: None
