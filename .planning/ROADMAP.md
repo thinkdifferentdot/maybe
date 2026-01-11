@@ -74,10 +74,10 @@ See [milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md) for full details.
 **Goal**: Add missing ANTHROPIC_* environment variable entries to .env.example
 **Depends on**: v1.2 complete
 **Research**: Unlikely (simple file update)
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 24-01: Add ANTHROPIC_API_KEY and ANTHROPIC_MODEL to .env.example
+- [x] 24-01: Add ANTHROPIC_API_KEY and ANTHROPIC_MODEL to .env.example — completed 2026-01-11
 
 #### Phase 25: Extract JSON Parser
 
@@ -303,7 +303,7 @@ The AI chat was failing when calling the `get_transactions` function because Ant
 | 17. Auto-Categorization Test Coverage | v1.2 | 1/1 | Complete | 2026-01-10 |
 | 18. Fuzzy Category & Merchant Matching | v1.2 | 1/1 | Complete | 2026-01-11 |
 | 20. Extract UsageRecorder Concern | v1.2 | 1/1 | Complete | 2026-01-11 |
-| 24. Env Example Updates | v1.3 | 0/? | Not started | — |
+| 24. Env Example Updates | v1.3 | 1/1 | Complete | 2026-01-11 |
 | 25. Extract JSON Parser | v1.3 | 0/? | Not started | — |
 | 26. Extract Thinking Tags | v1.3 | 0/? | Not started | — |
 | 27. Simplify JSON Parsing | v1.3 | 0/? | Not started | — |

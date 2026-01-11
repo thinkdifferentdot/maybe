@@ -10,14 +10,16 @@ See: .planning/PROJECT.md (updated 2026-01-11)
 ## Current Position
 
 Phase: Phase 24 of 29 (Env Example Updates)
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-01-11 — Milestone v1.2 complete
+Plan: 1 of 1 in current phase
+Status: Phase complete
+Last activity: 2026-01-11 — Completed 24-01-PLAN.md
 
-Progress for Phase 24: ░░░░░░░░░░ 0%
-Overall v1.3 Progress: ░░░░░░░░░░ 0% (0 of 6 phases complete)
+Progress for Phase 24: ███████████ 100%
+Overall v1.3 Progress: ██░░░░░░░░░ 17% (1 of 6 phases complete)
 
 **✅ v1.2 Milestone COMPLETE:** Anthropic Feature Parity achieved.
+
+**Summary (24-01):** Added ANTHROPIC_API_KEY and ANTHROPIC_MODEL environment variable documentation to .env.example file. Completed environment configuration documentation for Anthropic provider with default model claude-sonnet-4-5-20250929.
 
 **Summary (20-01):** Extracted duplicated usage recording code into shared Provider::Concerns::UsageRecorder module. Eliminated ~160 lines of duplicate code across AutoCategorizer, AutoMerchantDetector, and OpenAI concern. Format-detecting extract_tokens helper handles both Hash (OpenAI) and BaseModel (Anthropic) usage data formats. Backward-compatible alias preserves existing OpenAI includes. All 26 provider tests passing.
 
@@ -179,5 +181,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-11
-Stopped at: Milestone v1.3 initialization
+Stopped at: Completed 24-01-PLAN.md
 Resume file: None
