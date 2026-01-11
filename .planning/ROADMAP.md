@@ -11,8 +11,8 @@ None (Rails backend work following established patterns in the Sure codebase)
 ## Milestones
 
 - ✅ **[v1.0 Anthropic Support](milestones/v1.0-ROADMAP.md)** - Phases 1-9 + 9.1 (shipped 2026-01-10)
-- ✅ **[v1.1 AI Auto-Categorization Triggers](milestones/v1.1-ROADMAP.md)** - Phases 10-15 (shipped 2026-01-10)
-- ✅ **v1.2 Anthropic Feature Parity** - Phases 16-20 (shipped 2026-01-11)
+- ✅ **[v1.1 AI Auto-Categorization Triggers](milestones/v1.1-ROADMAP.md)** - Phases 10-15 + 14.1 + 14.2 (shipped 2026-01-10)
+- ✅ **[v1.2 Anthropic Feature Parity](milestones/v1.2-ROADMAP.md)** - Phases 16-18, 20 (shipped 2026-01-11)
 - 🚧 **v1.3 Codebase Health** - Phases 24-29 (in progress, 2026-01-11)
 
 ## Phases
