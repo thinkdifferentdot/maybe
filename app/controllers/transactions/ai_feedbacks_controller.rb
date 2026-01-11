@@ -1,4 +1,4 @@
-class Transactions::AifeedbacksController < ApplicationController
+class Transactions::AiFeedbacksController < ApplicationController
   include ActionView::RecordIdentifier
 
   before_action :authenticate_family!
