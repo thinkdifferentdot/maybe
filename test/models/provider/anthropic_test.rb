@@ -239,4 +239,70 @@ class Provider::AnthropicTest < ActiveSupport::TestCase
       end
     end
   end
+
+  # Fuzzy matching tests (Phase 18)
+  test "fuzzy_name_match handles common_variations" do
+    ClimateControl.modify ANTHROPIC_BASE_URL: nil do
+      provider = create_provider
+      categorizer = Provider::Anthropic::AutoCategorizer.new(
+        provider.client,
+        model: @subject_model,
+        user_categories: [
+          { id: "gas_id", name: "Gas & Fuel", is_subcategory: false, parent_id: nil, classification: "expense" },
+          { id: "coffee_id", name: "Coffee Shops", is_subcategory: false, parent_id: nil, classification: "expense" }
+        ]
+      )
+
+      # Test synonym matching
+      assert categorizer.send(:fuzzy_name_match?, "gasoline", "gas & fuel")
+      assert categorizer.send(:fuzzy_name_match?, "coffee shop", "coffee shops")
+
+      # Test non-matching pairs
+      assert_not categorizer.send(:fuzzy_name_match?, "unrelated", "restaurants")
+    end
+  end
+
+  test "find_fuzzy_category_match_handles_substrings" do
+    ClimateControl.modify ANTHROPIC_BASE_URL: nil do
+      provider = create_provider
+      categorizer = Provider::Anthropic::AutoCategorizer.new(
+        provider.client,
+        model: @subject_model,
+        user_categories: [
+          { id: "coffee_id", name: "Coffee Shops", is_subcategory: false, parent_id: nil, classification: "expense" },
+          { id: "gas_id", name: "Gas & Fuel", is_subcategory: false, parent_id: nil, classification: "expense" }
+        ]
+      )
+
+      # Test substring matching
+      assert_equal "Coffee Shops", categorizer.send(:find_fuzzy_category_match, "coffee")
+      assert_equal "Coffee Shops", categorizer.send(:find_fuzzy_category_match, "coffee shop")
+
+      # Test synonym matching via fuzzy_name_match?
+      assert_equal "Gas & Fuel", categorizer.send(:find_fuzzy_category_match, "Gas & Fuel")
+    end
+  end
+
+  test "normalize_category_name_applies_fuzzy_matching" do
+    ClimateControl.modify ANTHROPIC_BASE_URL: nil do
+      provider = create_provider
+      categorizer = Provider::Anthropic::AutoCategorizer.new(
+        provider.client,
+        model: @subject_model,
+        user_categories: [
+          { id: "gas_id", name: "Gas & Fuel", is_subcategory: false, parent_id: nil, classification: "expense" },
+          { id: "coffee_id", name: "Coffee Shops", is_subcategory: false, parent_id: nil, classification: "expense" }
+        ]
+      )
+
+      # Test synonym normalization (gasoline -> Gas & Fuel)
+      assert_equal "Gas & Fuel", categorizer.send(:normalize_category_name, "gasoline")
+
+      # Test substring normalization (coffee shop -> Coffee Shops)
+      assert_equal "Coffee Shops", categorizer.send(:normalize_category_name, "coffee shop")
+
+      # Test unmatched input returns as-is
+      assert_equal "unmatched", categorizer.send(:normalize_category_name, "unmatched")
+    end
+  end
 end
