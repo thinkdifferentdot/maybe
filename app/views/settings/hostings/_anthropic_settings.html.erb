@@ -29,18 +29,54 @@
                           disabled: ENV["ANTHROPIC_API_KEY"].present?,
                           data: { "auto-submit-form-target": "auto" } %>
 
-  <%= form.text_field :anthropic_model,
-                      label: t(".model_label"),
-                      placeholder: t(".model_placeholder"),
-                      value: Setting.anthropic_model,
-                      autocomplete: "off",
-                      autocapitalize: "none",
-                      spellcheck: "false",
-                      inputmode: "text",
-                      disabled: ENV["ANTHROPIC_MODEL"].present?,
-                      data: { "auto-submit-form-target": "auto" } %>
+  <div data-controller="anthropic-model-select"
+       data-anthropic-model-select-current-model-value="<%= Setting.anthropic_model %>"
+       data-anthropic-model-select-custom-option-label="<%= t(".custom_model_option") %>"
+       data-anthropic-model-select-default-error-message="<%= t(".models_fetch_error_generic") %>">
+    <%= form.label :anthropic_model, t(".model_label"), class: "block text-sm font-medium mb-1" %>
 
-  <p class="text-xs text-secondary mt-1"><%= t(".model_help") %></p>
+    <div class="relative">
+      <select name="setting[anthropic_model]"
+              id="setting_anthropic_model"
+              data-anthropic-model-select-target="select"
+              data-placeholder="<%= t(".model_placeholder") %>"
+              data-action="change->anthropic-model-select#change auto-submit-form#handleInput"
+              data-auto-submit-form-target="auto"
+              <%= "disabled" if ENV["ANTHROPIC_MODEL"].present? %>
+              class="w-full rounded-md border border-primary bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50">
+        <option value="" disabled><%= t(".models_loading") %></option>
+      </select>
+
+      <!-- Loading spinner -->
+      <div data-anthropic-model-select-target="spinner" class="absolute right-8 top-1/2 -translate-y-1/2 hidden">
+        <%= icon "loader-2", class: "h-4 w-4 animate-spin" %>
+      </div>
+    </div>
+
+    <!-- Custom model input wrapper (hidden by default) -->
+    <div data-anthropic-model-select-target="customInputWrapper" class="hidden mt-2">
+      <%= form.text_field :anthropic_model,
+                          label: t(".custom_model_label"),
+                          placeholder: t(".custom_model_placeholder"),
+                          value: Setting.anthropic_model,
+                          autocomplete: "off",
+                          autocapitalize: "none",
+                          spellcheck: "false",
+                          inputmode: "text",
+                          disabled: ENV["ANTHROPIC_MODEL"].present?,
+                          data: {
+                            "anthropic-model-select-target": "customInput",
+                            "action": "input->anthropic-model-select#customInputChange auto-submit-form#handleInput",
+                            "auto-submit-form-target": "auto"
+                          } %>
+      <p class="text-xs text-secondary mt-1"><%= t(".custom_model_help") %></p>
+    </div>
+
+    <!-- Error message -->
+    <p data-anthropic-model-select-target="error" class="text-xs text-danger mt-1 hidden"></p>
+
+    <p class="text-xs text-secondary mt-1"><%= t(".model_help_select") %></p>
+  </div>
 
   <%= form.submit t(".save_button") unless ENV["ANTHROPIC_API_KEY"].present? && ENV["ANTHROPIC_MODEL"].present? %>
   <% end %>
