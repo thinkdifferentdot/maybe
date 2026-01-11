@@ -3,7 +3,7 @@ class Settings::HostingsController < ApplicationController
 
   guard_feature unless: -> { self_hosted? }
 
-  before_action :ensure_admin, only: [ :update, :clear_cache ]
+  before_action :ensure_admin, only: [ :update, :clear_cache, :anthropic_models ]
 
   def show
     @breadcrumbs = [
@@ -117,6 +117,43 @@ class Settings::HostingsController < ApplicationController
   def clear_cache
     DataCacheClearJob.perform_later(Current.family)
     redirect_to settings_hosting_path, notice: t(".cache_cleared")
+  end
+
+  def anthropic_models
+    models = []
+    error = nil
+
+    access_token = ENV["ANTHROPIC_API_KEY"].presence || Setting.anthropic_access_token
+
+    if access_token.blank?
+      error = I18n.t("settings.hostings.anthropic_settings.models_fetch_error_no_key")
+    else
+      begin
+        client = ::Anthropic::Client.new(api_key: access_token)
+        response = client.models.list(limit: 100)
+
+        # Convert response to array of model hashes
+        # The response is a Page object that can be iterated
+        response.to_a.each do |model|
+          # Only include claude- models (the ones supported by our system)
+          if model.id.start_with?("claude-")
+            models << {
+              id: model.id,
+              display_name: model.display_name || model.id
+            }
+          end
+        end
+      rescue ::Anthropic::NotFoundError => e
+        error = I18n.t("settings.hostings.anthropic_settings.models_fetch_error_invalid_key")
+      rescue ::Anthropic::UnauthorizedError, ::Anthropic::AuthenticationError => e
+        error = I18n.t("settings.hostings.anthropic_settings.models_fetch_error_invalid_key")
+      rescue => e
+        Rails.logger.error("Failed to fetch Anthropic models: #{e.class} - #{e.message}")
+        error = I18n.t("settings.hostings.anthropic_settings.models_fetch_error", error: e.message)
+      end
+    end
+
+    render json: { models: models, error: error }
   end
 
   private
