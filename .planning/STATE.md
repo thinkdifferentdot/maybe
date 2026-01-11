@@ -9,17 +9,17 @@ See: .planning/PROJECT.md (updated 2026-01-11)
 
 ## Current Position
 
-Phase: Phase 24 of 29 (Env Example Updates)
+Phase: Phase 25 of 29 (Extract JsonParser)
 Plan: 1 of 1 in current phase
 Status: Phase complete
-Last activity: 2026-01-11 — Completed 24-01-PLAN.md
+Last activity: 2026-01-11 — Completed 25-01-PLAN.md
 
-Progress for Phase 24: ███████████ 100%
-Overall v1.3 Progress: ██░░░░░░░░░ 17% (1 of 6 phases complete)
+Progress for Phase 25: ███████████ 100%
+Overall v1.3 Progress: ███░░░░░░░░ 33% (2 of 6 phases complete)
 
 **✅ v1.2 Milestone COMPLETE:** Anthropic Feature Parity achieved.
 
-**Summary (24-01):** Added ANTHROPIC_API_KEY and ANTHROPIC_MODEL environment variable documentation to .env.example file. Completed environment configuration documentation for Anthropic provider with default model claude-sonnet-4-5-20250929.
+**Summary (25-01):** Extracted duplicated parse_json_flexibly and strip_thinking_tags methods to shared Provider::Concerns::JsonParser module. Eliminated ~390 lines of duplicate code across 4 provider classes (Anthropic::AutoCategorizer, Anthropic::AutoMerchantDetector, OpenAI::AutoCategorizer, OpenAI::AutoMerchantDetector). Shared concern handles both <thinking> (Anthropic) and  (OpenAI/o1) tag formats. All 174 provider tests passing.
 
 **Summary (20-01):** Extracted duplicated usage recording code into shared Provider::Concerns::UsageRecorder module. Eliminated ~160 lines of duplicate code across AutoCategorizer, AutoMerchantDetector, and OpenAI concern. Format-detecting extract_tokens helper handles both Hash (OpenAI) and BaseModel (Anthropic) usage data formats. Backward-compatible alias preserves existing OpenAI includes. All 26 provider tests passing.
 
