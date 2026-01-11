@@ -107,17 +107,17 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 27-01: Refactor parse_json_flexibly with helper methods and unit tests
+- [x] 27-01: Refactor parse_json_flexibly with helper methods and unit tests — completed 2026-01-11
 
 #### Phase 28: Standardize Error Handling
 
 **Goal**: Standardize error handling patterns across auto-categorizer and auto-merchant-detector
 **Depends on**: Phase 27
 **Research**: Unlikely (following existing error patterns)
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 28-01: Implement consistent error handling across AI providers
+- [x] 28-01: Implement consistent error handling across AI providers — completed 2026-01-11
 
 #### Phase 29: Improve Categorization Prompts
 
@@ -306,6 +306,6 @@ The AI chat was failing when calling the `get_transactions` function because Ant
 | 24. Env Example Updates | v1.3 | 1/1 | Complete | 2026-01-11 |
 | 25. Extract JSON Parser | v1.3 | 1/1 | Complete | 2026-01-11 |
 | 26. Extract Thinking Tags | v1.3 | 1/1 | Complete | 2026-01-11 |
-| 27. Simplify JSON Parsing | v1.3 | 0/? | Not started | — |
-| 28. Standardize Error Handling | v1.3 | 0/? | Not started | — |
+| 27. Simplify JSON Parsing | v1.3 | 1/1 | Complete | 2026-01-11 |
+| 28. Standardize Error Handling | v1.3 | 1/1 | Complete | 2026-01-11 |
 | 29. Improve Categorization Prompts | v1.3 | 0/? | Not started | — |
