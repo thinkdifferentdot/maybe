@@ -5,7 +5,7 @@
   <% if transaction.ai_categorized? && !transaction.ai_feedback_given? %>
     <%= button_to approve_transactions_ai_feedback_path,
           method: :post,
-          data: { ai_feedback_target: "button", turbo_stream: true, feedback_type: "approve" },
+          data: { ai_feedback_target: "button", turbo_stream: true, feedback_type: "approve", action: "click->ai_feedback#send" },
           title: t("transactions.approve_ai_title"),
           class: "inline-flex items-center justify-center p-1 rounded hover:bg-success/10 text-secondary hover:text-success transition-colors" do %>
       <%= icon "check", size: "sm", color: "current" %>
@@ -13,7 +13,7 @@
 
     <%= button_to reject_transactions_ai_feedback_path,
           method: :post,
-          data: { ai_feedback_target: "button", turbo_stream: true, feedback_type: "reject" },
+          data: { ai_feedback_target: "button", turbo_stream: true, feedback_type: "reject", action: "click->ai_feedback#send" },
           title: t("transactions.reject_ai_title"),
           class: "inline-flex items-center justify-center p-1 rounded hover:bg-destructive/10 text-secondary hover:text-destructive transition-colors" do %>
       <%= icon "x", size: "sm", color: "current" %>
