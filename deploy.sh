@@ -25,6 +25,8 @@ NC='\033[0m' # No Color
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BRANCH="${DEPLOY_BRANCH:-rpi5-docker-deploy}"
 COMPOSE_FILE="docker-compose.rpi5.yml"
+# Use 'fork' remote if it exists, otherwise use 'origin'
+REMOTE="$(git remote | grep '^fork$' || echo 'origin')"
 
 # Change to repo directory
 cd "$REPO_DIR"
@@ -71,10 +73,10 @@ done
 
 # 1. Pull latest changes
 if [ -z "$SKIP_PULL" ]; then
-    echo -e "${YELLOW}[1/5] Pulling latest changes...${NC}"
-    git fetch fork "$BRANCH"
+    echo -e "${YELLOW}[1/5] Pulling latest changes from '$REMOTE'...${NC}"
+    git fetch "$REMOTE" "$BRANCH"
     git checkout "$BRANCH"
-    git reset --hard "fork/$BRANCH"
+    git reset --hard "$REMOTE/$BRANCH"
     echo -e "${GREEN}✓ Updated to latest code${NC}"
     echo ""
 else
