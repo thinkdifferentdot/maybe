@@ -5,17 +5,17 @@
 See: .planning/PROJECT.md (updated 2026-01-10)
 
 **Core value:** Smooth UX configuration — Users select AI provider through settings dropdown
-**Current focus:** Milestone v1.1 — AI Auto-Categorization Triggers
+**Current focus:** Milestone v1.2 — Anthropic Feature Parity
 
 ## Current Position
 
-Phase: v1.1 AI Auto-Categorization Triggers — Phase 15 (Anthropic Model Autopopulate)
-Plan: 15-01 (Anthropic model select dropdown with API fetching) — COMPLETE
-Status: Phase 15 COMPLETE (1/1 plan)
-Last activity: 2026-01-10 — Converted Anthropic model field from text input to select dropdown with dynamic model fetching
+Phase: Phase 16 of 21 (Real Streaming Support)
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-01-10 — Milestone v1.2 created
 
-Progress for Phase 15: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100% (1 of 1 plan complete)
-Overall v1.1 Progress: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100% (22 of 22 plans complete)
+Progress for Phase 16: ░░░░░░░░░░ 0%
+Overall v1.2 Progress: ░░░░░░░░░░ 0% (6 phases defined)
 
 **Summary (15-01):** Converted Anthropic model field from text input to select dropdown with dynamic model fetching from Anthropic API. Created `/settings/hosting/anthropic_models` backend endpoint that proxies requests to Anthropic's `/v1/models` API. Implemented `anthropic-model-select` Stimulus controller for fetching models on page load, populating select dropdown, and managing "Custom..." option for manual entry. Added comprehensive test coverage with mocked API responses.
 
@@ -33,15 +33,13 @@ Overall v1.1 Progress: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100% 
 
 ## Next Milestone Goals
 
-**v1.1: AI Auto-Categorization Triggers** — COMPLETE
-- Phase 10: Settings & Config — User preferences for auto-categorization behavior and cost controls ✅ COMPLETE
-- Phase 11: Import Triggers — AI categorization in CSV import and sync jobs ✅ COMPLETE
-- Phase 12: Transaction UI Actions — Individual and bulk "AI categorize" buttons in transaction UI ✅ COMPLETE
-- Phase 13: Testing & Docs — Verify all trigger paths and document features ✅ COMPLETE
-- Phase 14: Manual Testing — User QA checklist for v1.1 features ✅ COMPLETE
-- Phase 14.1: Fix AI Categorize Route — Fixed 404 error on individual AI categorize button ✅ COMPLETE
-- Phase 14.2: Fix Auto-Categorize Page Labels — Fix missing option labels on auto-categorization settings page ✅ COMPLETE
-- Phase 15: Anthropic Model Autopopulate — Convert model field to select dropdown with API fetching ✅ COMPLETE
+**v1.2: Anthropic Feature Parity** — 6 phases
+- Phase 16: Real Streaming Support — Implement true streaming for Anthropic chat responses
+- Phase 17: Auto-Categorization Test Coverage — Add missing test to match OpenAI
+- Phase 18: Fuzzy Category & Merchant Matching — Port fuzzy_name_match from OpenAI
+- Phase 19: Flexible JSON Parsing — Handle LLM output quirks (thinking tags, unclosed markdown)
+- Phase 20: Extract UsageRecorder Concern — DRY up usage recording code
+- Phase 21: Custom Provider Support — Allow Anthropic-compatible APIs
 
 ## Performance Metrics
 
@@ -138,10 +136,8 @@ None.
 ### Roadmap Evolution
 
 - **v1.0 COMPLETE**: Anthropic Support (2026-01-10) — Full provider integration shipped
-- **v1.1 IN PROGRESS**: AI Auto-Categorization Triggers — 5 phases + 2 urgent fixes complete, 1 pending phase
-- **Phase 14.1 INSERTED** (2026-01-10): Fix AI categorize route — Urgent bug discovered during manual testing, POST to `/transactions/ai_categorization` returns 404 — COMPLETE
-- **Phase 14.2 INSERTED** (2026-01-10): Fix Auto-Categorize Page Labels — Urgent bug discovered during manual testing, auto-categorization settings page not showing option labels — COMPLETE
-- **Phase 15 ADDED** (2026-01-10): Anthropic Model Autopopulate — Feature request to convert Anthropic model field from text input to select dropdown that fetches available models from Anthropic API — PENDING
+- **v1.1 COMPLETE**: AI Auto-Categorization Triggers (2026-01-10) — 5 phases + 2 urgent fixes + model autopopulate feature
+- **v1.2 CREATED** (2026-01-10): Anthropic Feature Parity — 6 phases (Phase 16-21) to achieve feature parity with OpenAI implementation
 
 ### Blockers/Concerns
 
@@ -150,7 +146,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-10
-Phase: 14.2 COMPLETE (Fix Auto-Categorize Page Labels)
-Milestone: v1.1 COMPLETE - all 21 plans finished
-Next: Continue with manual testing or start next milestone
+Phase: Phase 16 (Real Streaming Support) - Ready to plan
+Milestone: v1.2 Anthropic Feature Parity created
+Next: Plan Phase 16 or discuss phase requirements
 Resume file: None

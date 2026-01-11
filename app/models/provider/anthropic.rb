@@ -105,9 +105,9 @@ class Provider::Anthropic < Provider
   )
     with_provider_response do
       # Plan 03-03: function_results and multi-turn conversations are now supported
-    # Plan 03-04: streaming support deferred to future enhancement
-    # TODO: Implement streaming using anthropic.messages.stream with stream.text.each helper
-    # Follow the OpenAI streaming pattern in Provider::Openai#native_chat_response
+      # Plan 03-04: streaming support deferred to future enhancement
+      # TODO: Implement streaming using anthropic.messages.stream with stream.text.each helper
+      # Follow the OpenAI streaming pattern in Provider::Openai#native_chat_response
 
       chat_config = ChatConfig.new(
         functions: functions,

@@ -129,7 +129,7 @@ class TransactionImport < Import
 
   private
 
-  def ai_categorize_enabled?
-    Setting.ai_categorize_on_import == true
-  end
+    def ai_categorize_enabled?
+      Setting.ai_categorize_on_import == true
+    end
 end

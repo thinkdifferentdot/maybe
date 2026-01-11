@@ -11,7 +11,8 @@ None (Rails backend work following established patterns in the Sure codebase)
 ## Milestones
 
 - ✅ **[v1.0 Anthropic Support](milestones/v1.0-ROADMAP.md)** - Phases 1-9 + 9.1 (shipped 2026-01-10)
-- ✅ **[v1.1 AI Auto-Categorization Triggers](milestones/v1.1-ROADMAP.md)** - Phases 10-14 (shipped 2026-01-10)
+- ✅ **[v1.1 AI Auto-Categorization Triggers](milestones/v1.1-ROADMAP.md)** - Phases 10-15 (shipped 2026-01-10)
+- 🚧 **v1.2 Anthropic Feature Parity** - Phases 16-21 (in progress, 2026-01-10)
 
 ## Phases
 
@@ -33,112 +34,91 @@ See [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full details.
 
 </details>
 
-### 📋 v1.1 AI Auto-Categorization Triggers (Planned)
+<details>
+<summary>✅ v1.1 AI Auto-Categorization Triggers (Phases 10-15) — SHIPPED 2026-01-10</summary>
 
-**Milestone Goal:** Add multiple trigger points for AI auto-categorization beyond just Rules - import flow, individual/bulk UI actions, and sync provider integration (especially Lunch Flow).
+See [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md) for full details.
 
-#### Phase 10: Settings & Config
+- [x] Phase 10: Settings & Config (1/1 plans) — completed 2026-01-10
+- [x] Phase 11: Import Triggers (4/4 plans) — completed 2026-01-10
+- [x] Phase 12: Transaction UI Actions (3/3 plans) — completed 2026-01-10
+- [x] Phase 13: Testing & Docs (4/4 plans) — completed 2026-01-10
+- [x] Phase 14: Manual Testing (1/1 plans) — completed 2026-01-10
+- [x] Phase 14.1: Fix AI Categorize Route (1/1 plans) — completed 2026-01-10 (INSERTED)
+- [x] Phase 14.2: Fix Auto-Categorize Page Labels (1/1 plans) — completed 2026-01-10 (INSERTED)
+- [x] Phase 15: Anthropic Model Autopopulate (1/1 plans) — completed 2026-01-10
 
-**Goal**: Add user preferences for auto-categorization behavior and cost controls
-**Depends on**: v1.0 complete
-**Research**: Unlikely (existing Settings patterns)
-**Plans**: 1 plan
-- [x] 10-01: Add AI trigger settings to Settings model and UI (2026-01-10)
+</details>
 
-#### Phase 11: Import Triggers
+### 🚧 v1.2 Anthropic Feature Parity (In Progress)
 
-**Goal**: Add AI categorization to CSV import and general sync jobs (Lunch Flow)
-**Depends on**: None (parallel with 10, 12)
-**Research**: Complete
-**Plans**: 4 plans
-- [x] 11-01: Add LearnedPattern model and matcher for AI categorization (2026-01-10)
-- [x] 11-02: Add AI categorization trigger to CSV import (2026-01-10)
-- [x] 11-03: Add AI categorization trigger to Lunchflow sync (2026-01-10)
-- [x] 11-04: Bulk review workflow (2026-01-10)
+**Milestone Goal:** Achieve feature parity between OpenAI and Anthropic provider implementations. OpenAI has ~1,880 lines across 8 files vs Anthropic's ~1,034 lines across 5 files. Key gaps include real streaming, test coverage, fuzzy matching, flexible JSON parsing, and code organization improvements.
 
-**Status**: Complete (4/4 plans complete - 2026-01-10)
+#### Phase 16: Real Streaming Support
 
-#### Phase 12: Transaction UI Actions
-
-**Goal**: Add individual and bulk "AI categorize" buttons to transaction UI
-**Depends on**: None (parallel with 10, 11)
-**Research**: Unlikely (existing Hotwire/UI patterns)
-**Plans**: 3 plans
-- [x] 12-01: Backend Provider Selection & Confidence (2026-01-10)
-- [x] 12-02: Individual AI categorize button in UI (2026-01-10)
-- [x] 12-03: Bulk AI categorize workflow (2026-01-10)
-
-**Status**: Complete (3/3 plans complete - 2026-01-10)
-
-#### Phase 13: Testing & Docs
-
-**Goal**: Verify all new trigger paths work correctly and document features
-**Depends on**: Phases 10, 11, 12
-**Research**: Unlikely (verification)
-**Plans**: 4 plans
-- [x] 13-01: LearnedPattern model and matcher tests (2026-01-10)
-- [x] 13-02: AI categorization controllers tests (2026-01-10)
-- [x] 13-03: Settings & confidence integration tests (2026-01-10)
-- [x] 13-04: Full AI regression tests (2026-01-10)
-
-**Status**: Complete (4/4 plans complete - 2026-01-10)
-
-#### Phase 14: Manual Testing
-
-**Goal**: User performs manual QA testing of all implemented v1.1 features
-**Depends on**: Phase 13
-**Research**: Unlikely (manual testing)
-**Plans**: 1 plan
-- [x] 14-01: Manual testing checklist and verification (2026-01-10)
-
-**Status**: Complete (1/1 plan complete - 2026-01-10)
-
-### Phase 14.1: Fix AI Categorize Route (INSERTED)
-
-**Goal**: Fix 404 error when clicking individual AI categorize button
-**Depends on**: Phase 14
-**Research**: Unlikely (bug fixing)
-**Plans**: 1 plan
+**Goal**: Implement true streaming for Anthropic chat responses, matching OpenAI's streaming behavior
+**Depends on**: Phase 15
+**Research**: Likely (Anthropic streaming API patterns)
+**Research topics**: Anthropic messages.stream API, stream.text.each helper, chunk types
+**Plans**: TBD
 
 Plans:
-- [x] 14.1-01: Fix AI categorize route 404 error (2026-01-10)
+- [ ] 16-01: Create ChatStreamParser and update chat_response for streaming (run /gsd:plan-phase 16 to break down)
 
-**Status**: Complete (1/1 plan complete - 2026-01-10)
+#### Phase 17: Auto-Categorization Test Coverage
 
-**Details:**
-Urgent bug discovered during manual testing: POST to `/transactions/ai_categorization` returns 404. Root cause was view sending `transaction.id` instead of `entry.id` (different UUIDs in delegated_type pattern). Fixed by correcting the view and adding controller-level rescue_from for proper error handling.
-
-### Phase 14.2: Fix Auto-Categorize Page Labels (INSERTED)
-
-**Goal**: Fix missing option labels on auto-categorization settings page
-**Depends on**: Phase 14.1
-**Research**: Unlikely (UI bug fixing)
-**Plans**: 1 plan
+**Goal**: Add missing auto-categorization test to match OpenAI test coverage
+**Depends on**: Phase 16
+**Research**: Unlikely (test patterns established)
+**Plans**: TBD
 
 Plans:
-- [x] 14.2-01: Add label support to DS::Toggle component (2026-01-10)
+- [ ] 17-01: Add auto_categorize test with VCR cassette (run /gsd:plan-phase 17 to break down)
 
-**Status**: Complete (1/1 plan complete - 2026-01-10)
+#### Phase 18: Fuzzy Category & Merchant Matching
 
-**Details:**
-Urgent bug discovered during manual testing: The auto-categorization settings page was not showing the option labels. Root cause was DS::Toggle component not accepting or displaying label parameter. Fixed by adding label attribute to component and updating template to render label text conditionally.
-
-### Phase 15: Anthropic Model Autopopulate
-
-**Goal**: Change Anthropic model field from text input to select dropdown that fetches available models from Anthropic API
-**Depends on**: Phase 14.2
-**Research**: Unlikely (existing patterns)
-**Plans**: 1 plan
+**Goal**: Add fuzzy name matching for better category/merchant normalization
+**Depends on**: Phase 17
+**Research**: Unlikely (porting existing patterns)
+**Plans**: TBD
 
 Plans:
-- [x] 15-01: Backend endpoint, Stimulus controller, and view updates for model select dropdown (2026-01-10)
+- [ ] 18-01: Port fuzzy_name_match and find_fuzzy_category_match from OpenAI (run /gsd:plan-phase 18 to break down)
 
-**Status**: Complete (1/1 plan complete - 2026-01-10)
+#### Phase 19: Flexible JSON Parsing
 
-**Details:**
-Feature request to improve Anthropic model selection UX. Converted text input to select dropdown with dynamic model fetching via backend proxy to Anthropic's `/v1/models` API endpoint. Created `/settings/hosting/anthropic_models` GET endpoint that requires admin auth, filters response to only claude- prefixed models, and handles errors gracefully. Implemented `anthropic-model-select` Stimulus controller that fetches models on connect, populates dropdown, manages "Custom..." option for manual entry, and shows loading/error states. Added comprehensive test coverage with mocked API responses.
+**Goal**: Handle LLM output quirks (thinking tags, unclosed markdown, multiple JSON formats)
+**Depends on**: Phase 18
+**Research**: Unlikely (porting existing patterns)
+**Plans**: TBD
 
-### Phase Details
+Plans:
+- [ ] 19-01: Port parse_json_flexibly method from OpenAI (run /gsd:plan-phase 19 to break down)
+
+#### Phase 20: Extract UsageRecorder Concern
+
+**Goal**: DRY up usage recording code by extracting to a concern module (refactor)
+**Depends on**: Phase 19
+**Research**: Unlikely (code organization)
+**Plans**: TBD
+
+Plans:
+- [ ] 20-01: Create concerns/usage_recorder and refactor auto-categorizer/merchant-detector (run /gsd:plan-phase 20 to break down)
+
+#### Phase 21: Custom Provider Support
+
+**Goal**: Allow Anthropic-compatible APIs (local models, proxies, custom endpoints)
+**Depends on**: Phase 20
+**Research**: Likely (Anthropic gem custom URL support)
+**Research topics**: Anthropic Ruby gem custom base_url support, generic chat patterns
+**Plans**: TBD
+
+Plans:
+- [ ] 21-01: Add custom provider support with base_url parameter (run /gsd:plan-phase 21 to break down)
+
+---
+
+## Archived Phase Details (v1.0)
 
 ### Phase 1: Foundation
 **Goal**: Add Anthropic gem and create Provider::Anthropic class with basic structure
@@ -296,4 +276,10 @@ The AI chat was failing when calling the `get_transactions` function because Ant
 | 14. Manual Testing | v1.1 | 1/1 | Complete | 2026-01-10 |
 | 14.1. Fix AI Categorize Route | v1.1 | 1/1 | Complete | 2026-01-10 | (INSERTED) |
 | 14.2. Fix Auto-Categorize Page Labels | v1.1 | 1/1 | Complete | 2026-01-10 | (INSERTED) |
-| 15. Anthropic Model Autopopulate | v1.1 | 0/1 | Pending | — | |
+| 15. Anthropic Model Autopopulate | v1.1 | 1/1 | Complete | 2026-01-10 |
+| 16. Real Streaming Support | v1.2 | 0/? | Not started | — |
+| 17. Auto-Categorization Test Coverage | v1.2 | 0/? | Not started | — |
+| 18. Fuzzy Category & Merchant Matching | v1.2 | 0/? | Not started | — |
+| 19. Flexible JSON Parsing | v1.2 | 0/? | Not started | — |
+| 20. Extract UsageRecorder Concern | v1.2 | 0/? | Not started | — |
+| 21. Custom Provider Support | v1.2 | 0/? | Not started | — |

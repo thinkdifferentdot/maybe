@@ -30,15 +30,15 @@ class LearnedPatternMatcher
 
   private
 
-  # Normalize a string for pattern matching.
-  # Downcases, removes special characters, and collapses whitespace.
-  def normalize(str)
-    str.to_s.downcase.gsub(/[^a-z0-9\s]/, "").squeeze(" ").strip
-  end
+    # Normalize a string for pattern matching.
+    # Downcases, removes special characters, and collapses whitespace.
+    def normalize(str)
+      str.to_s.downcase.gsub(/[^a-z0-9\s]/, "").squeeze(" ").strip
+    end
 
-  # Check if two strings match via substring relationship.
-  # Returns true if one string contains the other.
-  def substring_match?(input, pattern)
-    input.include?(pattern) || pattern.include?(input)
-  end
+    # Check if two strings match via substring relationship.
+    # Returns true if one string contains the other.
+    def substring_match?(input, pattern)
+      input.include?(pattern) || pattern.include?(input)
+    end
 end

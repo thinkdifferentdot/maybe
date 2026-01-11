@@ -20,7 +20,7 @@ class Provider::Anthropic::AutoMerchantDetector
     response = client.messages.create(
       model: model,
       max_tokens: 1024,
-      messages: [{role: "user", content: developer_message}],
+      messages: [ { role: "user", content: developer_message } ],
       system: instructions
     )
 
@@ -74,10 +74,10 @@ class Provider::Anthropic::AutoMerchantDetector
 
   private
 
-  AutoDetectedMerchant = Provider::LlmConcept::AutoDetectedMerchant
+    AutoDetectedMerchant = Provider::LlmConcept::AutoDetectedMerchant
 
-  def developer_message
-    <<~MESSAGE.strip_heredoc
+    def developer_message
+      <<~MESSAGE.strip_heredoc
       Here are the user's available merchants in JSON format:
 
       ```json
@@ -92,10 +92,10 @@ class Provider::Anthropic::AutoMerchantDetector
 
       Return "null" if you are not 80%+ confident in your answer.
     MESSAGE
-  end
+    end
 
-  def instructions
-    <<~INSTRUCTIONS.strip_heredoc
+    def instructions
+      <<~INSTRUCTIONS.strip_heredoc
       You are an assistant to a consumer personal finance app.
 
       Closely follow ALL the rules below while auto-detecting business names and website URLs:
@@ -133,125 +133,125 @@ class Provider::Anthropic::AutoMerchantDetector
       - business_url: null
       ```
     INSTRUCTIONS
-  end
+    end
 
-  def json_schema
-    {
-      type: "object",
-      properties: {
-        merchants: {
-          type: "array",
-          description: "An array of auto-detected merchant businesses for each transaction",
-          items: {
-            type: "object",
-            properties: {
-              transaction_id: {
-                type: "string",
-                description: "The internal ID of the original transaction",
-                enum: transactions.map { |t| t[:id] }
+    def json_schema
+      {
+        type: "object",
+        properties: {
+          merchants: {
+            type: "array",
+            description: "An array of auto-detected merchant businesses for each transaction",
+            items: {
+              type: "object",
+              properties: {
+                transaction_id: {
+                  type: "string",
+                  description: "The internal ID of the original transaction",
+                  enum: transactions.map { |t| t[:id] }
+                },
+                business_name: {
+                  type: [ "string", "null" ],
+                  description: "The detected business name of the transaction, or `null` if uncertain"
+                },
+                business_url: {
+                  type: [ "string", "null" ],
+                  description: "The URL of the detected business, or `null` if uncertain"
+                }
               },
-              business_name: {
-                type: ["string", "null"],
-                description: "The detected business name of the transaction, or `null` if uncertain"
-              },
-              business_url: {
-                type: ["string", "null"],
-                description: "The URL of the detected business, or `null` if uncertain"
-              }
-            },
-            required: ["transaction_id", "business_name", "business_url"],
-            additionalProperties: false
+              required: [ "transaction_id", "business_name", "business_url" ],
+              additionalProperties: false
+            }
           }
-        }
-      },
-      required: ["merchants"],
-      additionalProperties: false
-    }
-  end
-
-  def build_response(merchants)
-    merchants.map do |merchant|
-      # Handle both string and symbol keys
-      transaction_id = merchant["transaction_id"] || merchant[:transaction_id]
-      business_name = merchant["business_name"] || merchant[:business_name]
-      business_url = merchant["business_url"] || merchant[:business_url]
-
-      AutoDetectedMerchant.new(
-        transaction_id: transaction_id,
-        business_name: normalize_merchant_value(business_name),
-        business_url: normalize_merchant_value(business_url)
-      )
-    end
-  end
-
-  def normalize_merchant_value(value)
-    return nil if value.nil? || value == "null" || value.to_s.downcase == "null"
-
-    # Try to match against user merchants for name normalization
-    if user_merchants.present?
-      # Try exact match first
-      exact_match = user_merchants.find { |m| m[:name] == value }
-      return exact_match[:name] if exact_match
-
-      # Try case-insensitive match
-      case_match = user_merchants.find { |m| m[:name].to_s.downcase == value.to_s.downcase }
-      return case_match[:name] if case_match
+        },
+        required: [ "merchants" ],
+        additionalProperties: false
+      }
     end
 
-    value
-  end
+    def build_response(merchants)
+      merchants.map do |merchant|
+        # Handle both string and symbol keys
+        transaction_id = merchant["transaction_id"] || merchant[:transaction_id]
+        business_name = merchant["business_name"] || merchant[:business_name]
+        business_url = merchant["business_url"] || merchant[:business_url]
 
-  def extract_merchants(response)
-    # Note: response.content contains BaseModel objects with symbolized type attributes
-    content_block = response.content.find { |block| block.type == :text }
-    raise Provider::Anthropic::Error, "No text content found in response" if content_block.nil?
-
-    # Strip markdown code blocks if present (e.g., ```json...```)
-    text = content_block.text.gsub(/```json\n?/, "").gsub(/```\n?/, "")
-    parsed = JSON.parse(text)
-
-    # Handle both { "merchants": [...] } and direct [...] formats
-    if parsed.is_a?(Array)
-      merchants = parsed
-    else
-      merchants = parsed.dig("merchants") || []
+        AutoDetectedMerchant.new(
+          transaction_id: transaction_id,
+          business_name: normalize_merchant_value(business_name),
+          business_url: normalize_merchant_value(business_url)
+        )
+      end
     end
-    merchants
-  rescue JSON::ParserError => e
-    raise Provider::Anthropic::Error, "Invalid JSON in merchant detection response: #{e.message}"
-  end
 
-  def record_usage(model_name, usage_data, operation:, metadata: {})
-    return unless family && usage_data
+    def normalize_merchant_value(value)
+      return nil if value.nil? || value == "null" || value.to_s.downcase == "null"
 
-    # Note: usage_data is an Anthropic::Models::Usage BaseModel with input_tokens/output_tokens attributes
-    input_toks = usage_data.input_tokens
-    output_toks = usage_data.output_tokens
-    total_toks = input_toks + output_toks
+      # Try to match against user merchants for name normalization
+      if user_merchants.present?
+        # Try exact match first
+        exact_match = user_merchants.find { |m| m[:name] == value }
+        return exact_match[:name] if exact_match
 
-    LlmUsage.calculate_cost(
-      model: model_name,
-      prompt_tokens: input_toks,
-      completion_tokens: output_toks
-    ).yield_self do |estimated_cost|
-      if estimated_cost.nil?
-        Rails.logger.info("Recording LLM usage without cost estimate for unknown model: #{model_name}")
+        # Try case-insensitive match
+        case_match = user_merchants.find { |m| m[:name].to_s.downcase == value.to_s.downcase }
+        return case_match[:name] if case_match
       end
 
-      family.llm_usages.create!(
-        provider: LlmUsage.infer_provider(model_name),
-        model: model_name,
-        operation: operation,
-        prompt_tokens: input_toks,
-        completion_tokens: output_toks,
-        total_tokens: total_toks,
-        estimated_cost: estimated_cost,
-        metadata: metadata
-      )
-
-      Rails.logger.info("LLM usage recorded - Operation: #{operation}, Cost: #{estimated_cost.inspect}")
+      value
     end
-  rescue => e
-    Rails.logger.error("Failed to record LLM usage: #{e.message}")
-  end
+
+    def extract_merchants(response)
+      # Note: response.content contains BaseModel objects with symbolized type attributes
+      content_block = response.content.find { |block| block.type == :text }
+      raise Provider::Anthropic::Error, "No text content found in response" if content_block.nil?
+
+      # Strip markdown code blocks if present (e.g., ```json...```)
+      text = content_block.text.gsub(/```json\n?/, "").gsub(/```\n?/, "")
+      parsed = JSON.parse(text)
+
+      # Handle both { "merchants": [...] } and direct [...] formats
+      if parsed.is_a?(Array)
+        merchants = parsed
+      else
+        merchants = parsed.dig("merchants") || []
+      end
+      merchants
+    rescue JSON::ParserError => e
+      raise Provider::Anthropic::Error, "Invalid JSON in merchant detection response: #{e.message}"
+    end
+
+    def record_usage(model_name, usage_data, operation:, metadata: {})
+      return unless family && usage_data
+
+      # Note: usage_data is an Anthropic::Models::Usage BaseModel with input_tokens/output_tokens attributes
+      input_toks = usage_data.input_tokens
+      output_toks = usage_data.output_tokens
+      total_toks = input_toks + output_toks
+
+      LlmUsage.calculate_cost(
+        model: model_name,
+        prompt_tokens: input_toks,
+        completion_tokens: output_toks
+      ).yield_self do |estimated_cost|
+        if estimated_cost.nil?
+          Rails.logger.info("Recording LLM usage without cost estimate for unknown model: #{model_name}")
+        end
+
+        family.llm_usages.create!(
+          provider: LlmUsage.infer_provider(model_name),
+          model: model_name,
+          operation: operation,
+          prompt_tokens: input_toks,
+          completion_tokens: output_toks,
+          total_tokens: total_toks,
+          estimated_cost: estimated_cost,
+          metadata: metadata
+        )
+
+        Rails.logger.info("LLM usage recorded - Operation: #{operation}, Cost: #{estimated_cost.inspect}")
+      end
+    rescue => e
+      Rails.logger.error("Failed to record LLM usage: #{e.message}")
+    end
 end

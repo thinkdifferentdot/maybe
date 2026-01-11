@@ -10,7 +10,7 @@ class Provider::Anthropic::ChatConfig
   def build_input(prompt)
     if function_results.empty?
       # Simple chat (no function_results)
-      [{ role: "user", content: prompt }]
+      [ { role: "user", content: prompt } ]
     else
       # Multi-turn conversation with tool results
       # Anthropic requires:
@@ -18,7 +18,7 @@ class Provider::Anthropic::ChatConfig
       # 2. Assistant message with tool_use blocks
       # 3. User message with tool_result blocks (MUST come FIRST in content array)
 
-      messages = [{ role: "user", content: prompt }]
+      messages = [ { role: "user", content: prompt } ]
 
       # Reconstruct assistant message with tool_use blocks
       # The function_results include call_id which references the tool_use block id
@@ -74,5 +74,5 @@ class Provider::Anthropic::ChatConfig
 
   private
 
-  attr_reader :functions, :function_results
+    attr_reader :functions, :function_results
 end

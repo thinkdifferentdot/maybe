@@ -30,7 +30,7 @@ class LunchflowAccount::PostProcessor
 
   private
 
-  def ai_categorize_enabled?
-    Setting.ai_categorize_on_sync == true
-  end
+    def ai_categorize_enabled?
+      Setting.ai_categorize_on_sync == true
+    end
 end

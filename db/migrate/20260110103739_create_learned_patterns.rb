@@ -7,7 +7,7 @@ class CreateLearnedPatterns < ActiveRecord::Migration[7.2]
       t.string :normalized_merchant, null: false
       t.timestamps
 
-      t.index [:family_id, :normalized_merchant], unique: true
+      t.index [ :family_id, :normalized_merchant ], unique: true
     end
   end
 end

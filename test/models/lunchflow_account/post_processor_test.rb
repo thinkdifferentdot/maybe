@@ -42,7 +42,7 @@ class LunchflowAccount::PostProcessorTest < ActiveSupport::TestCase
     )
 
     assert_enqueued_jobs(1, only: AutoCategorizeJob) do
-      LunchflowAccount::PostProcessor.new(@lunchflow_account).process([transaction.id])
+      LunchflowAccount::PostProcessor.new(@lunchflow_account).process([ transaction.id ])
     end
   end
 
@@ -59,7 +59,7 @@ class LunchflowAccount::PostProcessorTest < ActiveSupport::TestCase
     )
 
     assert_no_enqueued_jobs(only: AutoCategorizeJob) do
-      LunchflowAccount::PostProcessor.new(@lunchflow_account).process([transaction.id])
+      LunchflowAccount::PostProcessor.new(@lunchflow_account).process([ transaction.id ])
     end
   end
 
@@ -77,7 +77,7 @@ class LunchflowAccount::PostProcessorTest < ActiveSupport::TestCase
     )
 
     assert_no_enqueued_jobs(only: AutoCategorizeJob) do
-      LunchflowAccount::PostProcessor.new(@lunchflow_account).process([transaction.id])
+      LunchflowAccount::PostProcessor.new(@lunchflow_account).process([ transaction.id ])
     end
   end
 
@@ -97,7 +97,7 @@ class LunchflowAccount::PostProcessorTest < ActiveSupport::TestCase
     transaction.lock_attr!(:category_id)
 
     assert_no_enqueued_jobs(only: AutoCategorizeJob) do
-      LunchflowAccount::PostProcessor.new(@lunchflow_account).process([transaction.id])
+      LunchflowAccount::PostProcessor.new(@lunchflow_account).process([ transaction.id ])
     end
   end
 
@@ -113,7 +113,7 @@ class LunchflowAccount::PostProcessorTest < ActiveSupport::TestCase
     )
 
     assert_no_enqueued_jobs(only: AutoCategorizeJob) do
-      LunchflowAccount::PostProcessor.new(unlinked_account).process([1])
+      LunchflowAccount::PostProcessor.new(unlinked_account).process([ 1 ])
     end
   end
 
@@ -150,7 +150,7 @@ class LunchflowAccount::PostProcessorTest < ActiveSupport::TestCase
 
     # Should only trigger for the uncategorized one
     assert_enqueued_jobs(1, only: AutoCategorizeJob) do
-      LunchflowAccount::PostProcessor.new(@lunchflow_account).process([categorized_transaction.id, uncategorized_transaction.id])
+      LunchflowAccount::PostProcessor.new(@lunchflow_account).process([ categorized_transaction.id, uncategorized_transaction.id ])
     end
   end
 end

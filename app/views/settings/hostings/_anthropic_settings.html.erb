@@ -64,6 +64,7 @@
                           spellcheck: "false",
                           inputmode: "text",
                           disabled: ENV["ANTHROPIC_MODEL"].present?,
+                          id: "setting_anthropic_model_custom",
                           data: {
                             "anthropic-model-select-target": "customInput",
                             "action": "input->anthropic-model-select#customInputChange auto-submit-form#handleInput",

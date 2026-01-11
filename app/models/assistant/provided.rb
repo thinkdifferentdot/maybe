@@ -28,6 +28,6 @@ module Assistant::Provided
       return all_providers unless preferred_instance
 
       # Put preferred provider first, then others in default order
-      [preferred_instance] + all_providers.reject { |p| p.is_a?(preferred_instance.class) }
+      [ preferred_instance ] + all_providers.reject { |p| p.is_a?(preferred_instance.class) }
     end
 end

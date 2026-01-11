@@ -9,9 +9,9 @@ class LearnedPattern < ApplicationRecord
 
   private
 
-  def normalize_merchant_name
-    return if merchant_name.blank?
+    def normalize_merchant_name
+      return if merchant_name.blank?
 
-    self.normalized_merchant = merchant_name.downcase.gsub(/[^a-z0-9\s]/, "").squeeze(" ").strip
-  end
+      self.normalized_merchant = merchant_name.downcase.gsub(/[^a-z0-9\s]/, "").squeeze(" ").strip
+    end
 end
