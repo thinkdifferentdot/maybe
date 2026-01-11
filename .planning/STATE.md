@@ -9,15 +9,17 @@ See: .planning/PROJECT.md (updated 2026-01-10)
 
 ## Current Position
 
-Phase: Phase 20 of 21 (Extract UsageRecorder Concern)
+Phase: Phase 20 of 20 (Extract UsageRecorder Concern)
 Plan: 1 of 1 in current phase
-Status: Phase complete
+Status: Milestone complete
 Last activity: 2026-01-11 — Completed 20-01-PLAN.md
 
 Progress for Phase 20: ██████████ 100%
-Overall v1.2 Progress: ██████░░░░ 50% (3 of 6 phases complete)
+Overall v1.2 Progress: ██████████ 100% (5 of 5 phases complete)
 
 **Summary (20-01):** Extracted duplicated usage recording code into shared Provider::Concerns::UsageRecorder module. Eliminated ~160 lines of duplicate code across AutoCategorizer, AutoMerchantDetector, and OpenAI concern. Format-detecting extract_tokens helper handles both Hash (OpenAI) and BaseModel (Anthropic) usage data formats. Backward-compatible alias preserves existing OpenAI includes. All 26 provider tests passing.
+
+**✅ v1.2 Milestone COMPLETE:** Anthropic Feature Parity achieved.
 
 **Summary (18-01):** Ported fuzzy name matching from OpenAI to Anthropic, enabling better category/merchant normalization with synonym and substring matching. Added fuzzy_name_match? and find_fuzzy_category_match methods to Provider::Anthropic::AutoCategorizer. Updated normalize_category_name to apply fuzzy matching as fallback. Added 3 tests validating fuzzy matching behavior. Feature parity achieved for category normalization.
 
@@ -39,13 +41,12 @@ Overall v1.2 Progress: ██████░░░░ 50% (3 of 6 phases complet
 
 ## Next Milestone Goals
 
-**v1.2: Anthropic Feature Parity** — 6 phases
-- Phase 16: Real Streaming Support — Implement true streaming for Anthropic chat responses
-- Phase 17: Auto-Categorization Test Coverage — Add missing test to match OpenAI
-- Phase 18: Fuzzy Category & Merchant Matching — Port fuzzy_name_match from OpenAI
-- Phase 19: Flexible JSON Parsing — Handle LLM output quirks (thinking tags, unclosed markdown)
-- Phase 20: Extract UsageRecorder Concern — DRY up usage recording code
-- Phase 21: Custom Provider Support — Allow Anthropic-compatible APIs
+**v1.2: Anthropic Feature Parity** — ✅ COMPLETE (5 phases)
+- Phase 16: Real Streaming Support — Implement true streaming for Anthropic chat responses ✅
+- Phase 17: Auto-Categorization Test Coverage — Add missing test to match OpenAI ✅
+- Phase 18: Fuzzy Category & Merchant Matching — Port fuzzy_name_match from OpenAI ✅
+- Phase 19: Flexible JSON Parsing — Handle LLM output quirks (thinking tags, unclosed markdown) ✅
+- Phase 20: Extract UsageRecorder Concern — DRY up usage recording code ✅
 
 ## Performance Metrics
 
@@ -143,7 +144,7 @@ None.
 
 - **v1.0 COMPLETE**: Anthropic Support (2026-01-10) — Full provider integration shipped
 - **v1.1 COMPLETE**: AI Auto-Categorization Triggers (2026-01-10) — 5 phases + 2 urgent fixes + model autopopulate feature
-- **v1.2 CREATED** (2026-01-10): Anthropic Feature Parity — 6 phases (Phase 16-21) to achieve feature parity with OpenAI implementation
+- **v1.2 COMPLETE**: Anthropic Feature Parity (2026-01-11) — 5 phases (Phase 16-20) achieving feature parity with OpenAI implementation
 
 ### Blockers/Concerns
 

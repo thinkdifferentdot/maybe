@@ -90,7 +90,16 @@ None — straightforward refactoring following existing patterns.
 
 ## Next Phase Readiness
 
-Phase 20 complete. Ready for Phase 21: Custom Provider Support.
+✅ **v1.2 Milestone COMPLETE!**
+
+Phase 20 complete — this was the final phase of v1.2: Anthropic Feature Parity.
+
+All 5 phases of v1.2 are now complete:
+- Phase 16: Real Streaming Support ✅
+- Phase 17: Auto-Categorization Test Coverage ✅
+- Phase 18: Fuzzy Category & Merchant Matching ✅
+- Phase 19: Flexible JSON Parsing ✅
+- Phase 20: Extract UsageRecorder Concern ✅
 
 All usage recording code now centralized in a single concern module that:
 - Handles both Hash (OpenAI) and BaseModel (Anthropic) formats automatically

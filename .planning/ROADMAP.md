@@ -50,7 +50,7 @@ See [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md) for full details.
 
 </details>
 
-### 🚧 v1.2 Anthropic Feature Parity (In Progress)
+### ✅ v1.2 Anthropic Feature Parity (COMPLETE)
 
 **Milestone Goal:** Achieve feature parity between OpenAI and Anthropic provider implementations. OpenAI has ~1,880 lines across 8 files vs Anthropic's ~1,034 lines across 5 files. Key gaps include real streaming, test coverage, fuzzy matching, flexible JSON parsing, and code organization improvements.
 
@@ -104,17 +104,6 @@ Plans:
 
 Plans:
 - [x] 20-01: Create concerns/usage_recorder and refactor auto-categorizer/merchant-detector
-
-#### Phase 21: Custom Provider Support
-
-**Goal**: Allow Anthropic-compatible APIs (local models, proxies, custom endpoints)
-**Depends on**: Phase 20
-**Research**: Likely (Anthropic gem custom URL support)
-**Research topics**: Anthropic Ruby gem custom base_url support, generic chat patterns
-**Plans**: TBD
-
-Plans:
-- [ ] 21-01: Add custom provider support with base_url parameter (run /gsd:plan-phase 21 to break down)
 
 ---
 
@@ -282,4 +271,3 @@ The AI chat was failing when calling the `get_transactions` function because Ant
 | 18. Fuzzy Category & Merchant Matching | v1.2 | 1/1 | Complete | 2026-01-11 |
 | 19. Flexible JSON Parsing | v1.2 | 0/? | Not started | — |
 | 20. Extract UsageRecorder Concern | v1.2 | 1/1 | Complete | 2026-01-11 |
-| 21. Custom Provider Support | v1.2 | 0/? | Not started | — |
