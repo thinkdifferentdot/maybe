@@ -5,17 +5,17 @@
 See: .planning/PROJECT.md (updated 2026-01-10)
 
 **Core value:** Smooth UX configuration — Users select AI provider through settings dropdown
-**Current focus:** Milestone v1.2 — Anthropic Feature Parity
+**Current focus:** Milestone v1.3 — Codebase Health
 
 ## Current Position
 
-Phase: Phase 20 of 20 (Extract UsageRecorder Concern)
-Plan: 1 of 1 in current phase
-Status: Milestone complete
-Last activity: 2026-01-11 — Completed 20-01-PLAN.md
+Phase: Phase 24 of 29 (Env Example Updates)
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-01-11 — Milestone v1.3 created
 
-Progress for Phase 20: ██████████ 100%
-Overall v1.2 Progress: ██████████ 100% (5 of 5 phases complete)
+Progress for Phase 24: ░░░░░░░░░░ 0%
+Overall v1.3 Progress: ░░░░░░░░░░ 0% (0 of 6 phases complete)
 
 **Summary (20-01):** Extracted duplicated usage recording code into shared Provider::Concerns::UsageRecorder module. Eliminated ~160 lines of duplicate code across AutoCategorizer, AutoMerchantDetector, and OpenAI concern. Format-detecting extract_tokens helper handles both Hash (OpenAI) and BaseModel (Anthropic) usage data formats. Backward-compatible alias preserves existing OpenAI includes. All 26 provider tests passing.
 
@@ -41,12 +41,13 @@ Overall v1.2 Progress: ██████████ 100% (5 of 5 phases comple
 
 ## Next Milestone Goals
 
-**v1.2: Anthropic Feature Parity** — ✅ COMPLETE (5 phases)
-- Phase 16: Real Streaming Support — Implement true streaming for Anthropic chat responses ✅
-- Phase 17: Auto-Categorization Test Coverage — Add missing test to match OpenAI ✅
-- Phase 18: Fuzzy Category & Merchant Matching — Port fuzzy_name_match from OpenAI ✅
-- Phase 19: Flexible JSON Parsing — Handle LLM output quirks (thinking tags, unclosed markdown) ✅
-- Phase 20: Extract UsageRecorder Concern — DRY up usage recording code ✅
+**v1.3: Codebase Health** — 🚧 IN PROGRESS (6 phases)
+- Phase 24: Env Example Updates — Add ANTHROPIC_* entries to .env.example
+- Phase 25: Extract JSON Parser — DRY up parse_json_flexibly across 4 files
+- Phase 26: Extract Thinking Tags — DRY up strip_thinking_tags across 4 files
+- Phase 27: Simplify JSON Parsing — Break down complex method with helpers
+- Phase 28: Standardize Error Handling — Consistent patterns across providers
+- Phase 29: Improve Categorization Prompts — Add few-shot examples to reduce nulls
 
 ## Performance Metrics
 
@@ -144,7 +145,9 @@ None.
 
 - **v1.0 COMPLETE**: Anthropic Support (2026-01-10) — Full provider integration shipped
 - **v1.1 COMPLETE**: AI Auto-Categorization Triggers (2026-01-10) — 5 phases + 2 urgent fixes + model autopopulate feature
-- **v1.2 COMPLETE**: Anthropic Feature Parity (2026-01-11) — 5 phases (Phase 16-20) achieving feature parity with OpenAI implementation
+- **v1.2 COMPLETE**: Anthropic Feature Parity (2026-01-11) — 4 phases (Phase 16-18, 20) achieving feature parity with OpenAI implementation
+- **v1.3 CREATED**: Codebase Health (2026-01-11) — 6 phases (Phase 24-29) for tech debt cleanup and bug fixes
+- **v1.4 PLANNED**: AI Observability — Deferred features: categorization feedback, evaluation framework, cost monitoring
 
 ### Blockers/Concerns
 
@@ -153,5 +156,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-11
-Stopped at: Completed 20-01-PLAN.md
+Stopped at: Milestone v1.3 initialization
 Resume file: None

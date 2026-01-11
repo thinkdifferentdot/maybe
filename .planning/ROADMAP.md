@@ -12,7 +12,8 @@ None (Rails backend work following established patterns in the Sure codebase)
 
 - ✅ **[v1.0 Anthropic Support](milestones/v1.0-ROADMAP.md)** - Phases 1-9 + 9.1 (shipped 2026-01-10)
 - ✅ **[v1.1 AI Auto-Categorization Triggers](milestones/v1.1-ROADMAP.md)** - Phases 10-15 (shipped 2026-01-10)
-- 🚧 **v1.2 Anthropic Feature Parity** - Phases 16-21 (in progress, 2026-01-10)
+- ✅ **v1.2 Anthropic Feature Parity** - Phases 16-20 (shipped 2026-01-11)
+- 🚧 **v1.3 Codebase Health** - Phases 24-29 (in progress, 2026-01-11)
 
 ## Phases
 
@@ -50,60 +51,93 @@ See [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md) for full details.
 
 </details>
 
-### ✅ v1.2 Anthropic Feature Parity (COMPLETE)
+<details>
+<summary>✅ v1.2 Anthropic Feature Parity (Phases 16-20) — SHIPPED 2026-01-11</summary>
 
-**Milestone Goal:** Achieve feature parity between OpenAI and Anthropic provider implementations. OpenAI has ~1,880 lines across 8 files vs Anthropic's ~1,034 lines across 5 files. Key gaps include real streaming, test coverage, fuzzy matching, flexible JSON parsing, and code organization improvements.
+**Milestone Goal:** Achieve feature parity between OpenAI and Anthropic provider implementations.
 
-#### Phase 16: Real Streaming Support
+- [x] Phase 16: Real Streaming Support (1/1 plans) — completed 2026-01-10
+- [x] Phase 17: Auto-Categorization Test Coverage (1/1 plans) — completed 2026-01-10
+- [x] Phase 18: Fuzzy Category & Merchant Matching (1/1 plans) — completed 2026-01-11
+- Phase 19: Flexible JSON Parsing — REMOVED (deferred to v1.3 tech debt)
+- [x] Phase 20: Extract UsageRecorder Concern (1/1 plans) — completed 2026-01-11
 
-**Goal**: Implement true streaming for Anthropic chat responses, matching OpenAI's streaming behavior
-**Depends on**: Phase 15
-**Research**: Likely (Anthropic streaming API patterns)
-**Research topics**: Anthropic messages.stream API, stream.text.each helper, chunk types
-**Status**: Complete (2026-01-10)
+</details>
 
-Plans:
-- [x] 16-01: Create ChatStreamParser and update chat_response for streaming
+---
 
-#### Phase 17: Auto-Categorization Test Coverage
+### 🚧 v1.3 Codebase Health (In Progress)
 
-**Goal**: Add missing auto-categorization test to match OpenAI test coverage
-**Depends on**: Phase 16
-**Research**: Unlikely (test patterns established)
-**Status**: Complete (2026-01-10)
+**Milestone Goal:** Reduce technical debt and fix known bugs to establish clean patterns for future feature work. Focuses on DRY-ing up duplicated code, improving error handling, and enhancing AI categorization accuracy.
 
-Plans:
-- [x] 17-01: Add auto_categorize test with VCR cassette
+#### Phase 24: Env Example Updates
 
-#### Phase 18: Fuzzy Category & Merchant Matching
-
-**Goal**: Add fuzzy name matching for better category/merchant normalization
-**Depends on**: Phase 17
-**Research**: Unlikely (porting existing patterns)
-**Status**: Complete (2026-01-11)
-
-Plans:
-- [x] 18-01: Port fuzzy_name_match and find_fuzzy_category_match from OpenAI
-
-#### Phase 19: Flexible JSON Parsing
-
-**Goal**: Handle LLM output quirks (thinking tags, unclosed markdown, multiple JSON formats)
-**Depends on**: Phase 18
-**Research**: Unlikely (porting existing patterns)
+**Goal**: Add missing ANTHROPIC_* environment variable entries to .env.example
+**Depends on**: v1.2 complete
+**Research**: Unlikely (simple file update)
 **Plans**: TBD
 
 Plans:
-- [ ] 19-01: Port parse_json_flexibly method from OpenAI (run /gsd:plan-phase 19 to break down)
+- [ ] 24-01: Add ANTHROPIC_API_KEY and ANTHROPIC_MODEL to .env.example
 
-#### Phase 20: Extract UsageRecorder Concern
+#### Phase 25: Extract JSON Parser
 
-**Goal**: DRY up usage recording code by extracting to a concern module (refactor)
-**Depends on**: Phase 19
-**Research**: Unlikely (code organization)
-**Status**: Complete (2026-01-11)
+**Goal**: Extract duplicated `parse_json_flexibly` method to shared concern across 4 provider files
+**Depends on**: Phase 24
+**Research**: Unlikely (following existing UsageRecorder pattern)
+**Plans**: TBD
 
 Plans:
-- [x] 20-01: Create concerns/usage_recorder and refactor auto-categorizer/merchant-detector
+- [ ] 25-01: Create Provider::Concerns::JsonParser with parse_json_flexibly method
+
+#### Phase 26: Extract Thinking Tags
+
+**Goal**: Extract duplicated `strip_thinking_tags` method to shared concern across 4 provider files
+**Depends on**: Phase 25
+**Research**: Unlikely (following JsonParser pattern)
+**Plans**: TBD
+
+Plans:
+- [ ] 26-01: Add strip_thinking_tags to JsonParser concern
+
+#### Phase 27: Simplify JSON Parsing
+
+**Goal**: Break down 85-line complex JSON parsing method into smaller helper methods
+**Depends on**: Phase 26
+**Research**: Unlikely (code refactoring)
+**Plans**: TBD
+
+Plans:
+- [ ] 27-01: Refactor parse_json_flexibly with helper methods and unit tests
+
+#### Phase 28: Standardize Error Handling
+
+**Goal**: Standardize error handling patterns across auto-categorizer and auto-merchant-detector
+**Depends on**: Phase 27
+**Research**: Unlikely (following existing error patterns)
+**Plans**: TBD
+
+Plans:
+- [ ] 28-01: Implement consistent error handling across AI providers
+
+#### Phase 29: Improve Categorization Prompts
+
+**Goal**: Add few-shot examples to prompts to reduce >50% null categorization results
+**Depends on**: Phase 28
+**Research**: Unlikely (prompt engineering)
+**Plans**: TBD
+
+Plans:
+- [ ] 29-01: Enhance prompts with few-shot examples and validate accuracy improvement
+
+---
+
+## v1.4 Future — AI Observability (Planned)
+
+**Deferred Features:**
+- Categorization feedback loop (LearnedPattern integration)
+- Evaluation framework automation (manual runner execution)
+- AI cost monitoring (DB + ENV hybrid, hard/soft limits)
 
 ---
 
@@ -267,7 +301,12 @@ The AI chat was failing when calling the `get_transactions` function because Ant
 | 14.2. Fix Auto-Categorize Page Labels | v1.1 | 1/1 | Complete | 2026-01-10 | (INSERTED) |
 | 15. Anthropic Model Autopopulate | v1.1 | 1/1 | Complete | 2026-01-10 |
 | 16. Real Streaming Support | v1.2 | 1/1 | Complete | 2026-01-10 |
-| 17. Auto-Categorization Test Coverage | v1.2 | 0/? | Not started | — |
+| 17. Auto-Categorization Test Coverage | v1.2 | 1/1 | Complete | 2026-01-10 |
 | 18. Fuzzy Category & Merchant Matching | v1.2 | 1/1 | Complete | 2026-01-11 |
-| 19. Flexible JSON Parsing | v1.2 | 0/? | Not started | — |
 | 20. Extract UsageRecorder Concern | v1.2 | 1/1 | Complete | 2026-01-11 |
+| 24. Env Example Updates | v1.3 | 0/? | Not started | — |
+| 25. Extract JSON Parser | v1.3 | 0/? | Not started | — |
+| 26. Extract Thinking Tags | v1.3 | 0/? | Not started | — |
+| 27. Simplify JSON Parsing | v1.3 | 0/? | Not started | — |
+| 28. Standardize Error Handling | v1.3 | 0/? | Not started | — |
+| 29. Improve Categorization Prompts | v1.3 | 0/? | Not started | — |
