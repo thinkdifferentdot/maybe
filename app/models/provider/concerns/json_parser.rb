@@ -157,11 +157,11 @@ module Provider::Concerns::JsonParser
     # Returns parsed JSON or nil if no valid JSON found
     def extract_json_with_key(text, key)
       # Build regex pattern for the specific key
-      pattern = /(\{\"\#{key}\"\s*:\s*\[[\s\S]*\]\s*\})/m
+      pattern = /(\{\"#{key}\"\s*:\s*\[[\s\S]*\]\s*\})/m
 
       if text =~ pattern
         # Try non-greedy matches first
-        non_greedy_pattern = /(\{\"\#{key}\"\s*:\s*\[[\s\S]*?\]\s*\})/m
+        non_greedy_pattern = /(\{\"#{key}\"\s*:\s*\[[\s\S]*?\]\s*\})/m
         matches = text.scan(non_greedy_pattern).flatten
         matches.reverse_each do |match|
           begin
