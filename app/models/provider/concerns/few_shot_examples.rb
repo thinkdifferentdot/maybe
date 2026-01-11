@@ -39,6 +39,8 @@ module Provider::Concerns::FewShotExamples
     # Selects diverse examples (one per category max) to avoid clustering
     # Samples up to 3 categories for variety
     def dynamic_examples
+      return [] unless family
+
       patterns_by_category = family.learned_patterns.includes(:category).group_by(&:category)
 
       # Sample up to 3 categories, take first pattern from each
