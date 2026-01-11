@@ -10,12 +10,14 @@ See: .planning/PROJECT.md (updated 2026-01-10)
 ## Current Position
 
 Phase: Phase 16 of 21 (Real Streaming Support)
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-01-10 — Milestone v1.2 created
+Plan: 1 of 1 in current phase
+Status: Phase complete
+Last activity: 2026-01-10 — Completed 16-01-PLAN.md
 
-Progress for Phase 16: ░░░░░░░░░░ 0%
-Overall v1.2 Progress: ░░░░░░░░░░ 0% (6 phases defined)
+Progress for Phase 16: ██████████ 100%
+Overall v1.2 Progress: ██░░░░░░░░ 17% (1 of 6 phases complete)
+
+**Summary (16-01):** Implemented token-by-token streaming for Anthropic chat responses using MessageStream API. Created Provider::Anthropic::ChatStreamParser to convert MessageStream events to ChatStreamChunk format. Updated Provider::Anthropic#chat_response to use client.messages.stream() when streamer provided. Added comprehensive test coverage (13 tests) for ChatStreamParser event handling.
 
 **Summary (15-01):** Converted Anthropic model field from text input to select dropdown with dynamic model fetching from Anthropic API. Created `/settings/hosting/anthropic_models` backend endpoint that proxies requests to Anthropic's `/v1/models` API. Implemented `anthropic-model-select` Stimulus controller for fetching models on page load, populating select dropdown, and managing "Custom..." option for manual entry. Added comprehensive test coverage with mocked API responses.
 
@@ -146,7 +148,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-10
-Phase: Phase 16 (Real Streaming Support) - Ready to plan
-Milestone: v1.2 Anthropic Feature Parity created
-Next: Plan Phase 16 or discuss phase requirements
+Stopped at: Completed 16-01-PLAN.md
 Resume file: None

@@ -60,10 +60,10 @@ See [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md) for full details.
 **Depends on**: Phase 15
 **Research**: Likely (Anthropic streaming API patterns)
 **Research topics**: Anthropic messages.stream API, stream.text.each helper, chunk types
-**Plans**: TBD
+**Status**: Complete (2026-01-10)
 
 Plans:
-- [ ] 16-01: Create ChatStreamParser and update chat_response for streaming (run /gsd:plan-phase 16 to break down)
+- [x] 16-01: Create ChatStreamParser and update chat_response for streaming
 
 #### Phase 17: Auto-Categorization Test Coverage
 
@@ -277,7 +277,7 @@ The AI chat was failing when calling the `get_transactions` function because Ant
 | 14.1. Fix AI Categorize Route | v1.1 | 1/1 | Complete | 2026-01-10 | (INSERTED) |
 | 14.2. Fix Auto-Categorize Page Labels | v1.1 | 1/1 | Complete | 2026-01-10 | (INSERTED) |
 | 15. Anthropic Model Autopopulate | v1.1 | 1/1 | Complete | 2026-01-10 |
-| 16. Real Streaming Support | v1.2 | 0/? | Not started | — |
+| 16. Real Streaming Support | v1.2 | 1/1 | Complete | 2026-01-10 |
 | 17. Auto-Categorization Test Coverage | v1.2 | 0/? | Not started | — |
 | 18. Fuzzy Category & Merchant Matching | v1.2 | 0/? | Not started | — |
 | 19. Flexible JSON Parsing | v1.2 | 0/? | Not started | — |
