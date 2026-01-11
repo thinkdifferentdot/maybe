@@ -40,40 +40,13 @@ module Provider::Concerns::JsonParser
         return result
       end
 
-      # Strategy 3: Find JSON object with "categorizations" key
-      if cleaned =~ /(\{"categorizations"\s*:\s*\[[\s\S]*\]\s*\})/m
-        matches = cleaned.scan(/(\{"categorizations"\s*:\s*\[[\s\S]*?\]\s*\})/m).flatten
-        matches.reverse_each do |match|
-          begin
-            return JSON.parse(match)
-          rescue JSON::ParserError
-            next
-          end
-        end
-        # Try greedy match if non-greedy failed
-        begin
-          return JSON.parse($1)
-        rescue JSON::ParserError
-          # Continue to next strategy
-        end
+      # Strategy 3: Find JSON object with specific keys
+      if (result = extract_json_with_key(cleaned, "categorizations"))
+        return result
       end
 
-      # Strategy 3b: Find JSON object with "merchants" key (for AutoMerchantDetector)
-      if cleaned =~ /(\{"merchants"\s*:\s*\[[\s\S]*\]\s*\})/m
-        matches = cleaned.scan(/(\{"merchants"\s*:\s*\[[\s\S]*?\]\s*\})/m).flatten
-        matches.reverse_each do |match|
-          begin
-            return JSON.parse(match)
-          rescue JSON::ParserError
-            next
-          end
-        end
-        # Try greedy match if non-greedy failed
-        begin
-          return JSON.parse($1)
-        rescue JSON::ParserError
-          # Continue to next strategy
-        end
+      if (result = extract_json_with_key(cleaned, "merchants"))
+        return result
       end
 
       # Strategy 4: Find any JSON object (last resort)
@@ -172,6 +145,37 @@ module Provider::Concerns::JsonParser
 
       # Try objects: ```json {...
       if text =~ /```(?:json)?\s*(\{[\s\S]*\})\s*$/m
+        begin
+          return JSON.parse($1)
+        rescue JSON::ParserError
+          # Return nil for both failing
+        end
+      end
+
+      nil
+    end
+
+    # Extract JSON object containing a specific key
+    # Finds JSON objects like {"categorizations": [...]} or {"merchants": [...]}
+    # Tries non-greedy match first, then greedy match as fallback
+    # Returns parsed JSON or nil if no valid JSON found
+    def extract_json_with_key(text, key)
+      # Build regex pattern for the specific key
+      pattern = /(\{\"\#{key}\"\s*:\s*\[[\s\S]*\]\s*\})/m
+
+      if text =~ pattern
+        # Try non-greedy matches first
+        non_greedy_pattern = /(\{\"\#{key}\"\s*:\s*\[[\s\S]*?\]\s*\})/m
+        matches = text.scan(non_greedy_pattern).flatten
+        matches.reverse_each do |match|
+          begin
+            return JSON.parse(match)
+          rescue JSON::ParserError
+            next
+          end
+        end
+
+        # Try greedy match as fallback
         begin
           return JSON.parse($1)
         rescue JSON::ParserError
