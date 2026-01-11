@@ -5,7 +5,7 @@ class Transactions::ConfidenceBadgeViewTest < ActionView::TestCase
     @account = accounts(:depository)
   end
 
-  test "renders green text for high confidence (>= 80%)" do
+  test "renders check-circle icon for high confidence (>= 80%)" do
     transaction = Transaction.create!(extra: { "ai_categorization_confidence" => 0.85 })
     @account.entries.create!(
       entryable: transaction,
@@ -17,12 +17,12 @@ class Transactions::ConfidenceBadgeViewTest < ActionView::TestCase
 
     html = render(partial: "transactions/confidence_badge", locals: { transaction: transaction })
 
-    assert_includes html, "text-green-600", "High confidence badge should have green text"
-    assert_includes html, "font-medium", "Badge should have font-medium class"
+    assert_includes html, "text-success", "High confidence badge should have success color"
     assert_includes html, "AI confidence score", "Badge should have title attribute"
+    assert_includes html, "M22 11.08V12a10 10 0 1 1-5.93-9.14", "High confidence badge should have check-circle icon path"
   end
 
-  test "renders yellow text for medium confidence (60-80%)" do
+  test "renders minus-circle icon for medium confidence (60-80%)" do
     transaction = Transaction.create!(extra: { "ai_categorization_confidence" => 0.70 })
     @account.entries.create!(
       entryable: transaction,
@@ -34,11 +34,12 @@ class Transactions::ConfidenceBadgeViewTest < ActionView::TestCase
 
     html = render(partial: "transactions/confidence_badge", locals: { transaction: transaction })
 
-    assert_includes html, "text-yellow-600", "Medium confidence badge should have yellow text"
-    assert_includes html, "font-medium", "Badge should have font-medium class"
+    assert_includes html, "text-warning", "Medium confidence badge should have warning color"
+    assert_includes html, "circle cx=\"12\" cy=\"12\" r=\"10\"", "Medium confidence badge should have circle"
+    assert_includes html, "M8 12h8", "Medium confidence badge should have minus path"
   end
 
-  test "renders orange text for low confidence (< 60%)" do
+  test "renders x-circle icon for low confidence (< 60%)" do
     transaction = Transaction.create!(extra: { "ai_categorization_confidence" => 0.50 })
     @account.entries.create!(
       entryable: transaction,
@@ -50,8 +51,9 @@ class Transactions::ConfidenceBadgeViewTest < ActionView::TestCase
 
     html = render(partial: "transactions/confidence_badge", locals: { transaction: transaction })
 
-    assert_includes html, "text-orange-600", "Low confidence badge should have orange text"
-    assert_includes html, "font-medium", "Badge should have font-medium class"
+    assert_includes html, "text-destructive", "Low confidence badge should have destructive color"
+    assert_includes html, "circle cx=\"12\" cy=\"12\" r=\"10\"", "Low confidence badge should have circle"
+    assert_includes html, "m15 9-6 6", "Low confidence badge should have x path"
   end
 
   test "renders nothing when confidence is not present" do
@@ -84,7 +86,7 @@ class Transactions::ConfidenceBadgeViewTest < ActionView::TestCase
     assert_empty html.strip, "Badge should not render when extra is empty"
   end
 
-  test "renders text-xs class for sizing" do
+  test "renders w-3 h-3 sizing classes for xs icon" do
     transaction = Transaction.create!(extra: { "ai_categorization_confidence" => 0.75 })
     @account.entries.create!(
       entryable: transaction,
@@ -96,10 +98,10 @@ class Transactions::ConfidenceBadgeViewTest < ActionView::TestCase
 
     html = render(partial: "transactions/confidence_badge", locals: { transaction: transaction })
 
-    assert_includes html, "text-xs", "Badge should have text-xs sizing class"
+    assert_includes html, "w-3 h-3", "Badge should have w-3 h-3 sizing classes for xs icon"
   end
 
-  test "boundary: 80% renders green" do
+  test "boundary: 80% renders check-circle icon with success color" do
     transaction = Transaction.create!(extra: { "ai_categorization_confidence" => 0.80 })
     @account.entries.create!(
       entryable: transaction,
@@ -111,10 +113,11 @@ class Transactions::ConfidenceBadgeViewTest < ActionView::TestCase
 
     html = render(partial: "transactions/confidence_badge", locals: { transaction: transaction })
 
-    assert_includes html, "text-green-600", "Confidence of exactly 80% should render green"
+    assert_includes html, "text-success", "Confidence of exactly 80% should render success color"
+    assert_includes html, "M22 11.08V12a10 10 0 1 1-5.93-9.14", "Confidence of exactly 80% should render check-circle icon path"
   end
 
-  test "boundary: 60% renders yellow" do
+  test "boundary: 60% renders minus-circle icon with warning color" do
     transaction = Transaction.create!(extra: { "ai_categorization_confidence" => 0.60 })
     @account.entries.create!(
       entryable: transaction,
@@ -126,10 +129,11 @@ class Transactions::ConfidenceBadgeViewTest < ActionView::TestCase
 
     html = render(partial: "transactions/confidence_badge", locals: { transaction: transaction })
 
-    assert_includes html, "text-yellow-600", "Confidence of exactly 60% should render yellow"
+    assert_includes html, "text-warning", "Confidence of exactly 60% should render warning color"
+    assert_includes html, "M8 12h8", "Confidence of exactly 60% should render minus path"
   end
 
-  test "boundary: 59% renders orange" do
+  test "boundary: 59% renders x-circle icon with destructive color" do
     transaction = Transaction.create!(extra: { "ai_categorization_confidence" => 0.59 })
     @account.entries.create!(
       entryable: transaction,
@@ -141,6 +145,7 @@ class Transactions::ConfidenceBadgeViewTest < ActionView::TestCase
 
     html = render(partial: "transactions/confidence_badge", locals: { transaction: transaction })
 
-    assert_includes html, "text-orange-600", "Confidence of 59% should render orange"
+    assert_includes html, "text-destructive", "Confidence of 59% should render destructive color"
+    assert_includes html, "m15 9-6 6", "Confidence of 59% should render x path"
   end
 end

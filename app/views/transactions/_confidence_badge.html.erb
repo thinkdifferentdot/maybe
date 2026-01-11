@@ -4,15 +4,15 @@
 
 <% if confidence.present? %>
   <% percent = (confidence * 100).round %>
-  <% bg_class, text_class = if percent >= 80
-                              ["bg-green-500/5", "text-green-600"]
+  <% icon_key, icon_color = if percent >= 80
+                              ["check-circle", "success"]
                             elsif percent >= 60
-                              ["bg-yellow-500/5", "text-yellow-600"]
+                              ["minus-circle", "warning"]
                             else
-                              ["bg-orange-500/5", "text-orange-600"]
+                              ["x-circle", "destructive"]
                             end %>
 
-  <span class="inline-flex items-center gap-1 text-xs font-medium rounded-full px-1.5 py-0.5 border border-alpha-black-50 <%= bg_class %> <%= text_class %>" title="AI confidence score">
-    <%= t("transactions.ai_categorize.confidence", percent: percent) %>
+  <span class="inline-flex items-center" title="AI confidence score">
+    <%= icon(icon_key, size: "xs", color: icon_color) %>
   </span>
 <% end %>
