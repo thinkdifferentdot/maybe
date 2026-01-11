@@ -179,9 +179,8 @@ class Provider::Anthropic::AutoCategorizer
           raise Provider::Anthropic::Error, "No tool_use or text content found in response"
         end
 
-        # Strip markdown code blocks if present (e.g., ```json...```)
-        text = text_block.text.gsub(/```json\n?/, "").gsub(/```\n?/, "")
-        parsed = JSON.parse(text)
+        # Use flexible JSON parsing to handle various LLM output formats
+        parsed = parse_json_flexibly(text_block.text)
 
         # Handle both { "categorizations": [...] } and direct [...] formats
         if parsed.is_a?(Array)
@@ -286,6 +285,91 @@ class Provider::Anthropic::AutoCategorizer
       end
 
       false
+    end
+
+    # Flexible JSON parsing that handles common LLM output issues
+    def parse_json_flexibly(raw)
+      return {} if raw.blank?
+
+      # Strip thinking model tags if present (e.g., <thinking>...</thinking>)
+      # The actual JSON output comes after the thinking block
+      cleaned = strip_thinking_tags(raw)
+
+      # Try direct parse first
+      JSON.parse(cleaned)
+    rescue JSON::ParserError
+      # Try multiple extraction strategies in order of preference
+
+      # Strategy 1: Closed markdown code blocks (```json...```)
+      if cleaned =~ /```(?:json)?\s*(\{[\s\S]*?\})\s*```/m
+        matches = cleaned.scan(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/m).flatten
+        matches.reverse_each do |match|
+          begin
+            return JSON.parse(match)
+          rescue JSON::ParserError
+            next
+          end
+        end
+      end
+
+      # Strategy 2: Unclosed markdown code blocks (thinking models often forget to close)
+      # Pattern: ```json followed by JSON that goes to end of string
+      if cleaned =~ /```(?:json)?\s*(\{[\s\S]*\})\s*$/m
+        begin
+          return JSON.parse($1)
+        rescue JSON::ParserError
+          # Continue to next strategy
+        end
+      end
+
+      # Strategy 3: Find JSON object with "categorizations" key
+      if cleaned =~ /(\{"categorizations"\s*:\s*\[[\s\S]*\]\s*\})/m
+        matches = cleaned.scan(/(\{"categorizations"\s*:\s*\[[\s\S]*?\]\s*\})/m).flatten
+        matches.reverse_each do |match|
+          begin
+            return JSON.parse(match)
+          rescue JSON::ParserError
+            next
+          end
+        end
+        # Try greedy match if non-greedy failed
+        begin
+          return JSON.parse($1)
+        rescue JSON::ParserError
+          # Continue to next strategy
+        end
+      end
+
+      # Strategy 4: Find any JSON object (last resort)
+      if cleaned =~ /(\{[\s\S]*\})/m
+        begin
+          return JSON.parse($1)
+        rescue JSON::ParserError
+          # Fall through to error
+        end
+      end
+
+      raise Provider::Anthropic::Error, "Could not parse JSON from response: #{raw.truncate(200)}"
+    end
+
+    # Strip thinking model tags (<thinking>...</thinking>) from response
+    # Some models like Qwen-thinking output reasoning in these tags before the actual response
+    def strip_thinking_tags(raw)
+      # Remove <thinking> blocks but keep content after them
+      # If no closing tag, the model may have been cut off - try to extract JSON from inside
+      if raw.include?("<thinking>")
+        # Check if there's content after the thinking block
+        if raw =~ /<\/think>\s*([\s\S]*)/m
+          after_thinking = $1.strip
+          return after_thinking if after_thinking.present?
+        end
+        # If no content after </thinking> or no closing tag, look inside the thinking block
+        # The JSON might be the last thing in the thinking block
+        if raw =~ /<thinking>([\s\S]*)/m
+          return $1
+        end
+      end
+      raw
     end
 
     def record_usage(model_name, usage_data, operation:, metadata: {})
