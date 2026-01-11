@@ -1,6 +1,7 @@
 class Provider::Openai::AutoCategorizer
   include Provider::Openai::Concerns::UsageRecorder
   include Provider::Concerns::JsonParser
+  include Provider::Concerns::ErrorHandler
 
   # JSON response format modes for custom providers
   # - "strict": Use strict JSON schema (requires full OpenAI API compatibility)
@@ -125,39 +126,38 @@ class Provider::Openai::AutoCategorizer
         user_categories: user_categories
       })
 
-      response = client.responses.create(parameters: {
-        model: model.presence || Provider::Openai::DEFAULT_MODEL,
-        input: [ { role: "developer", content: developer_message } ],
-        text: {
-          format: {
-            type: "json_schema",
-            name: "auto_categorize_personal_finance_transactions",
-            strict: true,
-            schema: json_schema
+      with_openai_error_handler(span: span, operation: "auto_categorize") do
+        response = client.responses.create(parameters: {
+          model: model.presence || Provider::Openai::DEFAULT_MODEL,
+          input: [ { role: "developer", content: developer_message } ],
+          text: {
+            format: {
+              type: "json_schema",
+              name: "auto_categorize_personal_finance_transactions",
+              strict: true,
+              schema: json_schema
+            }
+          },
+          instructions: instructions
+        })
+        Rails.logger.info("Tokens used to auto-categorize transactions: #{response.dig("usage", "total_tokens")}")
+
+        categorizations = extract_categorizations_native(response)
+        result = build_response(categorizations)
+
+        record_usage(
+          model.presence || Provider::Openai::DEFAULT_MODEL,
+          response.dig("usage"),
+          operation: "auto_categorize",
+          metadata: {
+            transaction_count: transactions.size,
+            category_count: user_categories.size
           }
-        },
-        instructions: instructions
-      })
-      Rails.logger.info("Tokens used to auto-categorize transactions: #{response.dig("usage", "total_tokens")}")
+        )
 
-      categorizations = extract_categorizations_native(response)
-      result = build_response(categorizations)
-
-      record_usage(
-        model.presence || Provider::Openai::DEFAULT_MODEL,
-        response.dig("usage"),
-        operation: "auto_categorize",
-        metadata: {
-          transaction_count: transactions.size,
-          category_count: user_categories.size
-        }
-      )
-
-      span&.end(output: result.map(&:to_h), usage: response.dig("usage"))
-      result
-    rescue => e
-      span&.end(output: { error: e.message }, level: "ERROR")
-      raise
+        span&.end(output: result.map(&:to_h), usage: response.dig("usage"))
+        result
+      end
     end
 
     def auto_categorize_openai_generic
@@ -210,54 +210,53 @@ class Provider::Openai::AutoCategorizer
         json_mode: mode
       })
 
-      # Build parameters with configurable JSON response format
-      params = {
-        model: model.presence || Provider::Openai::DEFAULT_MODEL,
-        messages: [
-          { role: "system", content: instructions },
-          { role: "user", content: developer_message_for_generic }
-        ]
-      }
+      with_openai_error_handler(span: span, operation: "auto_categorize") do
+        # Build parameters with configurable JSON response format
+        params = {
+          model: model.presence || Provider::Openai::DEFAULT_MODEL,
+          messages: [
+            { role: "system", content: instructions },
+            { role: "user", content: developer_message_for_generic }
+          ]
+        }
 
-      # Add response format based on json_mode setting
-      case mode
-      when JSON_MODE_STRICT
-        params[:response_format] = {
-          type: "json_schema",
-          json_schema: {
-            name: "auto_categorize_personal_finance_transactions",
-            strict: true,
-            schema: json_schema
+        # Add response format based on json_mode setting
+        case mode
+        when JSON_MODE_STRICT
+          params[:response_format] = {
+            type: "json_schema",
+            json_schema: {
+              name: "auto_categorize_personal_finance_transactions",
+              strict: true,
+              schema: json_schema
+            }
           }
-        }
-      when JSON_MODE_OBJECT
-        params[:response_format] = { type: "json_object" }
-        # JSON_MODE_NONE: no response_format constraint
+        when JSON_MODE_OBJECT
+          params[:response_format] = { type: "json_object" }
+          # JSON_MODE_NONE: no response_format constraint
+        end
+
+        response = client.chat(parameters: params)
+
+        Rails.logger.info("Tokens used to auto-categorize transactions: #{response.dig("usage", "total_tokens")} (json_mode: #{mode})")
+
+        categorizations = extract_categorizations_generic(response)
+        result = build_response(categorizations)
+
+        record_usage(
+          model.presence || Provider::Openai::DEFAULT_MODEL,
+          response.dig("usage"),
+          operation: "auto_categorize",
+          metadata: {
+            transaction_count: transactions.size,
+            category_count: user_categories.size,
+            json_mode: mode
+          }
+        )
+
+        span&.end(output: result.map(&:to_h), usage: response.dig("usage"))
+        result
       end
-
-      response = client.chat(parameters: params)
-
-      Rails.logger.info("Tokens used to auto-categorize transactions: #{response.dig("usage", "total_tokens")} (json_mode: #{mode})")
-
-      categorizations = extract_categorizations_generic(response)
-      result = build_response(categorizations)
-
-      record_usage(
-        model.presence || Provider::Openai::DEFAULT_MODEL,
-        response.dig("usage"),
-        operation: "auto_categorize",
-        metadata: {
-          transaction_count: transactions.size,
-          category_count: user_categories.size,
-          json_mode: mode
-        }
-      )
-
-      span&.end(output: result.map(&:to_h), usage: response.dig("usage"))
-      result
-    rescue => e
-      span&.end(output: { error: e.message }, level: "ERROR")
-      raise
     end
 
     AutoCategorization = Provider::LlmConcept::AutoCategorization
