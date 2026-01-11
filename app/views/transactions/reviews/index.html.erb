@@ -1,0 +1,47 @@
+<div class="space-y-4 pb-20">
+  <header class="flex justify-between items-center text-primary font-medium">
+    <h1 class="text-xl"><%= t("transactions.feedback.title") %></h1>
+  </header>
+
+  <div class="bg-container rounded-xl shadow-border-xs p-4">
+    <% if @transactions.any? %>
+      <div class="grid-cols-12 bg-container-inset rounded-xl px-5 py-3 text-xs uppercase font-medium text-secondary items-center mb-4 grid">
+        <p class="col-span-4 md:col-span-5"><%= t("transactions.feedback.transaction") %></p>
+        <p class="col-span-3 md:col-span-3 hidden md:block"><%= t("transactions.feedback.merchant") %></p>
+        <p class="col-span-4 md:col-span-2"><%= t("transactions.feedback.suggested_category") %></p>
+        <p class="col-span-2 md:col-span-1 text-center"><%= t("transactions.feedback.confidence") %></p>
+        <p class="col-span-2 md:col-span-1 text-center"><%= t("transactions.feedback.actions") %></p>
+      </div>
+
+      <div class="space-y-3">
+        <% @transactions.each do |transaction| %>
+          <div class="grid-cols-12 items-center grid py-3 border-b border-border last:border-0">
+            <p class="col-span-4 md:col-span-5 text-sm truncate pr-2">
+              <%= transaction.entry.name %>
+              <span class="text-xs text-secondary ml-2 md:hidden"><%= transaction.merchant&.name %></span>
+            </p>
+            <p class="col-span-3 md:col-span-3 text-sm text-secondary hidden md:block truncate">
+              <%= transaction.merchant&.name || t("transactions.show.none") %>
+            </p>
+            <div class="col-span-4 md:col-span-2">
+              <%= render "categories/badge", category: transaction.category %>
+            </div>
+            <div class="col-span-2 md:col-span-1 flex justify-center">
+              <%= render "transactions/confidence_badge", transaction: transaction %>
+            </div>
+            <div class="col-span-2 md:col-span-1 flex justify-center">
+              <%= render "transactions/ai_feedback_buttons", transaction: transaction %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="text-center py-12">
+        <p class="text-secondary"><%= t("transactions.feedback.empty_state") %></p>
+        <%= link_to transactions_path, class: "text-link hover:underline mt-2 inline-block" do %>
+          <%= t("transactions.index.transactions") %> →
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
