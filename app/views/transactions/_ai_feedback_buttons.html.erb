@@ -1,23 +1,25 @@
 <%# locals: (transaction:) -%>
 <%# Feedback buttons (checkmark/X) for AI-categorized transactions %>
 
-<div id="<%= dom_id(transaction, "ai_feedback") %>" data-controller="ai_feedback" data-ai-feedback-transaction-id-value="<%= transaction.id %>" class="inline-flex items-center gap-1">
+<div id="<%= dom_id(transaction, "ai_feedback") %>" data-controller="ai_feedback" data-ai-feedback-transaction-id-value="<%= transaction.id %>" class="inline-flex items-center gap-1" data-ai-feedback-target="container">
   <% if transaction.ai_categorized? && !transaction.ai_feedback_given? %>
-    <%= button_to approve_transactions_ai_feedback_path,
-          method: :post,
-          data: { ai_feedback_target: "button", turbo_stream: true, feedback_type: "approve", action: "click->ai_feedback#send" },
-          title: t("transactions.approve_ai_title"),
-          class: "inline-flex items-center justify-center p-1 rounded hover:bg-success/10 text-secondary hover:text-success transition-colors" do %>
+    <button type="button"
+            data-ai-feedback-target="button"
+            data-action="click->ai_feedback#send"
+            data-feedback-type="approve"
+            title="<%= t("transactions.approve_ai_title") %>"
+            class="inline-flex items-center justify-center p-1 rounded hover:bg-success/10 text-secondary hover:text-success transition-colors cursor-pointer">
       <%= icon "check", size: "sm", color: "current" %>
-    <% end %>
+    </button>
 
-    <%= button_to reject_transactions_ai_feedback_path,
-          method: :post,
-          data: { ai_feedback_target: "button", turbo_stream: true, feedback_type: "reject", action: "click->ai_feedback#send" },
-          title: t("transactions.reject_ai_title"),
-          class: "inline-flex items-center justify-center p-1 rounded hover:bg-destructive/10 text-secondary hover:text-destructive transition-colors" do %>
+    <button type="button"
+            data-ai-feedback-target="button"
+            data-action="click->ai_feedback#send"
+            data-feedback-type="reject"
+            title="<%= t("transactions.reject_ai_title") %>"
+            class="inline-flex items-center justify-center p-1 rounded hover:bg-destructive/10 text-secondary hover:text-destructive transition-colors cursor-pointer">
       <%= icon "x", size: "sm", color: "current" %>
-    <% end %>
+    </button>
   <% elsif transaction.ai_feedback_given? %>
     <% feedback = transaction.extra.dig("ai_feedback") %>
     <% if feedback == "approved" %>
