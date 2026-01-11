@@ -36,22 +36,8 @@ module Provider::Concerns::JsonParser
       end
 
       # Strategy 2: Unclosed markdown code blocks (thinking models often forget to close)
-      # Pattern: ```json followed by JSON (array or object) that goes to end of string
-      if cleaned =~ /```(?:json)?\s*(\[[\s\S]*\])\s*$/m
-        begin
-          return JSON.parse($1)
-        rescue JSON::ParserError
-          # Continue to next strategy
-        end
-      end
-
-      # Strategy 2b: Unclosed markdown code blocks with objects
-      if cleaned =~ /```(?:json)?\s*(\{[\s\S]*\})\s*$/m
-        begin
-          return JSON.parse($1)
-        rescue JSON::ParserError
-          # Continue to next strategy
-        end
+      if (result = extract_from_unclosed_code_blocks(cleaned))
+        return result
       end
 
       # Strategy 3: Find JSON object with "categorizations" key
@@ -165,6 +151,31 @@ module Provider::Concerns::JsonParser
           rescue JSON::ParserError
             next
           end
+        end
+      end
+
+      nil
+    end
+
+    # Extract JSON from unclosed markdown code blocks
+    # Thinking models often forget to close ```json or ``` blocks
+    # Returns parsed JSON or nil if no valid JSON found
+    def extract_from_unclosed_code_blocks(text)
+      # Try arrays first: ```json [...
+      if text =~ /```(?:json)?\s*(\[[\s\S]*\])\s*$/m
+        begin
+          return JSON.parse($1)
+        rescue JSON::ParserError
+          # Try objects next
+        end
+      end
+
+      # Try objects: ```json {...
+      if text =~ /```(?:json)?\s*(\{[\s\S]*\})\s*$/m
+        begin
+          return JSON.parse($1)
+        rescue JSON::ParserError
+          # Return nil for both failing
         end
       end
 

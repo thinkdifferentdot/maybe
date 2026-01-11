@@ -84,20 +84,20 @@ Plans:
 **Goal**: Extract duplicated `parse_json_flexibly` method to shared concern across 4 provider files
 **Depends on**: Phase 24
 **Research**: Unlikely (following existing UsageRecorder pattern)
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 25-01: Create Provider::Concerns::JsonParser with parse_json_flexibly method
+- [x] 25-01: Create Provider::Concerns::JsonParser with parse_json_flexibly method — completed 2026-01-11
 
 #### Phase 26: Extract Thinking Tags
 
 **Goal**: Extract duplicated `strip_thinking_tags` method to shared concern across 4 provider files
 **Depends on**: Phase 25
 **Research**: Unlikely (following JsonParser pattern)
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 26-01: Add strip_thinking_tags to JsonParser concern
+- [x] 26-01: Add strip_thinking_tags to JsonParser concern — completed 2026-01-11 (obsolete - work done in Phase 25)
 
 #### Phase 27: Simplify JSON Parsing
 
@@ -304,8 +304,8 @@ The AI chat was failing when calling the `get_transactions` function because Ant
 | 18. Fuzzy Category & Merchant Matching | v1.2 | 1/1 | Complete | 2026-01-11 |
 | 20. Extract UsageRecorder Concern | v1.2 | 1/1 | Complete | 2026-01-11 |
 | 24. Env Example Updates | v1.3 | 1/1 | Complete | 2026-01-11 |
-| 25. Extract JSON Parser | v1.3 | 0/? | Not started | — |
-| 26. Extract Thinking Tags | v1.3 | 0/? | Not started | — |
+| 25. Extract JSON Parser | v1.3 | 1/1 | Complete | 2026-01-11 |
+| 26. Extract Thinking Tags | v1.3 | 1/1 | Complete | 2026-01-11 |
 | 27. Simplify JSON Parsing | v1.3 | 0/? | Not started | — |
 | 28. Standardize Error Handling | v1.3 | 0/? | Not started | — |
 | 29. Improve Categorization Prompts | v1.3 | 0/? | Not started | — |
