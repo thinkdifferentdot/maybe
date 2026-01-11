@@ -31,27 +31,8 @@ module Provider::Concerns::JsonParser
 
       # Strategy 1: Closed markdown code blocks (```json...```)
       # Handle both objects {...} and arrays [...]
-      if cleaned =~ /```(?:json)?\s*(\[[\s\S]*?\])\s*```/m
-        matches = cleaned.scan(/```(?:json)?\s*(\[[\s\S]*?\])\s*```/m).flatten
-        matches.reverse_each do |match|
-          begin
-            return JSON.parse(match)
-          rescue JSON::ParserError
-            next
-          end
-        end
-      end
-
-      # Strategy 1b: Closed markdown code blocks with objects (fallback)
-      if cleaned =~ /```(?:json)?\s*(\{[\s\S]*?\})\s*```/m
-        matches = cleaned.scan(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/m).flatten
-        matches.reverse_each do |match|
-          begin
-            return JSON.parse(match)
-          rescue JSON::ParserError
-            next
-          end
-        end
+      if (result = extract_from_closed_code_blocks(cleaned))
+        return result
       end
 
       # Strategy 2: Unclosed markdown code blocks (thinking models often forget to close)
@@ -157,5 +138,36 @@ module Provider::Concerns::JsonParser
       end
 
       raw
+    end
+
+    # Extract JSON from closed markdown code blocks (```json...```)
+    # Handles both array [...] and object {...} patterns
+    # Returns parsed JSON or nil if no valid JSON found
+    def extract_from_closed_code_blocks(text)
+      # Try arrays first: ```json [...] ```
+      if text =~ /```(?:json)?\s*(\[[\s\S]*?\])\s*```/m
+        matches = text.scan(/```(?:json)?\s*(\[[\s\S]*?\])\s*```/m).flatten
+        matches.reverse_each do |match|
+          begin
+            return JSON.parse(match)
+          rescue JSON::ParserError
+            next
+          end
+        end
+      end
+
+      # Try objects: ```json {...} ```
+      if text =~ /```(?:json)?\s*(\{[\s\S]*?\})\s*```/m
+        matches = text.scan(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/m).flatten
+        matches.reverse_each do |match|
+          begin
+            return JSON.parse(match)
+          rescue JSON::ParserError
+            next
+          end
+        end
+      end
+
+      nil
     end
 end
