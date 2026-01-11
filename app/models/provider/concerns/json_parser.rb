@@ -50,12 +50,8 @@ module Provider::Concerns::JsonParser
       end
 
       # Strategy 4: Find any JSON object (last resort)
-      if cleaned =~ /(\{[\s\S]*\})/m
-        begin
-          return JSON.parse($1)
-        rescue JSON::ParserError
-          # Fall through to error
-        end
+      if (result = extract_any_json_object(cleaned))
+        return result
       end
 
       raise Provider::Anthropic::Error, "Could not parse JSON from response: #{raw.truncate(200)}"
@@ -180,6 +176,21 @@ module Provider::Concerns::JsonParser
           return JSON.parse($1)
         rescue JSON::ParserError
           # Return nil for both failing
+        end
+      end
+
+      nil
+    end
+
+    # Extract any JSON object as a last resort
+    # Finds the first {...} pattern in the text
+    # Returns parsed JSON or nil if no valid JSON found
+    def extract_any_json_object(text)
+      if text =~ /(\{[\s\S]*\})/m
+        begin
+          return JSON.parse($1)
+        rescue JSON::ParserError
+          # Return nil for failure
         end
       end
 
