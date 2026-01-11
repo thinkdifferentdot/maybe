@@ -2,6 +2,7 @@ class Provider::Anthropic::AutoCategorizer
   include Provider::Concerns::UsageRecorder
   include Provider::Concerns::JsonParser
   include Provider::Concerns::ErrorHandler
+  include Provider::Concerns::FewShotExamples
 
   attr_reader :client, :model, :transactions, :user_categories, :langfuse_trace, :family
 
@@ -84,8 +85,10 @@ class Provider::Anthropic::AutoCategorizer
     end
 
     def developer_message
+      few_shot_text = build_few_shot_examples_text
+
       <<~MESSAGE.strip_heredoc
-      Here are the user's available categories in JSON format:
+      #{few_shot_text}Here are the user's available categories in JSON format:
 
       ```json
       #{user_categories.to_json}
