@@ -5,15 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-11)
 
 **Core value:** Smooth UX configuration — Users select AI provider through settings dropdown
-**Current focus:** Planning next milestone
+**Current focus:** AI Observability - categorization quality improvement
 
 ## Current Position
 
-Phase: Milestone v1.3 complete
-Status: Ready to plan next milestone
-Last activity: 2026-01-11 — v1.3 Codebase Health milestone complete
+Phase: 30 of 33 (LearnedPattern Integration)
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-01-11 — Milestone v1.4 created
 
-Progress: ✅ v1.3 COMPLETE (6 phases, 6 plans)
+Progress: ░░░░░░░░░░ 0%
 
 **Summary (29-01):** Implemented two-tier few-shot examples system for AI transaction categorization prompts. Created Provider::Concerns::FewShotExamples with static baseline examples (5 hardcoded covering common categories) and dynamic examples from user's LearnedPattern records (0-3, one per category for diversity). Integrated into both OpenAI and Anthropic AutoCategorizers. Added comprehensive test coverage (14 tests). All 76 provider tests passing (11 OpenAI + 15 Anthropic + 36 JsonParser + 14 FewShotExamples).
 
@@ -51,12 +52,11 @@ Progress: ✅ v1.3 COMPLETE (6 phases, 6 plans)
 
 ## Next Milestone Goals
 
-**v1.3: Codebase Health** — ✅ COMPLETE (6 phases)
-
-**v1.4: AI Observability** — Planned (future)
-- Categorization feedback loop (LearnedPattern integration)
-- Evaluation framework automation (manual runner execution)
-- AI cost monitoring (DB + ENV hybrid, hard/soft limits)
+**v1.4: AI Observability** — IN PROGRESS (4 phases)
+- LearnedPattern Integration (Phase 30)
+- Feedback UI (Phase 31)
+- Evaluation Runner (Phase 32)
+- Accuracy Metrics (Phase 33)
 
 ## Performance Metrics
 
@@ -194,6 +194,7 @@ None.
 - **v1.2 COMPLETE**: Anthropic Feature Parity (2026-01-11) — 4 phases (Phase 16-18, 20) achieving feature parity with OpenAI implementation
 - **v1.3 COMPLETE**: Codebase Health (2026-01-11) — 6 phases (Phase 24-29) for tech debt cleanup and improved AI accuracy
 - **v1.4 PLANNED**: AI Observability — Deferred features: categorization feedback, evaluation framework, cost monitoring
+- **v1.4 CREATED**: AI Observability (2026-01-11) — 4 phases (Phase 30-33) for categorization quality improvement
 
 ### Blockers/Concerns
 
@@ -202,5 +203,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-11
-Stopped at: v1.3 milestone complete
+Stopped at: Milestone v1.4 initialization
 Resume file: None

@@ -14,6 +14,7 @@ None (Rails backend work following established patterns in the Sure codebase)
 - ✅ **[v1.1 AI Auto-Categorization Triggers](milestones/v1.1-ROADMAP.md)** - Phases 10-15 + 14.1 + 14.2 (shipped 2026-01-10)
 - ✅ **[v1.2 Anthropic Feature Parity](milestones/v1.2-ROADMAP.md)** - Phases 16-18, 20 (shipped 2026-01-11)
 - ✅ **[v1.3 Codebase Health](milestones/v1.3-ROADMAP.md)** - Phases 24-29 (shipped 2026-01-11)
+- 🚧 **v1.4 AI Observability** - Phases 30-33 (in progress)
 
 ## Phases
 
@@ -79,12 +80,51 @@ See [milestones/v1.3-ROADMAP.md](milestones/v1.3-ROADMAP.md) for full details.
 
 </details>
 
-## v1.4 Future — AI Observability (Planned)
+---
 
-**Deferred Features:**
-- Categorization feedback loop (LearnedPattern integration)
-- Evaluation framework automation (manual runner execution)
-- AI cost monitoring (DB + ENV hybrid, hard/soft limits)
+### 🚧 v1.4 AI Observability (In Progress)
+
+**Milestone Goal:** Improve AI categorization quality through feedback loops and evaluation
+
+#### Phase 30: LearnedPattern Integration
+
+**Goal**: Integrate LearnedPattern records into few-shot examples pipeline
+**Depends on**: Phase 29 (v1.3 complete)
+**Research**: Unlikely (established patterns - LearnedPattern model exists)
+**Plans**: TBD
+
+Plans:
+- [ ] 30-01: TBD (run /gsd:plan-phase 30 to break down)
+
+#### Phase 31: Feedback UI
+
+**Goal**: Add user feedback interface for AI categorization results
+**Depends on**: Phase 30
+**Research**: Unlikely (UI patterns established)
+**Plans**: TBD
+
+Plans:
+- [ ] 31-01: TBD
+
+#### Phase 32: Evaluation Runner
+
+**Goal**: Create manual evaluation framework for running categorization tests
+**Depends on**: Phase 31
+**Research**: Unlikely (internal patterns)
+**Plans**: TBD
+
+Plans:
+- [ ] 32-01: TBD
+
+#### Phase 33: Accuracy Metrics
+
+**Goal**: Track and display categorization accuracy metrics over time
+**Depends on**: Phase 32
+**Research**: Unlikely (internal patterns)
+**Plans**: TBD
+
+Plans:
+- [ ] 33-01: TBD
 
 ---
 
@@ -257,3 +297,7 @@ The AI chat was failing when calling the `get_transactions` function because Ant
 | 27. Simplify JSON Parsing | v1.3 | 1/1 | Complete | 2026-01-11 |
 | 28. Standardize Error Handling | v1.3 | 1/1 | Complete | 2026-01-11 |
 | 29. Improve Categorization Prompts | v1.3 | 1/1 | Complete | 2026-01-11 |
+| 30. LearnedPattern Integration | v1.4 | 0/? | Not started | - |
+| 31. Feedback UI | v1.4 | 0/? | Not started | - |
+| 32. Evaluation Runner | v1.4 | 0/? | Not started | - |
+| 33. Accuracy Metrics | v1.4 | 0/? | Not started | - |
