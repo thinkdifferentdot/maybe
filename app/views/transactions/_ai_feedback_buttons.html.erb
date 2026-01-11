@@ -1,11 +1,11 @@
 <%# locals: (transaction:) -%>
 <%# Feedback buttons (checkmark/X) for AI-categorized transactions %>
 
-<div id="<%= dom_id(transaction, "ai_feedback") %>" data-controller="ai_feedback" data-ai-feedback-transaction-id-value="<%= transaction.id %>" class="inline-flex items-center gap-1" data-ai-feedback-target="container">
+<div id="<%= dom_id(transaction, "ai_feedback") %>" data-controller="ai-feedback" data-ai-feedback-transaction-id-value="<%= transaction.id %>" class="inline-flex items-center gap-1" data-ai-feedback-target="container">
   <% if transaction.ai_categorized? && !transaction.ai_feedback_given? %>
     <button type="button"
             data-ai-feedback-target="button"
-            data-action="click->ai_feedback#send"
+            data-action="click->ai-feedback#send"
             data-feedback-type="approve"
             title="<%= t("transactions.approve_ai_title") %>"
             class="inline-flex items-center justify-center p-1 rounded hover:bg-success/10 text-secondary hover:text-success transition-colors cursor-pointer">
@@ -14,7 +14,7 @@
 
     <button type="button"
             data-ai-feedback-target="button"
-            data-action="click->ai_feedback#send"
+            data-action="click->ai-feedback#send"
             data-feedback-type="reject"
             title="<%= t("transactions.reject_ai_title") %>"
             class="inline-flex items-center justify-center p-1 rounded hover:bg-destructive/10 text-secondary hover:text-destructive transition-colors cursor-pointer">
