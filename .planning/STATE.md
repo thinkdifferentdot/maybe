@@ -9,15 +9,20 @@ See: .planning/PROJECT.md (updated 2026-01-11)
 
 ## Current Position
 
-Phase: Phase 28 of 29 (Standardize Error Handling)
+Phase: Phase 29 of 29 (Improve Categorization Prompts)
 Plan: 1 of 1 in current phase
 Status: Phase complete
-Last activity: 2026-01-11 — Completed 28-01-PLAN.md
+Last activity: 2026-01-11 — Completed 29-01-PLAN.md
 
-Progress for Phase 28: ███████████ 100%
-Overall v1.3 Progress: ███████░░░░ 83% (5 of 6 phases complete)
+Progress for Phase 29: ███████████ 100%
+Overall v1.3 Progress: ███████████ 100% (6 of 6 phases complete)
 
 **✅ v1.2 Milestone COMPLETE:** Anthropic Feature Parity achieved.
+**✅ v1.3 Milestone COMPLETE:** Codebase Health achieved.
+
+**Summary (29-01):** Implemented two-tier few-shot examples system for AI transaction categorization prompts. Created Provider::Concerns::FewShotExamples with static baseline examples (5 hardcoded covering common categories) and dynamic examples from user's LearnedPattern records (0-3, one per category for diversity). Integrated into both OpenAI and Anthropic AutoCategorizers. Added comprehensive test coverage (14 tests). All 76 provider tests passing (11 OpenAI + 15 Anthropic + 36 JsonParser + 14 FewShotExamples).
+
+**Summary (28-01):** Created shared Provider::Concerns::ErrorHandler module with provider-specific error translation methods (with_anthropic_error_handler, with_openai_error_handler). Refactored all 4 provider classes (Anthropic::AutoCategorizer, Anthropic::AutoMerchantDetector, OpenAI::AutoCategorizer, OpenAI::AutoMerchantDetector) to use shared concern. Eliminated ~60 lines of duplicate error handling code. Comprehensive error handling for all SDK-specific error types (APIConnectionError, APITimeoutError, RateLimitError, AuthenticationError, APIStatusError, JSON::ParserError). All 210 provider tests passing.
 
 **Summary (25-01):** Extracted duplicated parse_json_flexibly and strip_thinking_tags methods to shared Provider::Concerns::JsonParser module. Eliminated ~390 lines of duplicate code across 4 provider classes (Anthropic::AutoCategorizer, Anthropic::AutoMerchantDetector, OpenAI::AutoCategorizer, OpenAI::AutoMerchantDetector). Shared concern handles both <thinking> (Anthropic) and  (OpenAI/o1) tag formats. All 174 provider tests passing.
 
@@ -51,7 +56,7 @@ Overall v1.3 Progress: ███████░░░░ 83% (5 of 6 phases comp
 
 ## Next Milestone Goals
 
-**v1.3: Codebase Health** — 🚧 IN PROGRESS (6 phases)
+**v1.3: Codebase Health** — ✅ COMPLETE (6 phases)
 - Phase 24: Env Example Updates — Add ANTHROPIC_* entries to .env.example
 - Phase 25: Extract JSON Parser — DRY up parse_json_flexibly across 4 files
 - Phase 26: Extract Thinking Tags — DRY up strip_thinking_tags across 4 files
@@ -62,10 +67,10 @@ Overall v1.3 Progress: ███████░░░░ 83% (5 of 6 phases comp
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 50 (26 v1.0 + 20 v1.1 + 4 v1.2)
-- Total commits: 54 (implementation + fixes)
+- Total plans completed: 55 (26 v1.0 + 20 v1.1 + 4 v1.2 + 5 v1.3)
+- Total commits: 58 (implementation + fixes)
 - Average duration: ~6 min
-- Total execution time: ~300 min
+- Total execution time: ~330 min
 
 **By Phase:**
 
@@ -93,6 +98,7 @@ Overall v1.3 Progress: ███████░░░░ 83% (5 of 6 phases comp
 | 17 (Auto-Categorization Test Coverage) | 1 | ~3 min | ~3 min |
 | 18 (Fuzzy Category & Merchant Matching) | 1 | ~2 min | ~2 min |
 | 20 (Extract UsageRecorder Concern) | 1 | ~8 min | ~8 min |
+| 29 (Improve Categorization Prompts) | 1 | ~10 min | ~10 min |
 
 ## Accumulated Context
 
@@ -177,7 +183,7 @@ None.
 - **v1.0 COMPLETE**: Anthropic Support (2026-01-10) — Full provider integration shipped
 - **v1.1 COMPLETE**: AI Auto-Categorization Triggers (2026-01-10) — 5 phases + 2 urgent fixes + model autopopulate feature
 - **v1.2 COMPLETE**: Anthropic Feature Parity (2026-01-11) — 4 phases (Phase 16-18, 20) achieving feature parity with OpenAI implementation
-- **v1.3 CREATED**: Codebase Health (2026-01-11) — 6 phases (Phase 24-29) for tech debt cleanup and bug fixes
+- **v1.3 COMPLETE**: Codebase Health (2026-01-11) — 6 phases (Phase 24-29) for tech debt cleanup and bug fixes
 - **v1.4 PLANNED**: AI Observability — Deferred features: categorization feedback, evaluation framework, cost monitoring
 
 ### Blockers/Concerns
@@ -187,5 +193,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-11
-Stopped at: Completed 28-01-PLAN.md
+Stopped at: Completed 29-01-PLAN.md
 Resume file: None

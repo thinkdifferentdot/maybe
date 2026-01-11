@@ -13,7 +13,7 @@ None (Rails backend work following established patterns in the Sure codebase)
 - ✅ **[v1.0 Anthropic Support](milestones/v1.0-ROADMAP.md)** - Phases 1-9 + 9.1 (shipped 2026-01-10)
 - ✅ **[v1.1 AI Auto-Categorization Triggers](milestones/v1.1-ROADMAP.md)** - Phases 10-15 + 14.1 + 14.2 (shipped 2026-01-10)
 - ✅ **[v1.2 Anthropic Feature Parity](milestones/v1.2-ROADMAP.md)** - Phases 16-18, 20 (shipped 2026-01-11)
-- 🚧 **v1.3 Codebase Health** - Phases 24-29 (in progress, 2026-01-11)
+- ✅ **v1.3 Codebase Health** - Phases 24-29 (shipped 2026-01-11)
 
 ## Phases
 
@@ -65,69 +65,19 @@ See [milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md) for full details.
 
 ---
 
-### 🚧 v1.3 Codebase Health (In Progress)
+<details>
+<summary>✅ v1.3 Codebase Health (Phases 24-29) — SHIPPED 2026-01-11</summary>
 
 **Milestone Goal:** Reduce technical debt and fix known bugs to establish clean patterns for future feature work. Focuses on DRY-ing up duplicated code, improving error handling, and enhancing AI categorization accuracy.
 
-#### Phase 24: Env Example Updates
+- [x] Phase 24: Env Example Updates (1/1 plans) — completed 2026-01-11
+- [x] Phase 25: Extract JSON Parser (1/1 plans) — completed 2026-01-11
+- [x] Phase 26: Extract Thinking Tags (1/1 plans) — completed 2026-01-11 (obsolete)
+- [x] Phase 27: Simplify JSON Parsing (1/1 plans) — completed 2026-01-11
+- [x] Phase 28: Standardize Error Handling (1/1 plans) — completed 2026-01-11
+- [x] Phase 29: Improve Categorization Prompts (1/1 plans) — completed 2026-01-11
 
-**Goal**: Add missing ANTHROPIC_* environment variable entries to .env.example
-**Depends on**: v1.2 complete
-**Research**: Unlikely (simple file update)
-**Plans**: 1 plan
-
-Plans:
-- [x] 24-01: Add ANTHROPIC_API_KEY and ANTHROPIC_MODEL to .env.example — completed 2026-01-11
-
-#### Phase 25: Extract JSON Parser
-
-**Goal**: Extract duplicated `parse_json_flexibly` method to shared concern across 4 provider files
-**Depends on**: Phase 24
-**Research**: Unlikely (following existing UsageRecorder pattern)
-**Plans**: 1 plan
-
-Plans:
-- [x] 25-01: Create Provider::Concerns::JsonParser with parse_json_flexibly method — completed 2026-01-11
-
-#### Phase 26: Extract Thinking Tags
-
-**Goal**: Extract duplicated `strip_thinking_tags` method to shared concern across 4 provider files
-**Depends on**: Phase 25
-**Research**: Unlikely (following JsonParser pattern)
-**Plans**: 1 plan
-
-Plans:
-- [x] 26-01: Add strip_thinking_tags to JsonParser concern — completed 2026-01-11 (obsolete - work done in Phase 25)
-
-#### Phase 27: Simplify JSON Parsing
-
-**Goal**: Break down 85-line complex JSON parsing method into smaller helper methods
-**Depends on**: Phase 26
-**Research**: Unlikely (code refactoring)
-**Plans**: TBD
-
-Plans:
-- [x] 27-01: Refactor parse_json_flexibly with helper methods and unit tests — completed 2026-01-11
-
-#### Phase 28: Standardize Error Handling
-
-**Goal**: Standardize error handling patterns across auto-categorizer and auto-merchant-detector
-**Depends on**: Phase 27
-**Research**: Unlikely (following existing error patterns)
-**Plans**: 1 plan
-
-Plans:
-- [x] 28-01: Implement consistent error handling across AI providers — completed 2026-01-11
-
-#### Phase 29: Improve Categorization Prompts
-
-**Goal**: Add few-shot examples to prompts to reduce >50% null categorization results
-**Depends on**: Phase 28
-**Research**: Unlikely (prompt engineering)
-**Plans**: TBD
-
-Plans:
-- [ ] 29-01: Enhance prompts with few-shot examples and validate accuracy improvement
+</details>
 
 ---
 
@@ -308,4 +258,4 @@ The AI chat was failing when calling the `get_transactions` function because Ant
 | 26. Extract Thinking Tags | v1.3 | 1/1 | Complete | 2026-01-11 |
 | 27. Simplify JSON Parsing | v1.3 | 1/1 | Complete | 2026-01-11 |
 | 28. Standardize Error Handling | v1.3 | 1/1 | Complete | 2026-01-11 |
-| 29. Improve Categorization Prompts | v1.3 | 0/? | Not started | — |
+| 29. Improve Categorization Prompts | v1.3 | 1/1 | Complete | 2026-01-11 |
