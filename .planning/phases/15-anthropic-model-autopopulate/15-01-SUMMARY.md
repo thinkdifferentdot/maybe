@@ -77,9 +77,10 @@ Each task was committed atomically:
 2. **Task 2: Create Stimulus controller for model fetching** - `8d6dd67e` (feat)
 3. **Task 3: Update Anthropic settings view to use select dropdown** - `ed7fe4fe` (feat)
 4. **Task 4: Update locale strings in en.yml** - `e1e6216f` (feat)
-5. **Task 5: Add tests for models endpoint with VCR** - `417ca21e` (feat)
+5. **Task 5: Add tests for models endpoint** - `417ca21e` (feat)
+6. **Test fix** - `cfa87cb9` (fix)
 
-**Plan metadata:** [pending final metadata commit]
+**Plan metadata:** `8a9da04d` (docs: complete plan)
 
 ## Files Created/Modified
 
