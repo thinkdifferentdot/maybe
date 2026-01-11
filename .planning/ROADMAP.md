@@ -123,6 +123,21 @@ Plans:
 **Details:**
 Urgent bug discovered during manual testing: The auto-categorization settings page was not showing the option labels. Root cause was DS::Toggle component not accepting or displaying label parameter. Fixed by adding label attribute to component and updating template to render label text conditionally.
 
+### Phase 15: Anthropic Model Autopopulate
+
+**Goal**: Change Anthropic model field from text input to select dropdown that fetches available models from Anthropic API
+**Depends on**: Phase 14.2
+**Research**: Unlikely (existing patterns)
+**Plans**: 1 plan
+
+Plans:
+- [x] 15-01: Backend endpoint, Stimulus controller, and view updates for model select dropdown (2026-01-10)
+
+**Status**: Complete (1/1 plan complete - 2026-01-10)
+
+**Details:**
+Feature request to improve Anthropic model selection UX. Converted text input to select dropdown with dynamic model fetching via backend proxy to Anthropic's `/v1/models` API endpoint. Created `/settings/hosting/anthropic_models` GET endpoint that requires admin auth, filters response to only claude- prefixed models, and handles errors gracefully. Implemented `anthropic-model-select` Stimulus controller that fetches models on connect, populates dropdown, manages "Custom..." option for manual entry, and shows loading/error states. Added comprehensive test coverage with mocked API responses.
+
 ### Phase Details
 
 ### Phase 1: Foundation
@@ -281,3 +296,4 @@ The AI chat was failing when calling the `get_transactions` function because Ant
 | 14. Manual Testing | v1.1 | 1/1 | Complete | 2026-01-10 |
 | 14.1. Fix AI Categorize Route | v1.1 | 1/1 | Complete | 2026-01-10 | (INSERTED) |
 | 14.2. Fix Auto-Categorize Page Labels | v1.1 | 1/1 | Complete | 2026-01-10 | (INSERTED) |
+| 15. Anthropic Model Autopopulate | v1.1 | 0/1 | Pending | — | |

@@ -9,13 +9,15 @@ See: .planning/PROJECT.md (updated 2026-01-10)
 
 ## Current Position
 
-Phase: v1.1 AI Auto-Categorization Triggers — Phase 14.2 (Fix Auto-Categorize Page Labels)
-Plan: 14.2 (Fix auto-categorize page labels) — COMPLETE
-Status: Phase 14.2 COMPLETE (1/1 plan)
-Last activity: 2026-01-10 — Fixed missing toggle labels on auto-categorization settings page
+Phase: v1.1 AI Auto-Categorization Triggers — Phase 15 (Anthropic Model Autopopulate)
+Plan: 15-01 (Anthropic model select dropdown with API fetching) — COMPLETE
+Status: Phase 15 COMPLETE (1/1 plan)
+Last activity: 2026-01-10 — Converted Anthropic model field from text input to select dropdown with dynamic model fetching
 
-Progress for Phase 14.2: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100% (1 of 1 plan complete)
-Overall v1.1 Progress: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100% (21 of 21 plans complete)
+Progress for Phase 15: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100% (1 of 1 plan complete)
+Overall v1.1 Progress: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100% (22 of 22 plans complete)
+
+**Summary (15-01):** Converted Anthropic model field from text input to select dropdown with dynamic model fetching from Anthropic API. Created `/settings/hosting/anthropic_models` backend endpoint that proxies requests to Anthropic's `/v1/models` API. Implemented `anthropic-model-select` Stimulus controller for fetching models on page load, populating select dropdown, and managing "Custom..." option for manual entry. Added comprehensive test coverage with mocked API responses.
 
 **Summary (14.2-01):** Fixed missing toggle labels on auto-categorization settings page. Root cause was DS::Toggle component not accepting or displaying label parameter. Fixed by adding label attribute to component and updating template to render label text conditionally with flex container for proper alignment.
 
@@ -39,13 +41,14 @@ Overall v1.1 Progress: ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100% 
 - Phase 14: Manual Testing — User QA checklist for v1.1 features ✅ COMPLETE
 - Phase 14.1: Fix AI Categorize Route — Fixed 404 error on individual AI categorize button ✅ COMPLETE
 - Phase 14.2: Fix Auto-Categorize Page Labels — Fix missing option labels on auto-categorization settings page ✅ COMPLETE
+- Phase 15: Anthropic Model Autopopulate — Convert model field to select dropdown with API fetching ✅ COMPLETE
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 45 (26 v1.0 + 19 v1.1)
+- Total plans completed: 46 (26 v1.0 + 20 v1.1)
 - Average duration: ~6 min
-- Total execution time: ~275 min
+- Total execution time: ~280 min
 
 **By Phase:**
 
@@ -134,9 +137,10 @@ None.
 ### Roadmap Evolution
 
 - **v1.0 COMPLETE**: Anthropic Support (2026-01-10) — Full provider integration shipped
-- **v1.1 COMPLETE**: AI Auto-Categorization Triggers — All 5 phases complete (settings, import triggers, UI actions, testing & docs, manual testing)
+- **v1.1 IN PROGRESS**: AI Auto-Categorization Triggers — 5 phases + 2 urgent fixes complete, 1 pending phase
 - **Phase 14.1 INSERTED** (2026-01-10): Fix AI categorize route — Urgent bug discovered during manual testing, POST to `/transactions/ai_categorization` returns 404 — COMPLETE
 - **Phase 14.2 INSERTED** (2026-01-10): Fix Auto-Categorize Page Labels — Urgent bug discovered during manual testing, auto-categorization settings page not showing option labels — COMPLETE
+- **Phase 15 ADDED** (2026-01-10): Anthropic Model Autopopulate — Feature request to convert Anthropic model field from text input to select dropdown that fetches available models from Anthropic API — PENDING
 
 ### Blockers/Concerns
 
