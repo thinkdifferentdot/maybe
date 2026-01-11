@@ -133,8 +133,9 @@ class Settings::HostingsController < ApplicationController
         response = client.models.list(limit: 100)
 
         # Convert response to array of model hashes
-        # The response is a Page object that can be iterated directly
-        response.each do |model|
+        # The response is a Page object with a data attribute
+        models_data = response.data.to_a || []
+        models_data.each do |model|
           # Only include claude- models (the ones supported by our system)
           if model.id.start_with?("claude-")
             models << {
