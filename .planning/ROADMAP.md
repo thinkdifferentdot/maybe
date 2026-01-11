@@ -52,14 +52,13 @@ See [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md) for full details.
 </details>
 
 <details>
-<summary>✅ v1.2 Anthropic Feature Parity (Phases 16-20) — SHIPPED 2026-01-11</summary>
+<summary>✅ v1.2 Anthropic Feature Parity (Phases 16-18, 20) — SHIPPED 2026-01-11</summary>
 
-**Milestone Goal:** Achieve feature parity between OpenAI and Anthropic provider implementations.
+See [milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md) for full details.
 
 - [x] Phase 16: Real Streaming Support (1/1 plans) — completed 2026-01-10
 - [x] Phase 17: Auto-Categorization Test Coverage (1/1 plans) — completed 2026-01-10
 - [x] Phase 18: Fuzzy Category & Merchant Matching (1/1 plans) — completed 2026-01-11
-- Phase 19: Flexible JSON Parsing — REMOVED (deferred to v1.3 tech debt)
 - [x] Phase 20: Extract UsageRecorder Concern (1/1 plans) — completed 2026-01-11
 
 </details>

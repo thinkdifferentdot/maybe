@@ -6,9 +6,9 @@ Add native Anthropic Claude support to Sure (self-hosted financial tracking app)
 
 ## Current State
 
-**Shipped:** v1.0 Anthropic Support (2026-01-10)
+**Shipped:** v1.2 Anthropic Feature Parity (2026-01-11)
 
-The v1.0 milestone delivered full Anthropic Claude integration as a first-class LLM provider alongside OpenAI. Users can now select their AI provider through a settings dropdown and configure API keys for either provider. All AI features (chat, auto-categorization, merchant detection) work with both providers.
+The v1.2 milestone achieved feature parity between OpenAI and Anthropic implementations. Anthropic now has real streaming support for chat, fuzzy category/merchant matching for better normalization, and shares a centralized UsageRecorder concern with OpenAI for DRY code. Both providers are now fully equivalent in capabilities.
 
 ## Core Value
 
@@ -26,6 +26,9 @@ The v1.0 milestone delivered full Anthropic Claude integration as a first-class 
 - ✓ Support all AI operations with Anthropic: chat_response, auto_categorize, auto_detect_merchants — v1.0
 - ✓ Add Anthropic model pricing to `LlmUsage` for cost tracking — v1.0
 - ✓ Ensure Langfuse tracing works for Anthropic requests — v1.0
+- ✓ Real streaming support for Anthropic chat responses — v1.2
+- ✓ Fuzzy category/merchant matching for Anthropic (feature parity with OpenAI) — v1.2
+- ✓ Shared UsageRecorder concern for DRY code across providers — v1.2
 
 ### Active
 
@@ -33,9 +36,9 @@ The v1.0 milestone delivered full Anthropic Claude integration as a first-class 
 
 ### Out of Scope
 
-- **Streaming support for Anthropic** — Start with synchronous responses, add streaming later if needed (deferred from v1.0)
 - **Multi-provider routing** — Using OpenAI for some features and Anthropic for others; users select one provider globally
 - **Model comparison/testing tools** — Just make it work, not optimize model selection
+- **Flexible JSON parsing** — Deferred to v1.3 technical debt work (Phase 19)
 
 ## Context
 
@@ -45,6 +48,8 @@ The v1.0 milestone delivered full Anthropic Claude integration as a first-class 
 - `Provider::Openai` (`app/models/provider/openai.rb`) — Uses `ruby-openai` gem v8.1.0
 - `Provider::Anthropic` (`app/models/provider/anthropic.rb`) — Uses `anthropic` gem v1.16.3 (added in v1.0)
 - `Provider::Registry` (`app/models/provider/registry.rb`) — Manages provider discovery for both `openai` and `anthropic` for LLM concept
+- `Provider::Concerns::UsageRecorder` (`app/models/provider/concerns/usage_recorder.rb`) — Shared concern for usage recording (added in v1.2)
+- `Provider::Anthropic::ChatStreamParser` (`app/models/provider/anthropic/chat_stream_parser.rb`) — Parses Anthropic streaming events (added in v1.2)
 - `Setting` model (`app/models/setting.rb`) — Stores configuration with ENV fallbacks for both providers
 - `LlmUsage` model — Tracks token usage and costs per model for both providers
 - Langfuse integration for observability (works for both providers)
@@ -54,8 +59,10 @@ The v1.0 milestone delivered full Anthropic Claude integration as a first-class 
 - Implement `auto_categorize`, `auto_detect_merchants`, `chat_response` methods
 - Use `with_provider_response` wrapper for error handling
 - Support Langfuse tracing via `create_langfuse_trace` and `log_langfuse_generation`
-- Record usage via `record_llm_usage`
+- Record usage via shared `Provider::Concerns::UsageRecorder` (format-detecting for Hash/BaseModel)
 - Anthropic-specific: ChatConfig/ChatParser pattern for API format conversion, token field mapping (input/output_tokens -> prompt/completion_tokens)
+- Anthropic streaming: ChatStreamParser converts MessageStream events to ChatStreamChunk format
+- Fuzzy matching: normalize_category_name applies exact → case-insensitive → fuzzy → raw fallback
 
 **Technical notes:**
 - Anthropic SDK returns BaseModel objects with symbol keys (not string keys like OpenAI)
@@ -83,6 +90,9 @@ The v1.0 milestone delivered full Anthropic Claude integration as a first-class 
 | System parameter for instructions (Anthropic) | Anthropic convention uses separate "system" parameter, not in messages array | ✓ Good — Follows Anthropic best practices |
 | ANTHROPIC_API_KEY ENV variable name | Matches official gem convention | ✓ Good — Consistent with documentation |
 | Default provider is "openai" | Backward compatibility for existing installations | ✓ Good — No breaking changes for existing users |
+| Real streaming for Anthropic (v1.2) | Users expect progressive text output, not all-at-once responses | ✓ Good — ChatStreamParser handles all event types |
+| Shared UsageRecorder concern (v1.2) | DRY principle — eliminate 160+ lines of duplicate code | ✓ Good — Format detection handles both Hash and BaseModel |
+| Port fuzzy matching from OpenAI (v1.2) | Feature parity — Anthropic should match OpenAI's normalization capabilities | ✓ Good — Synonym and substring matching working |
 
 ---
-*Last updated: 2026-01-10 after v1.0 milestone*
+*Last updated: 2026-01-11 after v1.2 milestone*

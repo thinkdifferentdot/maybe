@@ -2,7 +2,7 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-01-10)
+See: .planning/PROJECT.md (updated 2026-01-11)
 
 **Core value:** Smooth UX configuration — Users select AI provider through settings dropdown
 **Current focus:** Milestone v1.3 — Codebase Health
@@ -12,16 +12,18 @@ See: .planning/PROJECT.md (updated 2026-01-10)
 Phase: Phase 24 of 29 (Env Example Updates)
 Plan: Not started
 Status: Ready to plan
-Last activity: 2026-01-11 — Milestone v1.3 created
+Last activity: 2026-01-11 — Milestone v1.2 complete
 
 Progress for Phase 24: ░░░░░░░░░░ 0%
 Overall v1.3 Progress: ░░░░░░░░░░ 0% (0 of 6 phases complete)
 
-**Summary (20-01):** Extracted duplicated usage recording code into shared Provider::Concerns::UsageRecorder module. Eliminated ~160 lines of duplicate code across AutoCategorizer, AutoMerchantDetector, and OpenAI concern. Format-detecting extract_tokens helper handles both Hash (OpenAI) and BaseModel (Anthropic) usage data formats. Backward-compatible alias preserves existing OpenAI includes. All 26 provider tests passing.
-
 **✅ v1.2 Milestone COMPLETE:** Anthropic Feature Parity achieved.
 
+**Summary (20-01):** Extracted duplicated usage recording code into shared Provider::Concerns::UsageRecorder module. Eliminated ~160 lines of duplicate code across AutoCategorizer, AutoMerchantDetector, and OpenAI concern. Format-detecting extract_tokens helper handles both Hash (OpenAI) and BaseModel (Anthropic) usage data formats. Backward-compatible alias preserves existing OpenAI includes. All 26 provider tests passing.
+
 **Summary (18-01):** Ported fuzzy name matching from OpenAI to Anthropic, enabling better category/merchant normalization with synonym and substring matching. Added fuzzy_name_match? and find_fuzzy_category_match methods to Provider::Anthropic::AutoCategorizer. Updated normalize_category_name to apply fuzzy matching as fallback. Added 3 tests validating fuzzy matching behavior. Feature parity achieved for category normalization.
+
+**Summary (17-01):** Added auto_categorize test for Provider::Anthropic, achieving test parity with OpenAI. Recorded VCR cassette for Anthropic auto_categorize API call. Verified all 12 Anthropic tests pass with no regressions.
 
 **Summary (16-01):** Implemented token-by-token streaming for Anthropic chat responses using MessageStream API. Created Provider::Anthropic::ChatStreamParser to convert MessageStream events to ChatStreamChunk format. Updated Provider::Anthropic#chat_response to use client.messages.stream() when streamer provided. Added comprehensive test coverage (13 tests) for ChatStreamParser event handling.
 
@@ -52,10 +54,10 @@ Overall v1.3 Progress: ░░░░░░░░░░ 0% (0 of 6 phases complete
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 46 (26 v1.0 + 20 v1.1)
-- Total commits: 48 (implementation + fixes)
+- Total plans completed: 50 (26 v1.0 + 20 v1.1 + 4 v1.2)
+- Total commits: 54 (implementation + fixes)
 - Average duration: ~6 min
-- Total execution time: ~280 min
+- Total execution time: ~300 min
 
 **By Phase:**
 
@@ -78,6 +80,12 @@ Overall v1.3 Progress: ░░░░░░░░░░ 0% (0 of 6 phases complete
 | 14 (Manual Testing) | 1 | <1 min | <1 min |
 | 14.1 (Fix AI Categorize Route) | 1 | ~5 min | ~5 min |
 | 14.2 (Fix Auto-Categorize Labels) | 1 | ~1 min | ~1 min |
+| 15 (Anthropic Model Autopopulate) | 1 | ~10 min | ~10 min |
+| 16 (Real Streaming Support) | 1 | ~5 min | ~5 min |
+| 17 (Auto-Categorization Test Coverage) | 1 | ~3 min | ~3 min |
+| 18 (Fuzzy Category & Merchant Matching) | 1 | ~2 min | ~2 min |
+| 20 (Extract UsageRecorder Concern) | 1 | ~8 min | ~8 min |
+
 ## Accumulated Context
 
 ### v1.0 Milestone Summary
@@ -95,6 +103,21 @@ Overall v1.3 Progress: ░░░░░░░░░░ 0% (0 of 6 phases complete
 - 6,372 lines added
 - 59 milestone-related commits
 - ~1 day development time (2026-01-09 → 2026-01-10)
+
+### v1.2 Milestone Summary
+
+**Delivered:**
+- Real streaming support for Anthropic chat responses using MessageStream API
+- ChatStreamParser for converting Anthropic stream events to ChatStreamChunk format
+- Auto-categorization test coverage matching OpenAI implementation
+- Fuzzy category/merchant matching ported from OpenAI to Anthropic
+- Shared Provider::Concerns::UsageRecorder module eliminating ~160 lines of duplicate code
+
+**Stats:**
+- 29 files changed
+- +4,086 lines added, -231 removed (net +3,855)
+- 4 phases, 4 plans
+- ~1 day development time (2026-01-10 → 2026-01-11)
 
 ### v1.1 Milestone Progress
 
