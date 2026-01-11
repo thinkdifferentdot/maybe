@@ -9,13 +9,15 @@ See: .planning/PROJECT.md (updated 2026-01-10)
 
 ## Current Position
 
-Phase: Phase 16 of 21 (Real Streaming Support)
+Phase: Phase 18 of 21 (Fuzzy Category & Merchant Matching)
 Plan: 1 of 1 in current phase
 Status: Phase complete
-Last activity: 2026-01-10 — Completed 16-01-PLAN.md
+Last activity: 2026-01-11 — Completed 18-01-PLAN.md
 
-Progress for Phase 16: ██████████ 100%
-Overall v1.2 Progress: ██░░░░░░░░ 17% (1 of 6 phases complete)
+Progress for Phase 18: ██████████ 100%
+Overall v1.2 Progress: ███░░░░░░░ 33% (2 of 6 phases complete)
+
+**Summary (18-01):** Ported fuzzy name matching from OpenAI to Anthropic, enabling better category/merchant normalization with synonym and substring matching. Added fuzzy_name_match? and find_fuzzy_category_match methods to Provider::Anthropic::AutoCategorizer. Updated normalize_category_name to apply fuzzy matching as fallback. Added 3 tests validating fuzzy matching behavior. Feature parity achieved for category normalization.
 
 **Summary (16-01):** Implemented token-by-token streaming for Anthropic chat responses using MessageStream API. Created Provider::Anthropic::ChatStreamParser to convert MessageStream events to ChatStreamChunk format. Updated Provider::Anthropic#chat_response to use client.messages.stream() when streamer provided. Added comprehensive test coverage (13 tests) for ChatStreamParser event handling.
 
@@ -147,6 +149,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-10
-Stopped at: Completed 16-01-PLAN.md
+Last session: 2026-01-11
+Stopped at: Completed 18-01-PLAN.md
 Resume file: None

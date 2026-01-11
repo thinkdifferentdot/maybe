@@ -70,20 +70,20 @@ Plans:
 **Goal**: Add missing auto-categorization test to match OpenAI test coverage
 **Depends on**: Phase 16
 **Research**: Unlikely (test patterns established)
-**Plans**: TBD
+**Status**: Complete (2026-01-10)
 
 Plans:
-- [ ] 17-01: Add auto_categorize test with VCR cassette (run /gsd:plan-phase 17 to break down)
+- [x] 17-01: Add auto_categorize test with VCR cassette
 
 #### Phase 18: Fuzzy Category & Merchant Matching
 
 **Goal**: Add fuzzy name matching for better category/merchant normalization
 **Depends on**: Phase 17
 **Research**: Unlikely (porting existing patterns)
-**Plans**: TBD
+**Status**: Complete (2026-01-11)
 
 Plans:
-- [ ] 18-01: Port fuzzy_name_match and find_fuzzy_category_match from OpenAI (run /gsd:plan-phase 18 to break down)
+- [x] 18-01: Port fuzzy_name_match and find_fuzzy_category_match from OpenAI
 
 #### Phase 19: Flexible JSON Parsing
 
