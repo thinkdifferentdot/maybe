@@ -108,8 +108,10 @@ docker compose -f "$COMPOSE_FILE" run --rm web bin/rails assets:precompile
 echo -e "${GREEN}✓ Assets precompiled${NC}"
 echo ""
 
-# 5. Restart services with minimal downtime
+# 5. Stop existing containers and restart
 echo -e "${YELLOW}[5/5] Restarting services...${NC}"
+# Stop any existing containers to avoid port conflicts
+docker compose -f "$COMPOSE_FILE" down 2>/dev/null || true
 docker compose -f "$COMPOSE_FILE" up -d
 echo -e "${GREEN}✓ Services restarted${NC}"
 echo ""
