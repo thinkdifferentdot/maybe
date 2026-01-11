@@ -233,7 +233,59 @@ class Provider::Anthropic::AutoCategorizer
       case_insensitive_match = user_categories.find { |c| c[:name].to_s.downcase == normalized.downcase }
       return case_insensitive_match[:name] if case_insensitive_match
 
+      # Try partial/fuzzy match (for common variations)
+      fuzzy_match = find_fuzzy_category_match(normalized)
+      return fuzzy_match if fuzzy_match
+
       normalized
+    end
+
+    # Find a fuzzy match for category names with common variations
+    def find_fuzzy_category_match(category_name)
+      # Ensure string input for string operations
+      input_str = category_name.to_s
+      normalized_input = input_str.downcase.gsub(/[^a-z0-9]/, "")
+
+      user_categories.each do |cat|
+        cat_name_str = cat[:name].to_s
+        normalized_cat = cat_name_str.downcase.gsub(/[^a-z0-9]/, "")
+
+        # Check if one contains the other
+        return cat[:name] if normalized_input.include?(normalized_cat) || normalized_cat.include?(normalized_input)
+
+        # Check common abbreviations/variations
+        return cat[:name] if fuzzy_name_match?(input_str, cat_name_str)
+      end
+
+      nil
+    end
+
+    # Handle common naming variations
+    def fuzzy_name_match?(input, category)
+      variations = {
+        "gas" => [ "gas & fuel", "gas and fuel", "fuel", "gasoline" ],
+        "restaurants" => [ "restaurant", "dining", "food" ],
+        "groceries" => [ "grocery", "supermarket", "food store" ],
+        "streaming" => [ "streaming services", "streaming service" ],
+        "rideshare" => [ "ride share", "ride-share", "uber", "lyft" ],
+        "coffee" => [ "coffee shops", "coffee shop", "cafe" ],
+        "fast food" => [ "fastfood", "quick service" ],
+        "gym" => [ "gym & fitness", "fitness", "gym and fitness" ],
+        "flights" => [ "flight", "airline", "airlines", "airfare" ],
+        "hotels" => [ "hotel", "lodging", "accommodation" ]
+      }
+
+      # Ensure string inputs for string operations
+      input_lower = input.to_s.downcase
+      category_lower = category.to_s.downcase
+
+      variations.each do |_key, synonyms|
+        if synonyms.include?(input_lower) && synonyms.include?(category_lower)
+          return true
+        end
+      end
+
+      false
     end
 
     def record_usage(model_name, usage_data, operation:, metadata: {})
