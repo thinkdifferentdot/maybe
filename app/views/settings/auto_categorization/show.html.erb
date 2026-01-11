@@ -1,26 +1,49 @@
 <%= content_for :page_title, t(".page_title") %>
 
-<%= settings_section title: t(".page_title"), subtitle: t(".page_subtitle") do %>
+<div class="bg-container shadow-border-xs rounded-xl p-4 space-y-4">
+  <p class="text-secondary text-sm"><%= t(".page_subtitle") %></p>
+
   <%= styled_form_with model: Setting.new,
                        url: settings_auto_categorization_path,
                        method: :patch do |form| %>
 
     <div class="space-y-4">
-      <%= form.toggle :ai_categorize_on_import,
-                      label: t(".import_label"),
-                      checked: Setting.ai_categorize_on_import? %>
+      <!-- Import row -->
+      <div class="flex items-center justify-between py-3 border-b border-secondary last:border-0">
+        <div class="space-y-1 pr-4">
+          <p class="text-sm font-medium text-primary"><%= t(".import_title") %></p>
+          <p class="text-secondary text-sm"><%= t(".import_description") %></p>
+        </div>
+        <%= form.toggle :ai_categorize_on_import,
+                        label: false,
+                        checked: Setting.ai_categorize_on_import? %>
+      </div>
 
-      <%= form.toggle :ai_categorize_on_sync,
-                      label: t(".sync_label"),
-                      checked: Setting.ai_categorize_on_sync? %>
+      <!-- Sync row -->
+      <div class="flex items-center justify-between py-3 border-b border-secondary last:border-0">
+        <div class="space-y-1 pr-4">
+          <p class="text-sm font-medium text-primary"><%= t(".sync_title") %></p>
+          <p class="text-secondary text-sm"><%= t(".sync_description") %></p>
+        </div>
+        <%= form.toggle :ai_categorize_on_sync,
+                        label: false,
+                        checked: Setting.ai_categorize_on_sync? %>
+      </div>
 
-      <%= form.toggle :ai_categorize_on_ui_action,
-                      label: t(".ui_action_label"),
-                      checked: Setting.ai_categorize_on_ui_action? %>
+      <!-- UI action row -->
+      <div class="flex items-center justify-between py-3">
+        <div class="space-y-1 pr-4">
+          <p class="text-sm font-medium text-primary"><%= t(".ui_action_title") %></p>
+          <p class="text-secondary text-sm"><%= t(".ui_action_description") %></p>
+        </div>
+        <%= form.toggle :ai_categorize_on_ui_action,
+                        label: false,
+                        checked: Setting.ai_categorize_on_ui_action? %>
+      </div>
     </div>
 
     <div class="mt-6">
       <%= form.submit t(".save_button") %>
     </div>
   <% end %>
-<% end %>
+</div>

@@ -4,10 +4,16 @@ en:
     auto_categorization:
       show:
         page_title: Auto-Categorization
-        page_subtitle: Choose when AI should automatically categorize your transactions
-        import_label: Categorize on CSV import
-        sync_label: Categorize on account sync
-        ui_action_label: Categorize on manual action
+        page_subtitle: Configure when AI should automatically categorize transactions
+        # Import setting
+        import_title: Categorize on CSV import
+        import_description: Automatically categorize transactions when uploading CSV files
+        # Sync setting
+        sync_title: Categorize on account sync
+        sync_description: Automatically categorize new transactions from bank syncs
+        # UI action setting
+        ui_action_title: Categorize on manual action
+        ui_action_description: Show AI categorize button for manual categorization
         save_button: Save Changes
         success: Auto-categorization settings updated
         not_authorized: You don't have permission to change settings
