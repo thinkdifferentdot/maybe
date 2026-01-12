@@ -175,10 +175,13 @@ class TransactionsController < ApplicationController
 
   def approve_ai
     @entry = Current.family.entries.find(params[:id])
-    transaction = @entry.transaction
+    transaction = @entry.entryable
 
     Current.family.learn_pattern_from!(transaction)
     transaction.lock_attr!(:category_id)
+
+    # Set the feedback state so the new UI shows the approved badge
+    transaction.update!(extra: transaction.extra.merge("ai_feedback" => "approved", "ai_feedback_given_at" => Time.current.iso8601))
 
     # Remove the enrichment record so approve buttons disappear
     transaction.data_enrichments
@@ -195,18 +198,19 @@ class TransactionsController < ApplicationController
 
   def reject_ai
     @entry = Current.family.entries.find(params[:id])
-    transaction = @entry.transaction
+    transaction = @entry.entryable
 
-    # Remove the AI-assigned category
-    transaction.update!(category_id: nil)
+    # Build the new extra hash with feedback state and without confidence score
+    new_extra = transaction.extra.merge("ai_feedback" => "rejected", "ai_feedback_given_at" => Time.current.iso8601)
+    new_extra.delete("ai_categorization_confidence")
+
+    # Update both category and extra in one go
+    transaction.update!(category_id: nil, extra: new_extra)
 
     # Remove the enrichment record so it doesn't show as "recent AI" anymore
     transaction.data_enrichments
       .where(source: "ai", attribute_name: "category_id")
       .destroy_all
-
-    # Clear the confidence score so the badge doesn't appear
-    transaction.update_column(:extra, transaction.extra.except("ai_categorization_confidence"))
 
     # Unlock the category_id attribute so it can be re-categorized
     transaction.unlock_attr!(:category_id)

@@ -7,10 +7,12 @@ class Transaction < ApplicationRecord
   has_many :taggings, as: :taggable, dependent: :destroy
   has_many :tags, through: :taggings
   has_many :data_enrichments, as: :enrichable, dependent: :destroy
+  has_many :categorization_feedbacks, foreign_key: :txn_id, dependent: :nullify
 
   accepts_nested_attributes_for :taggings, allow_destroy: true
 
   after_save :clear_merchant_unlinked_association, if: :merchant_id_previously_changed?
+  after_save :update_categorization_feedback, if: :category_id_previously_changed?
 
   enum :kind, {
     standard: "standard", # A regular transaction, included in budget analytics
@@ -70,7 +72,7 @@ class Transaction < ApplicationRecord
 
   # Check if user has given feedback on this AI categorization
   def ai_feedback_given?
-    extra&.dig("ai_feedback_given").present?
+    extra&.dig("ai_feedback").present?
   end
 
   private
@@ -81,5 +83,12 @@ class Transaction < ApplicationRecord
       return unless family
 
       FamilyMerchantAssociation.where(family: family, merchant: merchant).delete_all
+    end
+
+    def update_categorization_feedback
+      return unless category_id_previously_changed?
+
+      # Update any AI categorization feedback for this transaction
+      categorization_feedbacks.where(final_category_id: nil).update_all(final_category_id: category_id)
     end
 end

@@ -28,6 +28,18 @@ class TransactionCategoriesController < ApplicationController
             partial: "categories/menu",
             locals: { transaction: transaction }
           ),
+          # Refresh desktop transaction_category wrapper (includes AI feedback buttons)
+          turbo_stream.replace(
+            "#{dom_id(transaction, "category_menu")}_desktop",
+            partial: "transactions/transaction_category",
+            locals: { transaction: transaction, id_suffix: "desktop" }
+          ),
+          # Refresh mobile transaction_category wrapper (includes AI feedback buttons)
+          turbo_stream.replace(
+            "#{dom_id(transaction, "category_menu")}_mobile",
+            partial: "transactions/transaction_category",
+            locals: { transaction: transaction, id_suffix: "mobile" }
+          ),
           turbo_stream.replace(
             "category_name_mobile_#{transaction.id}",
             partial: "categories/category_name_mobile",

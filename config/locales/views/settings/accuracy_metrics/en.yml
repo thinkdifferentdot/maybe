@@ -1,0 +1,23 @@
+---
+en:
+  settings:
+    accuracy_metrics:
+      show:
+        page_title: AI Accuracy
+        home: Home
+        not_authorized: You don't have permission to view accuracy metrics
+        time_window_title: Time period
+        time_windows:
+          7_days: 7 days
+          30_days: 30 days
+          all_time: All time
+        accuracy_percent: "%{percent}%"
+        raw_counts: "(%{correct}/%{total} correct)"
+        view_misses: View misses
+        close_drill_down: Close
+        recent_misses_title: Recent misclassifications for "%{category}"
+        no_misses: No misclassifications found for this category
+        empty_state: No AI categorizations tracked yet. Accuracy metrics will appear here once you've used AI categorization.
+        info_accuracy: "Accuracy shows how often AI's suggested category was accepted. If you don't change a category after AI categorization, it counts as correct."
+        info_misses: "Click \"View misses\" next to any category below 100% to see transactions that were recategorized and understand why AI misclassified them."
+        uncategorized: Uncategorized

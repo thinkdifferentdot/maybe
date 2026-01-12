@@ -1,0 +1,8 @@
+<%# Hide AI feedback buttons when transaction is no longer AI-categorized %>
+<%= turbo_stream.replace "#{dom_id(@transaction, "category_menu")}_desktop" do %>
+  <%= render "transactions/transaction_category", transaction: @transaction.reload, id_suffix: "desktop" %>
+<% end %>
+
+<%= turbo_stream.replace "#{dom_id(@transaction, "category_menu")}_mobile" do %>
+  <%= render "transactions/transaction_category", transaction: @transaction.reload, id_suffix: "mobile" %>
+<% end %>

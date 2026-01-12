@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_01_10_103739) do
+ActiveRecord::Schema[7.2].define(version: 2026_01_11_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -184,6 +184,19 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_10_103739) do
     t.string "classification", default: "expense", null: false
     t.string "lucide_icon", default: "shapes", null: false
     t.index ["family_id"], name: "index_categories_on_family_id"
+  end
+
+  create_table "categorization_feedbacks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "family_id", null: false
+    t.uuid "txn_id", null: false
+    t.uuid "suggested_category_id", null: false
+    t.uuid "final_category_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["family_id", "created_at"], name: "index_categorization_feedbacks_on_family_id_and_created_at"
+    t.index ["family_id"], name: "index_categorization_feedbacks_on_family_id"
+    t.index ["suggested_category_id", "final_category_id"], name: "idx_on_suggested_category_id_final_category_id_6db04ae5f1"
+    t.index ["txn_id"], name: "index_categorization_feedbacks_on_txn_id"
   end
 
   create_table "chats", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

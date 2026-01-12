@@ -9,7 +9,7 @@ See: .planning/PROJECT.md (updated 2026-01-11)
 
 ## Current Position
 
-Phase: 30 of 33 (LearnedPattern Integration)
+Phase: 30 of 32 (LearnedPattern Integration)
 Plan: Not started
 Status: Ready to plan
 Last activity: 2026-01-11 — Milestone v1.4 created
@@ -52,11 +52,10 @@ Progress: ░░░░░░░░░░ 0%
 
 ## Next Milestone Goals
 
-**v1.4: AI Observability** — IN PROGRESS (4 phases)
+**v1.4: AI Observability** — IN PROGRESS (3 phases)
 - LearnedPattern Integration (Phase 30)
 - Feedback UI (Phase 31)
-- Evaluation Runner (Phase 32)
-- Accuracy Metrics (Phase 33)
+- Accuracy Metrics (Phase 32)
 
 ## Performance Metrics
 

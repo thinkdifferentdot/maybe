@@ -12,7 +12,7 @@
                               ["x-circle", "destructive"]
                             end %>
 
-  <span class="inline-flex items-center" title="AI confidence score">
+  <span id="<%= dom_id(transaction, "confidence_badge") %>" class="inline-flex items-center" title="AI confidence score">
     <%= icon(icon_key, size: "xs", color: icon_color) %>
   </span>
 <% end %>

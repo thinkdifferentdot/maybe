@@ -30,7 +30,7 @@
               <%= render "transactions/confidence_badge", transaction: transaction %>
             </div>
             <div class="col-span-2 md:col-span-1 flex justify-center">
-              <%= render "transactions/ai_feedback_buttons", transaction: transaction %>
+              <%= render "transactions/ai_feedback_buttons", transaction: transaction, entry: transaction.entry %>
             </div>
           </div>
         <% end %>

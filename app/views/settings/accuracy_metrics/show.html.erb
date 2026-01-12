@@ -1,0 +1,170 @@
+<%= content_for :page_title, t(".page_title") %>
+
+<div class="space-y-6">
+  <!-- Time window selector -->
+  <div class="bg-container shadow-border-xs rounded-xl p-4">
+    <h2 class="text-lg font-medium text-primary mb-4"><%= t(".time_window_title") %></h2>
+    <div class="flex items-center gap-2">
+      <%= link_to settings_accuracy_metrics_path(time_window: "7_days"),
+          class: time_window_tab_class("7_days") do %>
+        <%= t(".time_windows.7_days") %>
+      <% end %>
+      <%= link_to settings_accuracy_metrics_path(time_window: "30_days"),
+          class: time_window_tab_class("30_days") do %>
+        <%= t(".time_windows.30_days") %>
+      <% end %>
+      <%= link_to settings_accuracy_metrics_path(time_window: "all_time"),
+          class: time_window_tab_class("all_time") do %>
+        <%= t(".time_windows.all_time") %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Category metrics -->
+  <div class="bg-container shadow-border-xs rounded-xl p-4">
+    <% if @category_metrics.any? %>
+      <div class="space-y-4">
+        <% @category_metrics.sort_by { |cat, metrics| metrics[:accuracy] }.reverse.each do |category, metrics| %>
+          <%
+            accuracy = metrics[:accuracy]
+            correct = metrics[:correct]
+            total = metrics[:total]
+            badge_variant = accuracy >= 0.8 ? :success : (accuracy >= 0.6 ? :warning : :error)
+            category_name = category.name
+            show_drill_down = accuracy < 1.0
+            is_selected = @selected_category_id == category.id
+          %>
+
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <%= link_to category_name, category_path(category), class: "text-sm font-medium text-primary hover:text-primary-hover" %>
+
+                <!-- Accuracy badge -->
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium <%= accuracy_badge_classes(badge_variant) %>">
+                  <%= t(".accuracy_percent", percent: (accuracy * 100).round) %>
+                </span>
+
+                <!-- Raw counts -->
+                <span class="text-xs text-secondary">
+                  <%= t(".raw_counts", correct: correct, total: total) %>
+                </span>
+
+                <!-- Drill-down toggle -->
+                <% if show_drill_down %>
+                  <% if is_selected %>
+                    <%= link_to settings_accuracy_metrics_path(time_window: @time_window),
+                        class: "text-xs text-primary hover:text-primary-hover flex items-center gap-1" do %>
+                      <%= icon("x", size: :xs, color: "muted") %>
+                      <%= t(".close_drill_down") %>
+                    <% end %>
+                  <% else %>
+                    <%= link_to settings_accuracy_metrics_path(time_window: @time_window, category_id: category.id),
+                        class: "text-xs text-primary hover:text-primary-hover flex items-center gap-1" do %>
+                      <%= icon("chevron-down", size: :xs, color: "muted") %>
+                      <%= t(".view_misses") %>
+                    <% end %>
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+
+            <!-- Progress bar -->
+            <div class="w-full bg-surface-inset rounded-full h-2">
+              <div class="h-2 rounded-full <%= progress_bar_classes(badge_variant) %>" style="width: <%= accuracy * 100 %>%;"></div>
+            </div>
+
+            <!-- Recent misses drill-down -->
+            <% if show_drill_down && is_selected && @recent_misses.any? %>
+              <div class="mt-3 pl-4 border-l-2 border-secondary">
+                <h4 class="text-sm font-medium text-primary mb-2"><%= t(".recent_misses_title", category: category_name) %></h4>
+                <div class="space-y-2">
+                  <% @recent_misses.each do |feedback| %>
+                    <%
+                      txn = feedback.transaction
+                      suggested = feedback.suggested_category
+                      final_category = feedback.final_category
+                      merchant_name = txn.merchant_name
+                      date = txn.date
+                      amount = txn.amount
+                    %>
+                    <div class="bg-surface-inset rounded-lg p-3 text-sm">
+                      <div class="flex items-start justify-between gap-4">
+                        <div class="space-y-1">
+                          <div class="flex items-center gap-2">
+                            <span class="text-primary font-medium"><%= merchant_name %></span>
+                            <span class="text-secondary text-xs"><%= l(date, format: :short) %></span>
+                          </div>
+                          <div class="text-secondary text-xs">
+                            <%= amount.format %> &mdash;
+                            <span class="line-through text-decoration-muted"><%= suggested.name %></span>
+                            &rarr;
+                            <span class="text-primary"><%= final_category&.name || t(".uncategorized") %></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            <% elsif show_drill_down && is_selected && @recent_misses.empty? %>
+              <div class="mt-3 pl-4 border-l-2 border-secondary">
+                <p class="text-sm text-secondary"><%= t(".no_misses") %></p>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <!-- Empty state -->
+      <div class="text-center py-8">
+        <%= icon("bar-chart-2", size: :lg, color: "muted") %>
+        <p class="text-secondary mt-2"><%= t(".empty_state") %></p>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Info section -->
+  <div class="bg-container shadow-border-xs rounded-xl p-4">
+    <div class="flex items-start gap-3">
+      <%= icon("info", size: :sm, color: "muted") %>
+      <div class="text-sm text-secondary">
+        <p><%= t(".info_accuracy") %></p>
+        <p class="mt-1"><%= t(".info_misses") %></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%# Helper methods for this view %>
+<%#
+def time_window_tab_class(window)
+  if @time_window == window
+    "px-4 py-2 rounded-lg text-sm font-medium bg-surface-inset text-primary"
+  else
+    "px-4 py-2 rounded-lg text-sm font-medium text-secondary hover:bg-surface-inset-hover"
+  end
+end
+
+def accuracy_badge_classes(variant)
+  case variant
+  when :success
+    "bg-green-50 text-green-700"
+  when :warning
+    "bg-yellow-50 text-yellow-700"
+  when :error
+    "bg-red-50 text-red-700"
+  end
+end
+
+def progress_bar_classes(variant)
+  case variant
+  when :success
+    "bg-green-500"
+  when :warning
+    "bg-yellow-500"
+  when :error
+    "bg-red-500"
+  end
+end
+%>

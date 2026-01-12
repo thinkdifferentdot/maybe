@@ -1,4 +1,4 @@
-<%# locals: (transaction:, id_suffix: nil) %>
+<%# locals: (transaction:, entry:, id_suffix: nil) %>
 
 <% menu_id = id_suffix.present? ? "#{dom_id(transaction, "category_menu")}_#{id_suffix}" : dom_id(transaction, "category_menu") %>
 
@@ -15,5 +15,5 @@
   <% end %>
 
   <%= render "transactions/confidence_badge", transaction: transaction %>
-  <%= render "transactions/ai_feedback_buttons", transaction: transaction %>
+  <%= render "transactions/ai_feedback_buttons", transaction: transaction, entry: entry %>
 </div>

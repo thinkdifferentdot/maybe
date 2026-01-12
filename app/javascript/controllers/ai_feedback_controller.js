@@ -45,6 +45,7 @@ export default class extends Controller {
       .then((html) => {
         // Turbo will handle the stream response automatically
         Turbo.renderStreamMessage(html);
+        this._setLoadingState(false);
       })
       .catch((error) => {
         console.error("[AI Feedback] Error:", error);

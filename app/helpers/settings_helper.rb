@@ -81,4 +81,35 @@ module SettingsHelper
     def self_hosted_and_admin?
       self_hosted? && admin_user?
     end
+
+    # Accuracy metrics view helpers
+    def time_window_tab_class(window)
+      if @time_window == window
+        "px-4 py-2 rounded-lg text-sm font-medium bg-surface-inset text-primary"
+      else
+        "px-4 py-2 rounded-lg text-sm font-medium text-secondary hover:bg-surface-inset-hover"
+      end
+    end
+
+    def accuracy_badge_classes(variant)
+      case variant
+      when :success
+        "bg-green-50 text-green-700"
+      when :warning
+        "bg-yellow-50 text-yellow-700"
+      when :error
+        "bg-red-50 text-red-700"
+      end
+    end
+
+    def progress_bar_classes(variant)
+      case variant
+      when :success
+        "bg-green-500"
+      when :warning
+        "bg-yellow-500"
+      when :error
+        "bg-red-500"
+      end
+    end
 end

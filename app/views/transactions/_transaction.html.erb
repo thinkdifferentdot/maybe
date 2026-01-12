@@ -36,7 +36,7 @@
               <% end %>
             </div>
             <div class="flex md:hidden items-center gap-1 col-span-2 relative">
-              <%= render "transactions/transaction_category", transaction: transaction, id_suffix: "mobile" %>
+              <%= render "transactions/transaction_category", transaction: transaction, entry: entry, id_suffix: "mobile" %>
               <% if transaction.merchant&.logo_url.present? %>
                 <%= image_tag transaction.merchant.logo_url,
                     class: "w-5 h-5 rounded-full absolute -bottom-1 -right-1 border border-secondary pointer-events-none",
@@ -122,7 +122,7 @@
       </div>
 
       <div class="hidden md:flex items-center gap-1 col-span-2">
-        <%= render "transactions/transaction_category", transaction: transaction, id_suffix: "desktop" %>
+        <%= render "transactions/transaction_category", transaction: transaction, entry: entry, id_suffix: "desktop" %>
 
         <%# AI Categorize button %>
         <% if transaction.transfer&.categorizable? || transaction.transfer.nil? %>
@@ -136,28 +136,6 @@
           </button>
         <% end %>
 
-        <%# Approve/Reject buttons for AI-categorized transactions %>
-        <% if transaction.data_enrichments.where(source: "ai", attribute_name: "category_id").any? %>
-          <div class="flex gap-1 ml-1">
-            <%= button_to approve_ai_transaction_path(entry.id),
-                method: :post,
-                form: { data: { turbo_frame: dom_id(entry) } },
-                class: "text-xs bg-green-100 text-green-700 px-2 py-1 rounded hover:bg-green-200 flex items-center gap-1",
-                title: t(".approve_ai_title") do %>
-              <%= icon "check", size: "xs" %>
-              <span class="hidden sm:inline"><%= t(".approve_ai") %></span>
-            <% end %>
-
-            <%= button_to reject_ai_transaction_path(entry.id),
-                method: :post,
-                form: { data: { turbo_frame: dom_id(entry) } },
-                class: "text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200 flex items-center gap-1",
-                title: t(".reject_ai_title") do %>
-              <%= icon "x", size: "xs" %>
-              <span class="hidden sm:inline"><%= t(".reject_ai") %></span>
-            <% end %>
-          </div>
-        <% end %>
       </div>
 
       <div class="shrink-0 col-span-4 lg:col-span-2 ml-auto text-right">

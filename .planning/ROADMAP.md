@@ -106,25 +106,15 @@ Plans:
 Plans:
 - [ ] 31-01: TBD
 
-#### Phase 32: Evaluation Runner
+#### Phase 32: Accuracy Metrics
 
-**Goal**: Create manual evaluation framework for running categorization tests
+**Goal**: Track and display categorization accuracy metrics over time
 **Depends on**: Phase 31
 **Research**: Unlikely (internal patterns)
 **Plans**: TBD
 
 Plans:
 - [ ] 32-01: TBD
-
-#### Phase 33: Accuracy Metrics
-
-**Goal**: Track and display categorization accuracy metrics over time
-**Depends on**: Phase 32
-**Research**: Unlikely (internal patterns)
-**Plans**: TBD
-
-Plans:
-- [ ] 33-01: TBD
 
 ---
 
@@ -299,5 +289,4 @@ The AI chat was failing when calling the `get_transactions` function because Ant
 | 29. Improve Categorization Prompts | v1.3 | 1/1 | Complete | 2026-01-11 |
 | 30. LearnedPattern Integration | v1.4 | 0/? | Not started | - |
 | 31. Feedback UI | v1.4 | 0/? | Not started | - |
-| 32. Evaluation Runner | v1.4 | 0/? | Not started | - |
-| 33. Accuracy Metrics | v1.4 | 0/? | Not started | - |
+| 32. Accuracy Metrics | v1.4 | 0/? | Not started | - |

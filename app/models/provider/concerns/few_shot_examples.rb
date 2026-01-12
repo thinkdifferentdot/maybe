@@ -36,24 +36,42 @@ module Provider::Concerns::FewShotExamples
     end
 
     # Dynamic examples from user's LearnedPattern records
-    # Selects diverse examples (one per category max) to avoid clustering
-    # Samples up to 3 categories for variety
+    # Uses relevance-based merchant matching instead of random sampling.
+    # Finds patterns matching the merchants in the current transaction batch.
     def dynamic_examples
       return [] unless family
 
-      patterns_by_category = family.learned_patterns.includes(:category).group_by(&:category)
+      # Get merchant names from transactions if available
+      merchant_names = extract_merchant_names_from_transactions
 
-      # Sample up to 3 categories, take first pattern from each
-      patterns_by_category.values.sample(3).map(&:first).map do |pattern|
+      # Collect relevant patterns for each merchant, up to 3 total
+      relevant_pattern_set = Set.new
+      merchant_names.each do |merchant|
+        patterns = relevant_patterns(merchant)
+        patterns.each { |p| relevant_pattern_set << p }
+        break if relevant_pattern_set.size >= 3
+      end
+
+      # Convert patterns to example format
+      relevant_pattern_set.first(3).map do |pattern|
         {
           description: pattern.merchant_name,
           category: pattern.category.name
         }
       end
-    rescue ArgumentError => e
-      # Handle case where sample(3) is called on empty array
-      Rails.logger.debug("Could not sample dynamic examples: #{e.message}")
+    rescue => e
+      Rails.logger.debug("Could not build dynamic examples: #{e.message}")
       []
+    end
+
+    # Extract merchant names from transactions array.
+    # Returns array of merchant name strings.
+    def extract_merchant_names_from_transactions
+      return [] unless respond_to?(:transactions)
+
+      transactions.map do |transaction|
+        transaction[:description] || transaction["description"]
+      end.compact.uniq
     end
 
     # Check if a category name exists in the user's available categories
@@ -72,15 +90,95 @@ module Provider::Concerns::FewShotExamples
     end
 
     # Build the few-shot examples text section for prompts
-    # Returns formatted text with EXAMPLES header or empty string
+    # Returns formatted text with EXAMPLES header and optional USER'S PATTERNS section
     def build_few_shot_examples_text
-      examples = build_few_shot_examples
-      return "" if examples.empty?
+      static = static_examples
+      dynamic = dynamic_examples
 
-      <<~EXAMPLES
-        EXAMPLES:
-        #{format_few_shot_examples(examples)}
+      return "" if static.empty? && dynamic.empty?
 
-      EXAMPLES
+      text = +""
+
+      # Add static examples section
+      if static.any?
+        text << "EXAMPLES:\n"
+        text << format_few_shot_examples(static)
+        text << "\n\n"
+      end
+
+      # Add user patterns section if any exist
+      if dynamic.any?
+        text << "USER'S PATTERNS (how this user categorizes):\n"
+        text << format_few_shot_examples(dynamic)
+        text << "\n"
+      end
+
+      text
+    end
+
+    # Find relevant learned patterns for a given merchant name.
+    # Uses fuzzy matching with relevance sorting (exact matches first, then substring similarity).
+    # Returns up to 3 most relevant LearnedPattern records.
+    #
+    # @param merchant_name [String] the merchant name to find patterns for
+    # @return [Array<LearnedPattern>] array of relevant patterns, sorted by relevance
+    def relevant_patterns(merchant_name)
+      return [] unless merchant_name.present? && family
+
+      normalized_input = normalize_merchant(merchant_name)
+
+      # Try exact match first
+      exact_match = family.learned_patterns.includes(:category).find_by(normalized_merchant: normalized_input)
+      return [exact_match] if exact_match
+
+      # Find all substring matches and sort by relevance
+      all_matches = family.learned_patterns.includes(:category).select do |pattern|
+        substring_match?(normalized_input, pattern.normalized_merchant)
+      end
+
+      # Sort by relevance (longer matching substring = higher relevance)
+      sorted_matches = all_matches.sort_by do |pattern|
+        # Calculate match score: negative length so longer matches come first
+        -calculate_match_score(normalized_input, pattern.normalized_merchant)
+      end
+
+      sorted_matches.first(3)
+    rescue => e
+      Rails.logger.debug("Error finding relevant patterns: #{e.message}")
+      []
+    end
+
+    # Normalize a merchant name for pattern matching.
+    # Downcases, removes special characters, and collapses whitespace.
+    # @param str [String] the string to normalize
+    # @return [String] the normalized string
+    def normalize_merchant(str)
+      str.to_s.downcase.gsub(/[^a-z0-9\s]/, "").squeeze(" ").strip
+    end
+
+    # Check if two strings match via substring relationship.
+    # @param input [String] the normalized input string
+    # @param pattern [String] the normalized pattern string
+    # @return [Boolean] true if one string contains the other
+    def substring_match?(input, pattern)
+      return false if input.blank? || pattern.blank?
+
+      # Quality threshold: only match if substring is at least 3 characters
+      (input.include?(pattern) || pattern.include?(input)) && [input.length, pattern.length].min >= 3
+    end
+
+    # Calculate a relevance score for a substring match.
+    # Longer matching substrings get higher scores.
+    # @param input [String] the normalized input string
+    # @param pattern [String] the normalized pattern string
+    # @return [Integer] the match score (higher = more relevant)
+    def calculate_match_score(input, pattern)
+      if input.include?(pattern)
+        pattern.length
+      elsif pattern.include?(input)
+        input.length
+      else
+        0
+      end
     end
 end

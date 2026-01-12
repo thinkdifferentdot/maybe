@@ -8,18 +8,18 @@ class Transactions::AiFeedbacksController < ApplicationController
     @transaction = @entry.entryable
 
     if @transaction.nil?
-      flash[:error] = t("transactions.ai_categorize.error")
       respond_to do |format|
-        format.turbo_stream { head :unprocessable_entity }
+        format.turbo_stream { render "error", status: :unprocessable_entity }
+        format.html { redirect_to transactions_path }
       end
       return
     end
 
     # Validate this is an AI-categorized transaction
     unless @transaction.ai_categorized?
-      flash[:error] = t("transactions.ai_categorize.error")
       respond_to do |format|
-        format.turbo_stream { head :unprocessable_entity }
+        format.turbo_stream { render "error", status: :unprocessable_entity }
+        format.html { redirect_to transactions_path }
       end
       return
     end
@@ -42,18 +42,18 @@ class Transactions::AiFeedbacksController < ApplicationController
     @transaction = @entry.entryable
 
     if @transaction.nil?
-      flash[:error] = t("transactions.ai_categorize.error")
       respond_to do |format|
-        format.turbo_stream { head :unprocessable_entity }
+        format.turbo_stream { render "error", status: :unprocessable_entity }
+        format.html { redirect_to transactions_path }
       end
       return
     end
 
     # Validate this is an AI-categorized transaction
     unless @transaction.ai_categorized?
-      flash[:error] = t("transactions.ai_categorize.error")
       respond_to do |format|
-        format.turbo_stream { head :unprocessable_entity }
+        format.turbo_stream { render "error", status: :unprocessable_entity }
+        format.html { redirect_to transactions_path }
       end
       return
     end
@@ -87,7 +87,8 @@ class Transactions::AiFeedbacksController < ApplicationController
 
   def handle_not_found
     respond_to do |format|
-      format.turbo_stream { head :unprocessable_entity }
+      format.turbo_stream { render "error", status: :not_found }
+      format.html { redirect_to transactions_path }
     end
   end
 end

@@ -75,6 +75,14 @@ class Family::AutoCategorizer
         # Store confidence in extra metadata for UI display
         if was_modified
           transaction.update_column(:extra, transaction.extra.merge("ai_categorization_confidence" => confidence))
+
+          # Record categorization feedback for accuracy metrics
+          CategorizationFeedback.create!(
+            family: family,
+            txn: transaction,
+            suggested_category_id: category_id,
+            final_category_id: nil # Will be set if user changes the category
+          )
         end
 
         transaction.lock_attr!(:category_id)

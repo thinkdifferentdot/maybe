@@ -6,11 +6,12 @@ require "test_helper"
 class FewShotExamplesTestClass
   include Provider::Concerns::FewShotExamples
 
-  attr_accessor :user_categories, :family
+  attr_accessor :user_categories, :family, :transactions
 
-  def initialize(user_categories:, family: nil)
+  def initialize(user_categories:, family: nil, transactions: nil)
     @user_categories = user_categories
     @family = family
+    @transactions = transactions
   end
 
   # Expose private methods for testing
@@ -36,6 +37,22 @@ class FewShotExamplesTestClass
 
   def build_few_shot_examples_text_public
     build_few_shot_examples_text
+  end
+
+  def relevant_patterns_public(merchant_name)
+    relevant_patterns(merchant_name)
+  end
+
+  def normalize_merchant_public(str)
+    normalize_merchant(str)
+  end
+
+  def substring_match_public(input, pattern)
+    substring_match?(input, pattern)
+  end
+
+  def calculate_match_score_public(input, pattern)
+    calculate_match_score(input, pattern)
   end
 end
 
@@ -141,10 +158,16 @@ class Provider::Concerns::FewShotExamplesTest < ActiveSupport::TestCase
     pattern2 = LearnedPattern.create!(family: family, category: restaurants, merchant_name: "MCDONALDS")
     pattern3 = LearnedPattern.create!(family: family, category: groceries, merchant_name: "TRADER JOES") # Same category as pattern1
 
-    instance = FewShotExamplesTestClass.new(user_categories: @user_categories, family: family)
+    # Provide transactions with matching merchant names for relevance-based selection
+    transactions = [
+      { id: "1", description: "WHOLE FOODS MARKET", amount: 100, classification: "expense" },
+      { id: "2", description: "MCDONALDS", amount: 50, classification: "expense" }
+    ]
+
+    instance = FewShotExamplesTestClass.new(user_categories: @user_categories, family: family, transactions: transactions)
     examples = instance.dynamic_examples_public
 
-    # Should return at most 1 example per category (so 2 total: groceries and restaurants)
+    # Should return at most 3 examples matching the transaction merchants
     assert examples.size <= 3
     assert examples.any? { |ex| ex[:category] == groceries.name }
     assert examples.any? { |ex| ex[:category] == restaurants.name }
@@ -193,7 +216,12 @@ class Provider::Concerns::FewShotExamplesTest < ActiveSupport::TestCase
     # Create a learned pattern for a category not in static examples
     pattern = LearnedPattern.create!(family: family, category: groceries, merchant_name: "CUSTOM MERCHANT")
 
-    instance = FewShotExamplesTestClass.new(user_categories: @user_categories, family: family)
+    # Provide transactions with matching merchant name
+    transactions = [
+      { id: "1", description: "CUSTOM MERCHANT", amount: 100, classification: "expense" }
+    ]
+
+    instance = FewShotExamplesTestClass.new(user_categories: @user_categories, family: family, transactions: transactions)
     examples = instance.build_few_shot_examples_public
 
     # Should have 5 static + 1 dynamic (at most)
@@ -223,5 +251,178 @@ class Provider::Concerns::FewShotExamplesTest < ActiveSupport::TestCase
     assert_includes result, "EXAMPLES:"
     assert_includes result, "Transaction: WHOLE FOODS MARKET \u2192 Category: Groceries"
     assert_includes result, "Transaction: SHELL SERVICE STATION \u2192 Category: Gas & Fuel"
+  end
+
+  # Tests for relevance-based pattern selection
+
+  test "relevant_patterns returns exact match first" do
+    family = families(:dylan_family)
+    groceries = categories(:one)
+
+    # Create a pattern with exact merchant name
+    pattern = LearnedPattern.create!(family: family, category: groceries, merchant_name: "WHOLE FOODS")
+
+    instance = FewShotExamplesTestClass.new(user_categories: @user_categories, family: family)
+    results = instance.relevant_patterns_public("WHOLE FOODS")
+
+    assert_equal 1, results.size
+    assert_equal "WHOLE FOODS", results.first.merchant_name
+
+    # Cleanup
+    LearnedPattern.delete(pattern.id)
+  end
+
+  test "relevant_patterns returns substring matches sorted by similarity" do
+    family = families(:dylan_family)
+    groceries = categories(:one)
+    restaurants = categories(:subcategory)
+
+    # Create patterns with varying substring similarity
+    pattern1 = LearnedPattern.create!(family: family, category: groceries, merchant_name: "STARBUCKS")
+    pattern2 = LearnedPattern.create!(family: family, category: restaurants, merchant_name: "BUCK") # Shorter match
+    pattern3 = LearnedPattern.create!(family: family, category: groceries, merchant_name: "STARBUCKS COFFEE") # Longer match
+
+    instance = FewShotExamplesTestClass.new(user_categories: @user_categories, family: family)
+    results = instance.relevant_patterns_public("STARBUCKS")
+
+    # Should return patterns sorted by relevance (longer match first)
+    assert results.size >= 1
+    assert results.any? { |p| p.merchant_name == "STARBUCKS" }
+
+    # Cleanup
+    LearnedPattern.delete(pattern1.id)
+    LearnedPattern.delete(pattern2.id)
+    LearnedPattern.delete(pattern3.id)
+  end
+
+  test "relevant_patterns handles blank merchant input" do
+    family = families(:dylan_family)
+    instance = FewShotExamplesTestClass.new(user_categories: @user_categories, family: family)
+
+    assert_equal [], instance.relevant_patterns_public(nil)
+    assert_equal [], instance.relevant_patterns_public("")
+    assert_equal [], instance.relevant_patterns_public("   ")
+  end
+
+  test "relevant_patterns limits to 3 patterns" do
+    family = families(:dylan_family)
+    groceries = categories(:one)
+    restaurants = categories(:subcategory)
+
+    # Create more than 3 matching patterns
+    pattern1 = LearnedPattern.create!(family: family, category: groceries, merchant_name: "FOOD STORE A")
+    pattern2 = LearnedPattern.create!(family: family, category: restaurants, merchant_name: "FOOD STORE B")
+    pattern3 = LearnedPattern.create!(family: family, category: groceries, merchant_name: "FOOD STORE C")
+    pattern4 = LearnedPattern.create!(family: family, category: restaurants, merchant_name: "FOOD STORE D")
+
+    instance = FewShotExamplesTestClass.new(user_categories: @user_categories, family: family)
+    results = instance.relevant_patterns_public("FOOD STORE")
+
+    assert results.size <= 3
+
+    # Cleanup
+    LearnedPattern.delete(pattern1.id)
+    LearnedPattern.delete(pattern2.id)
+    LearnedPattern.delete(pattern3.id)
+    LearnedPattern.delete(pattern4.id)
+  end
+
+  test "relevant_patterns handles nil family" do
+    instance = FewShotExamplesTestClass.new(user_categories: @user_categories, family: nil)
+    results = instance.relevant_patterns_public("WHOLE FOODS")
+
+    assert_equal [], results
+  end
+
+  test "dynamic_examples returns empty when no relevant patterns" do
+    family = families(:dylan_family)
+    groceries = categories(:one)
+
+    # Create a pattern that won't match the transaction
+    LearnedPattern.create!(family: family, category: groceries, merchant_name: "WHOLE FOODS")
+
+    # Transaction with completely different merchant
+    transactions = [
+      { id: "1", description: "COMPLETELY UNRELATED MERCHANT", amount: 100, classification: "expense" }
+    ]
+
+    instance = FewShotExamplesTestClass.new(user_categories: @user_categories, family: family, transactions: transactions)
+    examples = instance.dynamic_examples_public
+
+    assert_equal [], examples
+
+    # Cleanup
+    family.learned_patterns.destroy_all
+  end
+
+  test "build_few_shot_examples_text separates user patterns" do
+    family = families(:dylan_family)
+    groceries = categories(:one)
+
+    pattern = LearnedPattern.create!(family: family, category: groceries, merchant_name: "USER PATTERN")
+
+    transactions = [
+      { id: "1", description: "USER PATTERN", amount: 100, classification: "expense" }
+    ]
+
+    instance = FewShotExamplesTestClass.new(user_categories: @user_categories, family: family, transactions: transactions)
+    result = instance.build_few_shot_examples_text_public
+
+    # Should have both sections
+    assert_includes result, "EXAMPLES:"
+    assert_includes result, "USER'S PATTERNS (how this user categorizes):"
+
+    # User pattern should be in the user patterns section
+    assert_includes result, "Transaction: USER PATTERN"
+
+    # Cleanup
+    LearnedPattern.delete(pattern.id)
+  end
+
+  test "build_few_shot_examples_text shows only examples when no user patterns" do
+    instance = FewShotExamplesTestClass.new(user_categories: @user_categories, family: nil)
+    result = instance.build_few_shot_examples_text_public
+
+    # Should have only EXAMPLES section
+    assert_includes result, "EXAMPLES:"
+    assert_not_includes result, "USER'S PATTERNS"
+  end
+
+  test "normalize_merchant normalizes correctly" do
+    family = families(:dylan_family)
+    instance = FewShotExamplesTestClass.new(user_categories: @user_categories, family: family)
+
+    assert_equal "whole foods", instance.normalize_merchant_public("WHOLE FOODS!!!")
+    assert_equal "starbucks coffee", instance.normalize_merchant_public("Starbucks  Coffee???")
+    assert_equal "", instance.normalize_merchant_public("!!!@@@###")
+  end
+
+  test "substring_match_public applies quality threshold" do
+    family = families(:dylan_family)
+    instance = FewShotExamplesTestClass.new(user_categories: @user_categories, family: family)
+
+    # Valid substring match (length >= 3)
+    assert instance.substring_match_public("starbucks coffee", "starbucks")
+
+    # Too short (quality threshold)
+    assert_not instance.substring_match_public("st", "starbucks")
+
+    # Blank inputs
+    assert_not instance.substring_match_public("", "starbucks")
+    assert_not instance.substring_match_public("coffee", "")
+  end
+
+  test "calculate_match_score returns correct relevance" do
+    family = families(:dylan_family)
+    instance = FewShotExamplesTestClass.new(user_categories: @user_categories, family: family)
+
+    # Input contains pattern - score is pattern length
+    assert_equal 9, instance.calculate_match_score_public("starbucks", "starbucks")
+
+    # Pattern contains input - score is input length
+    assert_equal 6, instance.calculate_match_score_public("coffee", "starbucks coffee")
+
+    # No match
+    assert_equal 0, instance.calculate_match_score_public("whole", "foods")
   end
 end
