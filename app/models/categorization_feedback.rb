@@ -24,7 +24,7 @@ class CategorizationFeedback < ApplicationRecord
   scope :all_time, -> { all }
 
   # Scope for misses (incorrect categorizations)
-  scope :misses, -> { where.not(final_category_id: [ nil, :suggested_category_id ]) }
+  scope :misses, -> { where("final_category_id IS NOT NULL AND final_category_id != suggested_category_id") }
 
   # Map time window strings to scope symbols
   TIME_WINDOW_MAPPING = {
@@ -72,9 +72,9 @@ class CategorizationFeedback < ApplicationRecord
   # Recent misses for a specific category
   def self.recent_misses(category, limit: 20)
     misses_by_category = where(suggested_category: category)
-      .where.not(final_category_id: [ nil, :suggested_category_id ])
+      .where("final_category_id IS NOT NULL AND final_category_id != suggested_category_id")
       .includes(:txn, :suggested_category, :final_category)
-      .order(created_at: desc)
+      .order(created_at: :desc)
       .limit(limit)
 
     misses_by_category.to_a

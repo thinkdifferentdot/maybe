@@ -81,22 +81,21 @@
                 <div class="space-y-2">
                   <% @recent_misses.each do |feedback| %>
                     <%
-                      txn = feedback.transaction
+                      txn = feedback.txn
                       suggested = feedback.suggested_category
                       final_category = feedback.final_category
                       merchant_name = txn.merchant_name
-                      date = txn.date
-                      amount = txn.amount
+                      entry = txn.entry
                     %>
                     <div class="bg-surface-inset rounded-lg p-3 text-sm">
                       <div class="flex items-start justify-between gap-4">
                         <div class="space-y-1">
                           <div class="flex items-center gap-2">
                             <span class="text-primary font-medium"><%= merchant_name %></span>
-                            <span class="text-secondary text-xs"><%= l(date, format: :short) %></span>
+                            <span class="text-secondary text-xs"><%= l(entry.date, format: :short) %></span>
                           </div>
                           <div class="text-secondary text-xs">
-                            <%= amount.format %> &mdash;
+                            <%= format_money(entry.amount_money) %> &mdash;
                             <span class="line-through text-decoration-muted"><%= suggested.name %></span>
                             &rarr;
                             <span class="text-primary"><%= final_category&.name || t(".uncategorized") %></span>
