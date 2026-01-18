@@ -1,12 +1,2 @@
-<%# Replace feedback buttons with "Approved" state %>
-<%= turbo_stream.replace dom_id(@transaction, "ai_feedback") do %>
-  <span id="<%= dom_id(@transaction, "ai_feedback") %>" class="inline-flex items-center gap-1 text-xs text-success">
-    <%= icon "check-circle", size: "xs", color: "success" %>
-    <span class="hidden sm:inline"><%= t("transactions.feedback_approved") %></span>
-  </span>
-<% end %>
-
-<%# Update confidence badge to show confirmed %>
-<%= turbo_stream.replace "#{dom_id(@transaction, "confidence_badge")}" do %>
-  <%= render "transactions/confidence_badge", transaction: @transaction.reload %>
-<% end %>
+<%= turbo_stream.replace @entry, partial: "entries/entry", locals: { entry: @entry } %>
+<%= turbo_stream.append "notification-tray", partial: "shared/notifications/notice", locals: { message: flash[:notice] } %> 

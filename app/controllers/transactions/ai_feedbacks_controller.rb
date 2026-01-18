@@ -32,6 +32,9 @@ class Transactions::AiFeedbacksController < ApplicationController
 
     flash[:notice] = t("transactions.approval_success")
 
+    @transaction.reload
+    @entry.reload
+    
     respond_to do |format|
       format.turbo_stream
     end
@@ -59,12 +62,15 @@ class Transactions::AiFeedbacksController < ApplicationController
     end
 
     # Remove category and clear confidence
-    @transaction.update_column(:category_id, nil)
+    @transaction.update!(category_id: nil)
 
     # Mark feedback as given and store rejection
     update_feedback_state(@transaction, "rejected")
 
     flash[:notice] = t("transactions.rejection_success")
+
+    @transaction.reload
+    @entry.reload
 
     respond_to do |format|
       format.turbo_stream
@@ -76,13 +82,19 @@ class Transactions::AiFeedbacksController < ApplicationController
   def update_feedback_state(transaction, feedback_type)
     updated_extra = transaction.extra.merge(
       "ai_feedback_given" => true,
-      "ai_feedback" => feedback_type
+      "ai_feedback" => feedback_type,
+      "ai_feedback_given_at" => Time.current.iso8601
     )
 
-    # Clear confidence if rejected
-    updated_extra.delete("ai_categorization_confidence") if feedback_type == "rejected"
+    # Clear confidence if rejected or approved (we're done with AI state)
+    updated_extra.delete("ai_categorization_confidence")
 
-    transaction.update_column(:extra, updated_extra)
+    transaction.update!(extra: updated_extra)
+    
+    # Remove the enrichment record so it doesn't show as "recent AI" anymore
+    transaction.data_enrichments
+      .where(source: "ai", attribute_name: "category_id")
+      .destroy_all
   end
 
   def handle_not_found
