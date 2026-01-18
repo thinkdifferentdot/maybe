@@ -1,7 +1,17 @@
-<%# locals: (transaction:, entry:) -%>
+<%# locals: (transaction:, entry: nil, id_suffix: nil) -%>
 <%# Feedback buttons (checkmark/X) for AI-categorized transactions %>
+<%
+  approve_url = approve_transactions_ai_feedback_path(id_suffix: id_suffix)
+  reject_url = reject_transactions_ai_feedback_path(id_suffix: id_suffix)
+%>
 
-<div id="<%= dom_id(transaction, "ai_feedback") %>" data-controller="ai-feedback" data-ai-feedback-transaction-id-value="<%= entry.id %>" class="inline-flex items-center gap-1" data-ai-feedback-target="container">
+<div id="<%= dom_id(transaction, "ai_feedback") %>"
+     data-controller="ai-feedback"
+     data-ai-feedback-transaction-id-value="<%= transaction.id %>"
+     data-ai-feedback-approve-url-value="<%= approve_url %>"
+     data-ai-feedback-reject-url-value="<%= reject_url %>"
+     class="inline-flex items-center gap-1"
+     data-ai-feedback-target="container">
   <% if transaction.ai_categorized? && !transaction.ai_feedback_given? %>
     <button type="button"
             data-ai-feedback-target="button"

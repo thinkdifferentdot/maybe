@@ -15,7 +15,7 @@
 
       <div class="space-y-3">
         <% @transactions.each do |transaction| %>
-          <div class="grid-cols-12 items-center grid py-3 border-b border-border last:border-0">
+          <div id="<%= dom_id(transaction, "review_row") %>" class="grid-cols-12 items-center grid py-3 border-b border-border last:border-0">
             <p class="col-span-4 md:col-span-5 text-sm truncate pr-2">
               <%= transaction.entry.name %>
               <span class="text-xs text-secondary ml-2 md:hidden"><%= transaction.merchant&.name %></span>
@@ -30,7 +30,7 @@
               <%= render "transactions/confidence_badge", transaction: transaction %>
             </div>
             <div class="col-span-2 md:col-span-1 flex justify-center">
-              <%= render "transactions/ai_feedback_buttons", transaction: transaction, entry: transaction.entry %>
+              <%= render "transactions/ai_feedback_buttons", transaction: transaction, entry: transaction.entry, id_suffix: "review" %>
             </div>
           </div>
         <% end %>

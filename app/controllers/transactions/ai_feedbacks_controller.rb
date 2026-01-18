@@ -4,8 +4,9 @@ class Transactions::AiFeedbacksController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound, with: :handle_not_found
 
   def approve
-    @entry = Current.family.entries.transactions.find(params[:transaction_id])
-    @transaction = @entry.entryable
+    @transaction = Current.family.transactions.find(params[:transaction_id])
+    @entry = @transaction.entry
+    @id_suffix = params[:id_suffix]
 
     if @transaction.nil?
       respond_to do |format|
@@ -41,8 +42,9 @@ class Transactions::AiFeedbacksController < ApplicationController
   end
 
   def reject
-    @entry = Current.family.entries.transactions.find(params[:transaction_id])
-    @transaction = @entry.entryable
+    @transaction = Current.family.transactions.find(params[:transaction_id])
+    @entry = @transaction.entry
+    @id_suffix = params[:id_suffix]
 
     if @transaction.nil?
       respond_to do |format|

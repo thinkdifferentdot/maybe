@@ -4,6 +4,8 @@ export default class extends Controller {
   static targets = ["button", "container"];
   static values = {
     transactionId: String,
+    approveUrl: String,
+    rejectUrl: String,
     feedbackType: String,
   };
 
@@ -18,9 +20,7 @@ export default class extends Controller {
 
     const button = event.currentTarget;
     const feedbackType = button.dataset.feedbackType || this.feedbackTypeValue;
-    const url = feedbackType === "reject"
-      ? "/transactions/ai_feedback/reject"
-      : "/transactions/ai_feedback/approve";
+    const url = feedbackType === "reject" ? this.rejectUrlValue : this.approveUrlValue;
 
     // Set loading state
     this._setLoadingState(true);
