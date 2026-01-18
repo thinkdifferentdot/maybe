@@ -82,12 +82,12 @@ class Family < ApplicationRecord
   def learn_pattern_from!(transaction)
     return unless transaction.merchant_name.present? && transaction.category_id.present?
 
-    learned_patterns.find_or_create_by(
+    pattern = learned_patterns.find_or_initialize_by(
       normalized_merchant: LearnedPatternMatcher.new(self).send(:normalize, transaction.merchant_name)
-    ) do |pattern|
-      pattern.merchant_name = transaction.merchant_name
-      pattern.category = transaction.category
-    end
+    )
+    pattern.merchant_name = transaction.merchant_name
+    pattern.category = transaction.category
+    pattern.save!
   end
 
   def balance_sheet

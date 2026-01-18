@@ -100,6 +100,26 @@ class TransactionsController < ApplicationController
         }
       end
 
+      if transaction.saved_change_to_category_id?
+        Current.family.learn_pattern_from!(transaction)
+
+        # If this was an AI categorized transaction or already had feedback,
+        # update the feedback to reflect the manual correction/approval
+        if transaction.ai_categorized? || transaction.ai_feedback_given?
+          new_extra = transaction.extra.merge(
+            "ai_feedback" => "approved",
+            "ai_feedback_given_at" => Time.current.iso8601
+          )
+          new_extra.delete("ai_categorization_confidence")
+          
+          transaction.update!(extra: new_extra)
+          
+          transaction.data_enrichments
+            .where(source: "ai", attribute_name: "category_id")
+            .destroy_all
+        end
+      end
+
       @entry.sync_account_later
       @entry.lock_saved_attributes!
       @entry.transaction.lock_attr!(:tag_ids) if @entry.transaction.tags.any?
