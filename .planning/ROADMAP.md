@@ -82,7 +82,7 @@ See [milestones/v1.3-ROADMAP.md](milestones/v1.3-ROADMAP.md) for full details.
 
 ---
 
-### 🚧 v1.4 AI Observability (In Progress)
+### 🚧 v1.4 AI Observability (In Progress - 2 of 3 phases complete)
 
 **Milestone Goal:** Improve AI categorization quality through feedback loops and evaluation
 
@@ -91,20 +91,18 @@ See [milestones/v1.3-ROADMAP.md](milestones/v1.3-ROADMAP.md) for full details.
 **Goal**: Integrate LearnedPattern records into few-shot examples pipeline
 **Depends on**: Phase 29 (v1.3 complete)
 **Research**: Unlikely (established patterns - LearnedPattern model exists)
-**Plans**: TBD
 
 Plans:
-- [ ] 30-01: TBD (run /gsd:plan-phase 30 to break down)
+- [x] 30-01: Relevance-based pattern selection for few-shot examples — completed 2026-01-11
 
 #### Phase 31: Feedback UI
 
 **Goal**: Add user feedback interface for AI categorization results
 **Depends on**: Phase 30
 **Research**: Unlikely (UI patterns established)
-**Plans**: TBD
 
 Plans:
-- [ ] 31-01: TBD
+- [x] 31-01: Checkmark/X approval buttons with review screen — completed 2026-01-18
 
 #### Phase 32: Accuracy Metrics
 
