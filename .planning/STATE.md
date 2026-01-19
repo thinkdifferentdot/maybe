@@ -9,14 +9,14 @@ See: .planning/PROJECT.md (updated 2026-01-11)
 
 ## Current Position
 
-Phase: 31 of 32 (Feedback UI)
+Phase: 31.1 of 32 (Add navigation link to reviews page)
 Plan: 1 of 1 complete
-Status: Phase complete, ready for Phase 32
-Last activity: 2026-01-18 — Completed 31-01: Feedback UI
+Status: Phase complete
+Last activity: 2026-01-18 — Completed 31.1-01: Add reviews link
 
-Progress: ███████████░ 90%
+Progress: ████████████ 91%
 
-**Summary (31-01):** Checkmark/X approval buttons for AI-categorized transactions with review screen and LearnedPattern integration. Complete feedback UI with approve/reject actions, Stimulus controller for button interactions, Turbo Stream responses for instant updates, and review screen for batch feedback. 14 commits (6 feat, 6 fix, 1 refactor, 1 docs).
+**Summary (31.1-01):** Navigation menu item added to transactions page linking to AI reviews screen. Menu item uses clipboard-check icon, properly localized with i18n, and links to transactions_reviews_path. 2 commits (both feat).
 
 **Summary (29-01):** Implemented two-tier few-shot examples system for AI transaction categorization prompts. Created Provider::Concerns::FewShotExamples with static baseline examples (5 hardcoded covering common categories) and dynamic examples from user's LearnedPattern records (0-3, one per category for diversity). Integrated into both OpenAI and Anthropic AutoCategorizers. Added comprehensive test coverage (14 tests). All 76 provider tests passing (11 OpenAI + 15 Anthropic + 36 JsonParser + 14 FewShotExamples).
 
@@ -54,18 +54,19 @@ Progress: ███████████░ 90%
 
 ## Next Milestone Goals
 
-**v1.4: AI Observability** — IN PROGRESS (2 of 3 phases complete)
+**v1.4: AI Observability** — IN PROGRESS (3 of 4 phases complete)
 - LearnedPattern Integration (Phase 30) - COMPLETE
 - Feedback UI (Phase 31) - COMPLETE
+- Add navigation link to reviews page (Phase 31.1) - COMPLETE
 - Accuracy Metrics (Phase 32) - NEXT
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 69 (26 v1.0 + 20 v1.1 + 4 v1.2 + 5 v1.3 + 1 v1.4 phase 30 + 13 v1.4 phase 31)
-- Total commits: 86 (implementation + fixes)
+- Total plans completed: 70 (26 v1.0 + 20 v1.1 + 4 v1.2 + 5 v1.3 + 1 v1.4 phase 30 + 13 v1.4 phase 31 + 1 v1.4 phase 31.1)
+- Total commits: 88 (implementation + fixes)
 - Average duration: ~6 min
-- Total execution time: ~420 min
+- Total execution time: ~423 min
 
 **By Phase:**
 
@@ -96,6 +97,7 @@ Progress: ███████████░ 90%
 | 29 (Improve Categorization Prompts) | 1 | ~10 min | ~10 min |
 | 30 (LearnedPattern Integration) | 1 | ~30 min | ~30 min |
 | 31 (Feedback UI) | 1 | ~45 min | ~45 min |
+| 31.1 (Add Reviews Nav Link) | 1 | ~3 min | ~3 min |
 
 ## Accumulated Context
 
@@ -198,6 +200,7 @@ None.
 - **v1.3 COMPLETE**: Codebase Health (2026-01-11) — 6 phases (Phase 24-29) for tech debt cleanup and improved AI accuracy
 - **v1.4 PLANNED**: AI Observability — Deferred features: categorization feedback, evaluation framework, cost monitoring
 - **v1.4 CREATED**: AI Observability (2026-01-11) — 4 phases (Phase 30-33) for categorization quality improvement
+- **Phase 31.1 INSERTED**: Add navigation link to reviews page (2026-01-18) — Discovered during Phase 31 verification: the reviews page exists but has no navigation link for users to access it
 
 ### Blockers/Concerns
 
@@ -206,5 +209,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-18
-Stopped at: Completed 31-01: Feedback UI
+Stopped at: Completed 31.1-01: Add reviews link
 Resume file: None

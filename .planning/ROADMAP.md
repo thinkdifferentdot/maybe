@@ -82,7 +82,7 @@ See [milestones/v1.3-ROADMAP.md](milestones/v1.3-ROADMAP.md) for full details.
 
 ---
 
-### 🚧 v1.4 AI Observability (In Progress - 2 of 3 phases complete)
+### 🚧 v1.4 AI Observability (In Progress - 3 of 4 phases complete)
 
 **Milestone Goal:** Improve AI categorization quality through feedback loops and evaluation
 
@@ -103,6 +103,18 @@ Plans:
 
 Plans:
 - [x] 31-01: Checkmark/X approval buttons with review screen — completed 2026-01-18
+
+#### Phase 31.1: Add navigation link to reviews page (INSERTED)
+
+**Goal**: Add menu item linking to /transactions/reviews on the transactions index page
+**Depends on**: Phase 31
+**Research**: Unlikely (simple UI addition)
+
+Plans:
+- [x] 31.1-01: Add reviews link to transactions menu — completed 2026-01-18
+
+**Details:**
+Discovered during Phase 31 verification: the reviews page exists but has no navigation link. Users cannot easily access the review screen for batch feedback on AI categorizations.
 
 #### Phase 32: Accuracy Metrics
 
@@ -285,6 +297,7 @@ The AI chat was failing when calling the `get_transactions` function because Ant
 | 27. Simplify JSON Parsing | v1.3 | 1/1 | Complete | 2026-01-11 |
 | 28. Standardize Error Handling | v1.3 | 1/1 | Complete | 2026-01-11 |
 | 29. Improve Categorization Prompts | v1.3 | 1/1 | Complete | 2026-01-11 |
-| 30. LearnedPattern Integration | v1.4 | 0/? | Not started | - |
-| 31. Feedback UI | v1.4 | 0/? | Not started | - |
+| 30. LearnedPattern Integration | v1.4 | 1/1 | Complete | 2026-01-11 |
+| 31. Feedback UI | v1.4 | 1/1 | Complete | 2026-01-18 |
+| 31.1. Add navigation link to reviews page | v1.4 | 0/? | Not started | - | (INSERTED)
 | 32. Accuracy Metrics | v1.4 | 0/? | Not started | - |
