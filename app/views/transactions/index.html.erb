@@ -9,7 +9,7 @@
           <% menu.with_item(variant: "link", text: "Edit categories", href: categories_path, icon: "shapes", data: { turbo_frame: :_top }) %>
           <% menu.with_item(variant: "link", text: "Edit tags", href: tags_path, icon: "tags", data: { turbo_frame: :_top }) %>
           <% menu.with_item(variant: "link", text: "Edit merchants", href: family_merchants_path, icon: "store", data: { turbo_frame: :_top }) %>
-          <% menu.with_item(variant: "link", text: "Review AI suggestions", href: transactions_reviews_path, icon: "clipboard-check", data: { turbo_frame: :_top }) %>
+          <% menu.with_item(variant: "link", text: t(".review_ai"), href: transactions_reviews_path, icon: "clipboard-check", data: { turbo_frame: :_top }) %>
           <% menu.with_item(variant: "link", text: "Import", href: new_import_path, icon: "download", data: { turbo_frame: "modal", class_name: "md:!hidden" }) %>
         <% end %>
 

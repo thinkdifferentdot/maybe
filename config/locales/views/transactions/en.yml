@@ -54,6 +54,7 @@ en:
       transaction: transaction
       transactions: transactions
       import: Import
+      review_ai: Review AI suggestions
     toggle_recurring_section: Toggle upcoming recurring transactions
     ai_categorize:
       button_title: AI Categorize
